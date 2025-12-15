@@ -12,14 +12,15 @@
 :root{
   --bg:#0b1020;
   --ink:#ffffff;
-  --panel:#0f172a;
   --good:#22c55e;
   --bad:#ef4444;
   --gold:#ffd166;
   --outline:rgba(255,255,255,.12);
 }
+
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
+
 body{
   background:
     radial-gradient(circle at 20% 15%, rgba(255,209,102,.22), transparent 55%),
@@ -33,6 +34,33 @@ body{
   padding:16px;
 }
 
+/* ✅ Top-left Back button */
+.backTop{
+  position:fixed;
+  top:14px;
+  left:14px;
+  z-index:1000;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:14px;
+  text-decoration:none;
+  background:rgba(0,0,0,.45);
+  border:1px solid rgba(255,255,255,.22);
+  color:#fff;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  backdrop-filter: blur(4px);
+  -webkit-tap-highlight-color: transparent;
+}
+.backTop span{
+  font-family:'Noto Sans JP',system-ui;
+  font-weight:900;
+  color:#d7d7d7;
+}
+
+/* Card */
 .card{
   width:min(760px,94vw);
   background:rgba(0,0,0,.35);
@@ -44,7 +72,45 @@ body{
   position:relative;
 }
 
-/* Top title (EN with JP under) */
+/* Perfect run gold frame */
+.card.perfect{
+  border:2px solid rgba(255,209,102,.65);
+  box-shadow:
+    0 0 18px rgba(255,209,102,.28),
+    0 0 46px rgba(255,209,102,.20),
+    0 22px 70px rgba(0,0,0,.55);
+}
+.card.perfect::after{
+  content:"";
+  position:absolute;
+  inset:-10px;
+  border-radius:32px;
+  pointer-events:none;
+  background:conic-gradient(from 0deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,241,179,.75) 12%,
+    rgba(255,255,255,0) 24%,
+    rgba(255,209,102,.80) 38%,
+    rgba(255,255,255,0) 52%,
+    rgba(255,241,179,.70) 68%,
+    rgba(255,255,255,0) 82%,
+    rgba(255,209,102,.80) 94%,
+    rgba(255,255,255,0) 100%
+  );
+  opacity:.55;
+  filter:blur(0.6px);
+  animation:goldSpin 3.6s linear infinite;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  padding:10px;
+}
+@keyframes goldSpin{to{transform:rotate(360deg)}}
+
+/* Header */
 .header{
   display:flex;
   flex-direction:column;
@@ -73,10 +139,11 @@ h1 small{
   color:#cbd5e1;
 }
 
+/* Prompt */
 .jp{
   margin-top:22px;
   font-family:'Noto Sans JP',system-ui;
-  font-size:clamp(28px,5.2vw,40px); /* ✅ bigger Japanese */
+  font-size:clamp(28px,5.2vw,40px);
   font-weight:900;
   letter-spacing:.02em;
 }
@@ -87,6 +154,7 @@ h1 small{
   color:#cbd5e1;
 }
 
+/* Input + button */
 input{
   margin-top:18px;
   width:100%;
@@ -97,7 +165,6 @@ input{
   outline:none;
   text-align:center;
 }
-
 button{
   margin-top:14px;
   width:100%;
@@ -112,7 +179,6 @@ button{
 
 .feedback{
   margin-top:14px;
-  font-size:18px;
   min-height:52px;
   display:flex;
   align-items:center;
@@ -129,7 +195,6 @@ button{
   60%{transform:scale(1.2)}
   100%{transform:scale(1)}
 }
-
 .fart{
   font-size:44px;
   color:var(--bad);
@@ -161,7 +226,37 @@ button{
 .mid{color:#ffd166}
 .bad{color:#ef4444}
 
-/* Footer + Back */
+/* Perfect text */
+.perfectTag{
+  margin-top:12px;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.08em;
+  color:#ffd166;
+  text-shadow:0 0 10px rgba(255,209,102,.35), 0 0 22px rgba(255,209,102,.22);
+  font-size:clamp(16px,2.6vw,20px);
+}
+.perfectTag small{
+  display:block;
+  margin-top:6px;
+  font-family:'Noto Sans JP',system-ui;
+  letter-spacing:.02em;
+  color:#ffe7b5;
+  font-weight:900;
+}
+
+/* Footer bigger in Booha font */
+footer{
+  width:100%;
+  margin-top:14px;
+  text-align:center;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  color:#cbd5e1;
+  font-size:18px;
+  letter-spacing:.06em;
+}
+
 .bottom{
   margin-top:18px;
   display:flex;
@@ -183,6 +278,7 @@ a.back{
   color:#fff;
   font-family:'Cinzel',serif;
   font-weight:900;
+  -webkit-tap-highlight-color: transparent;
 }
 a.back span{
   font-family:'Noto Sans JP',system-ui;
@@ -190,20 +286,19 @@ a.back span{
   color:#d7d7d7;
 }
 
-footer{
-  width:100%;
-  margin-top:10px;
-  text-align:center;
-  font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;
-  font-weight:800;
-  color:#9aa3b2;
-  font-size:14px;
+@media (max-width: 520px){
+  input{font-size:20px}
+  button{font-size:19px}
+  .backTop{top:10px;left:10px;padding:9px 12px}
 }
 </style>
 </head>
 <body>
 
-<div class="card">
+<!-- ✅ Top-left main menu -->
+<a class="backTop" href="index.html">Back to Menu <span>メニューへ</span></a>
+
+<div class="card" id="card">
   <div id="game">
     <div class="header">
       <h1>Word Typing<small>タイピング</small></h1>
@@ -219,9 +314,6 @@ footer{
     <div class="feedback" id="feedback"></div>
     <div class="hint" id="hint"></div>
 
-    <div class="bottom">
-      <a class="back" href="index.html">Back to Menu <span>メニューへ</span></a>
-    </div>
     <footer>Bryan's English School</footer>
   </div>
 
@@ -229,12 +321,18 @@ footer{
     <div class="header">
       <h1>RESULT<small>けっか</small></h1>
     </div>
+
     <div class="score" id="score"></div>
+    <div class="perfectTag" id="perfectTag" style="display:none;">
+      PERFECT RUN
+      <small>パーフェクト！</small>
+    </div>
 
     <div class="bottom">
       <a class="back" href="index.html">Back to Menu <span>メニューへ</span></a>
       <a class="back" href="" id="retryLink">Try Again <span>もう一回</span></a>
     </div>
+
     <footer>Bryan's English School</footer>
   </div>
 </div>
@@ -315,6 +413,7 @@ for(let k=DATA.length-1;k>0;k--){
 }
 
 let idx=0, score=0, mistakes=0;
+let anyWrongEver = false; // ✅ perfect run check
 
 const jpEl=$('#jp');
 const hiraEl=$('#hira');
@@ -322,6 +421,14 @@ const ansEl=$('#answer');
 const fbEl=$('#feedback');
 const hintEl=$('#hint');
 const counterEl=$('#counter');
+const submitBtn=$('#submit');
+const cardEl=$('#card');
+
+function safePlay(aud){
+  if(!aud) return;
+  try{ aud.pause(); aud.currentTime=0; }catch(e){}
+  try{ aud.play().catch(()=>{}); }catch(e){}
+}
 
 function load(){
   const d=DATA[idx];
@@ -332,29 +439,30 @@ function load(){
   hintEl.textContent='';
   mistakes=0;
   counterEl.textContent=(idx+1)+' / '+DATA.length;
+  submitBtn.textContent='OK';
   ansEl.focus();
 }
 
-function safePlay(aud){
-  if(!aud) return;
-  try{ aud.pause(); aud.currentTime=0; }catch(e){}
-  try{ aud.play().catch(()=>{}); }catch(e){}
-}
-
 function check(){
-  const d=DATA[idx];
+  const d = DATA[idx];
   const typed = ansEl.value.trim().toLowerCase();
+
   if(typed === d.en){
     score++;
-    fbEl.innerHTML='<div class="heart">❤</div>';
+    fbEl.innerHTML = '<div class="heart">❤</div>';
+    hintEl.textContent = '';
+    submitBtn.textContent = 'OK';
     safePlay(ding);
     setTimeout(next, 650);
   }else{
+    anyWrongEver = true;
     mistakes++;
-    fbEl.innerHTML='<div class="fart">💨</div>';
+    fbEl.innerHTML = '<div class="fart">💨</div>';
+    submitBtn.textContent = 'もう一回';
     safePlay(fart);
-    if(mistakes>=3){
-      hintEl.textContent='Hint: ' + d.en[0] + '...';
+
+    if(mistakes >= 3){
+      hintEl.textContent = 'Hint: ' + d.en[0] + '...';
     }
   }
 }
@@ -368,6 +476,7 @@ function next(){
 function finish(){
   $('#game').style.display='none';
   $('#result').style.display='block';
+
   const pct=Math.round((score/DATA.length)*100);
   const s=$('#score');
   s.textContent=pct+'%';
@@ -375,9 +484,15 @@ function finish(){
 
   const retry = $('#retryLink');
   if(retry) retry.href = window.location.pathname.split('/').pop() || '';
+
+  // ✅ Perfect run: no wrong answers ever
+  if(!anyWrongEver){
+    cardEl.classList.add('perfect');
+    $('#perfectTag').style.display='block';
+  }
 }
 
-$('#submit').addEventListener('click', check);
+submitBtn.addEventListener('click', check);
 ansEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') check(); });
 
 load();
