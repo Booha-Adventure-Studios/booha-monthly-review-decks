@@ -23,15 +23,14 @@
 
   --tileBorder:#000;
   --tileGlow: 0 0 10px rgba(255,255,255,.12), 0 0 34px rgba(255,209,102,.20);
-  --tileGlowHot: 0 0 18px rgba(255,255,255,.18), 0 0 58px rgba(255,209,102,.40);
+  --tileGlowHot: 0 0 18px rgba(255,255,255,.18), 0 0 60px rgba(255,209,102,.42);
 
-  --sweepDur: 2.2s;
+  --sweepDur: 2.1s;
   --pulseDur: 1.6s;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-
 body{
   background:
     radial-gradient(circle at 16% 18%, rgba(255,209,102,.18), transparent 55%),
@@ -55,12 +54,14 @@ body{
   animation:fadeIn .9s ease;
 }
 
+/* ✅ English slightly smaller */
 h1{
-  font-size:clamp(32px,5vw,62px);
+  font-size:clamp(30px,4.8vw,58px);
   font-weight:900;
   letter-spacing:.06em;
   margin-bottom:.15em;
 }
+
 h2{
   font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;
   font-size:clamp(18px,2.8vw,34px);
@@ -68,6 +69,7 @@ h2{
   color:#d7d7d7;
   margin-bottom:.25em;
 }
+
 h3{
   font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;
   font-size:clamp(14px,2.3vw,20px);
@@ -77,7 +79,6 @@ h3{
   line-height:1.35;
 }
 
-/* Grid */
 .deck-links{
   display:grid;
   grid-template-columns:repeat(3, minmax(0, 1fr));
@@ -86,7 +87,6 @@ h3{
   width:100%;
 }
 
-/* Tiles */
 a.deck{
   position:relative;
   display:flex;
@@ -109,61 +109,70 @@ a.deck{
   text-align:center;
 }
 
-/* keep text perfectly centered + stable */
-a.deck .label{
+/* ✅ Titles always centered, never moving */
+a.deck b{
   position:relative;
   z-index:3;
-  width:100%;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  padding:0 10px;
+  width:100%;
+  padding:0 12px;
+  line-height:1.06;
   transform:none !important;
 }
-a.deck .label .en{
-  font-family:'Cinzel',serif;
-  font-size:clamp(16px,2.2vw,22px);
-  line-height:1.06;
-  letter-spacing:.04em;
+
+/* English a bit smaller on tiles */
+a.deck b .en{
+  display:block;
+  font-size:0.95em;
+  letter-spacing:.03em;
   white-space:nowrap;
 }
-a.deck .label .jp{
-  margin-top:7px;
-  font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;
-  font-size:clamp(13px,1.9vw,16px);
-  font-weight:900;
+
+/* Extra safety for long titles (ex: Make the Sentences) */
+a.deck b .en.long{
+  font-size:0.86em;
   letter-spacing:.02em;
+}
+
+/* Japanese line under English */
+a.deck span.jp{
+  position:relative;
+  z-index:3;
+  margin-top:8px;
+  font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;
+  font-size:clamp(12px,1.9vw,16px);
+  font-weight:900;
   color:#1b1b1b;
   opacity:.90;
   white-space:nowrap;
 }
-a.deck .sub{
+
+/* Japanese subtitle */
+a.deck span.sub{
   position:relative;
   z-index:3;
   margin-top:10px;
   font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;
-  font-size:clamp(12px,1.7vw,14px);
+  font-size:clamp(11px,1.7vw,14px);
   font-weight:900;
   color:#0b0b0b;
   opacity:.72;
   white-space:nowrap;
 }
 
-/* FLASHIER: animated neon border ring */
-a.deck::borderRing{
-  content:"";
-}
+/* Flashier: sweep + twinkle */
 a.deck::before{
   content:"";
   position:absolute;
   inset:-40%;
-  background:
-    linear-gradient(120deg,
-      rgba(255,255,255,0) 0%,
-      rgba(255,255,255,.70) 46%,
-      rgba(255,255,255,0) 62%
-    );
+  background:linear-gradient(120deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.72) 46%,
+    rgba(255,255,255,0) 62%
+  );
   transform:translateX(-60%) rotate(10deg);
   opacity:.62;
   mix-blend-mode:overlay;
@@ -172,7 +181,6 @@ a.deck::before{
   z-index:1;
 }
 
-/* twinkle film */
 a.deck::after{
   content:"";
   position:absolute;
@@ -188,7 +196,7 @@ a.deck::after{
   z-index:1;
 }
 
-/* neon outline glow that animates (separate layer so text never “moves”) */
+/* Neon ring */
 a.deck .neon{
   position:absolute;
   inset:-2px;
@@ -208,7 +216,7 @@ a.deck .neon{
       rgba(255,255,255,0) 100%
     );
   filter:blur(0.5px);
-  opacity:.48;
+  opacity:.52;
   animation:ring 3.4s linear infinite;
   mask:
     linear-gradient(#000 0 0) content-box,
@@ -217,14 +225,10 @@ a.deck .neon{
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   padding:7px;
-  box-sizing:border-box;
-  mix-blend-mode:overlay;
 }
 
-a.deck:hover{ transform:scale(1.035); filter:brightness(1.10); }
 a.deck.active{ box-shadow:var(--tileGlowHot); filter:brightness(1.13); }
-
-/* Hide original tile during clone animation (prevents grid jitter) */
+a.deck:hover{ transform:scale(1.035); filter:brightness(1.10); }
 a.deck.is-hidden{ visibility:hidden; }
 
 /* Tile colors */
@@ -245,17 +249,11 @@ a.deck:nth-child(6){background:linear-gradient(145deg, var(--c6), #ffe7d4);}
   opacity:0;
   animation:sparkleFly 2.4s ease-out forwards;
 }
-@keyframes sparkleFly{
-  0%{transform:translate(0,0) scale(1);opacity:1;}
-  100%{transform:translate(var(--dx),var(--dy)) scale(0.35);opacity:0;}
-}
 
-/* Black swipe screen */
 #fadeScreen{
   position:fixed; inset:0;
   background:#000;
   transform:translateY(100%);
-  opacity:1;
   pointer-events:none;
   transition:transform 0.085s ease-in-out;
   z-index:9000;
@@ -270,41 +268,27 @@ footer{
   font-size:clamp(13px,2vw,18px);
   color:#9a9a9a;
   letter-spacing:.04em;
-  font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;
-  font-weight:800;
 }
 
-/* Animations */
 @keyframes sweep{
   0%{ transform:translateX(-65%) rotate(10deg); opacity:.28; }
-  45%{ opacity:.75; }
+  45%{ opacity:.78; }
   100%{ transform:translateX(65%) rotate(10deg); opacity:.28; }
 }
 @keyframes pulse{
   0%,100%{ opacity:.28; transform:scale(1); }
-  50%{ opacity:.52; transform:scale(1.02); }
+  50%{ opacity:.54; transform:scale(1.02); }
 }
-@keyframes ring{
-  0%{ transform:rotate(0deg); opacity:.45; }
-  50%{ opacity:.62; }
-  100%{ transform:rotate(360deg); opacity:.45; }
-}
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(6px);}
-  to{opacity:1; transform:translateY(0);}
-}
+@keyframes ring{ 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+@keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+@keyframes sparkleFly{ 0%{transform:translate(0,0) scale(1);opacity:1;} 100%{transform:translate(var(--dx),var(--dy)) scale(0.35);opacity:0;} }
 
-/* Mobile tweaks */
 @media (max-width: 768px){
   #welcome{ justify-content:flex-start; padding-top:1.35rem; }
   h3{ margin-bottom:1.1em; }
-  .deck-links{
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-    gap:1.1rem;
-  }
-  a.deck .label .en{ font-size:clamp(15px,3.6vw,20px); }
-  a.deck .label .jp{ font-size:clamp(12px,3.2vw,15px); }
-  a.deck .sub{ font-size:clamp(11px,3vw,13px); }
+  .deck-links{ grid-template-columns:repeat(2, minmax(0, 1fr)); gap:1.1rem; }
+  a.deck b .en{ font-size:0.92em; }
+  a.deck b .en.long{ font-size:0.84em; }
   footer{ bottom:10px; font-size:13px; }
 }
 </style>
@@ -314,72 +298,70 @@ footer{
 <section id="welcome">
   <h1>Booha Review Decks</h1>
   <h2>ブーハー・レビュー・デッキ</h2>
-
-  <!-- Change this per month folder -->
   <h3>January Monthly Review<br>１月マンスリーレビュー</h3>
 
   <div class="deck-links">
     <a class="deck" href="g1-word-typing.html">
       <div class="neon"></div>
-      <div class="label">
-        <div class="en">Typing</div>
-        <div class="jp">タイピング</div>
-      </div>
-      <div class="sub">思い出してスペル</div>
+      <b>
+        <span class="en">Typing</span>
+      </b>
+      <span class="jp">タイピング</span>
+      <span class="sub">思い出してスペル</span>
     </a>
 
     <a class="deck" href="g2-pick-sentence.html">
       <div class="neon"></div>
-      <div class="label">
-        <div class="en">Pick the Sentences</div>
-        <div class="jp">正しい文を選ぼう</div>
-      </div>
-      <div class="sub">聞いて見分ける</div>
+      <b>
+        <span class="en">Pick the Sentences</span>
+      </b>
+      <span class="jp">正しい文を選ぼう</span>
+      <span class="sub">聞いて見分ける</span>
     </a>
 
     <a class="deck" href="g3-speed-of-words.html">
       <div class="neon"></div>
-      <div class="label">
-        <div class="en">Word Speed</div>
-        <div class="jp">ワードスピード</div>
-      </div>
-      <div class="sub">早押し認識</div>
+      <b>
+        <span class="en">Word Speed</span>
+      </b>
+      <span class="jp">ワードスピード</span>
+      <span class="sub">早押し認識</span>
     </a>
 
     <a class="deck" href="g4-spot-the-mistake.html">
       <div class="neon"></div>
-      <div class="label">
-        <div class="en">Spot the Mistake</div>
-        <div class="jp">まちがい探し</div>
-      </div>
-      <div class="sub">間違いを見つける</div>
+      <b>
+        <span class="en">Spot the Mistake</span>
+      </b>
+      <span class="jp">まちがい探し</span>
+      <span class="sub">間違いを見つける</span>
     </a>
 
     <a class="deck" href="g5-order-sentence.html">
       <div class="neon"></div>
-      <div class="label">
-        <div class="en">Sentence Order</div>
-        <div class="jp">文の並べ替え</div>
-      </div>
-      <div class="sub">文の順番</div>
+      <b>
+        <span class="en long">Sentence Order</span>
+      </b>
+      <span class="jp">文の並べ替え</span>
+      <span class="sub">文の順番</span>
     </a>
 
     <a class="deck" href="g6-yes-no-listening.html">
       <div class="neon"></div>
-      <div class="label">
-        <div class="en">Yes / No Listening</div>
-        <div class="jp">Yes・No リスニング</div>
-      </div>
-      <div class="sub">聞いてYes/No</div>
+      <b>
+        <span class="en">Yes / No Listening</span>
+      </b>
+      <span class="jp">Yes・No リスニング</span>
+      <span class="sub">聞いてYes/No</span>
     </a>
   </div>
 
-  <footer>ブライアン英会話教室</footer>
+  <footer>Bryan's English School</footer>
 </section>
 
 <div id="fadeScreen"></div>
 
-<!-- reviewdeck.mp3 is in the SAME folder as this HTML -->
+<!-- ✅ reviewdeck.mp3 is in the SAME folder as this index.html -->
 <audio id="reviewIntro" src="reviewdeck.mp3" preload="auto"></audio>
 
 <script>
@@ -441,7 +423,6 @@ if (deckContainer) {
     deck.classList.add('active');
 
     const r = deck.getBoundingClientRect();
-
     const clone = deck.cloneNode(true);
     clone.classList.add('active');
 
