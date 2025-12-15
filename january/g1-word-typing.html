@@ -16,6 +16,7 @@
   --good:#22c55e;
   --bad:#ef4444;
   --gold:#ffd166;
+  --outline:rgba(255,255,255,.12);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -29,25 +30,55 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
+  padding:16px;
 }
 
 .card{
-  width:min(720px,94vw);
+  width:min(760px,94vw);
   background:rgba(0,0,0,.35);
   border-radius:26px;
-  padding:26px 22px 30px;
+  padding:26px 22px 20px;
   text-align:center;
   box-shadow:0 20px 60px rgba(0,0,0,.5);
+  border:1px solid var(--outline);
+  position:relative;
 }
 
-h1{font-size:clamp(26px,4.6vw,46px);font-weight:900;}
-.counter{margin-top:6px;font-size:14px;color:#cbd5e1;}
+/* Top title (EN with JP under) */
+.header{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+h1{
+  font-size:clamp(26px,4.6vw,44px);
+  font-weight:900;
+  letter-spacing:.05em;
+  line-height:1.05;
+}
+h1 small{
+  display:block;
+  margin-top:6px;
+  font-family:'Noto Sans JP',system-ui;
+  font-size:clamp(15px,2.6vw,22px);
+  font-weight:900;
+  color:#d7d7d7;
+  letter-spacing:.02em;
+}
+.counter{
+  margin-top:10px;
+  font-size:14px;
+  color:#cbd5e1;
+}
 
 .jp{
   margin-top:22px;
   font-family:'Noto Sans JP',system-ui;
-  font-size:clamp(22px,4vw,30px);
+  font-size:clamp(28px,5.2vw,40px); /* ✅ bigger Japanese */
   font-weight:900;
+  letter-spacing:.02em;
 }
 .hira{
   margin-top:6px;
@@ -57,7 +88,7 @@ h1{font-size:clamp(26px,4.6vw,46px);font-weight:900;}
 }
 
 input{
-  margin-top:20px;
+  margin-top:18px;
   width:100%;
   font-size:22px;
   padding:14px 16px;
@@ -68,7 +99,7 @@ input{
 }
 
 button{
-  margin-top:16px;
+  margin-top:14px;
   width:100%;
   padding:14px;
   font-size:20px;
@@ -80,17 +111,19 @@ button{
 }
 
 .feedback{
-  margin-top:16px;
+  margin-top:14px;
   font-size:18px;
-  min-height:24px;
+  min-height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .heart{
-  font-size:42px;
+  font-size:46px;
   color:var(--good);
   animation:pop .6s ease;
 }
-
 @keyframes pop{
   0%{transform:scale(.6);opacity:0}
   60%{transform:scale(1.2)}
@@ -98,173 +131,254 @@ button{
 }
 
 .fart{
-  font-size:36px;
+  font-size:44px;
   color:var(--bad);
   animation:shake .4s ease;
 }
-
 @keyframes shake{
   0%{transform:translateX(0)}
-  25%{transform:translateX(-6px)}
-  50%{transform:translateX(6px)}
-  75%{transform:translateX(-4px)}
+  25%{transform:translateX(-7px)}
+  50%{transform:translateX(7px)}
+  75%{transform:translateX(-5px)}
   100%{transform:translateX(0)}
 }
 
 .hint{
-  margin-top:10px;
+  margin-top:6px;
   font-size:14px;
   color:#ffd166;
+  min-height:18px;
 }
 
-#result{
-  display:none;
-}
-
+/* Result */
+#result{display:none}
 .score{
-  margin-top:20px;
-  font-size:42px;
+  margin-top:18px;
+  font-size:44px;
   font-weight:900;
 }
-
 .good{color:#22c55e}
 .mid{color:#ffd166}
 .bad{color:#ef4444}
+
+/* Footer + Back */
+.bottom{
+  margin-top:18px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+}
+a.back{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:14px;
+  text-decoration:none;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+}
+a.back span{
+  font-family:'Noto Sans JP',system-ui;
+  font-weight:900;
+  color:#d7d7d7;
+}
+
+footer{
+  width:100%;
+  margin-top:10px;
+  text-align:center;
+  font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;
+  font-weight:800;
+  color:#9aa3b2;
+  font-size:14px;
+}
 </style>
 </head>
 <body>
 
 <div class="card">
   <div id="game">
-    <h1>Word Typing</h1>
-    <div class="counter" id="counter">1 / 60</div>
+    <div class="header">
+      <h1>Word Typing<small>タイピング</small></h1>
+      <div class="counter" id="counter">1 / 60</div>
+    </div>
 
     <div class="jp" id="jp"></div>
     <div class="hira" id="hira"></div>
 
-    <input id="answer" autocomplete="off" autocapitalize="none" />
+    <input id="answer" autocomplete="off" autocapitalize="none" spellcheck="false" />
     <button id="submit">OK</button>
 
     <div class="feedback" id="feedback"></div>
     <div class="hint" id="hint"></div>
+
+    <div class="bottom">
+      <a class="back" href="index.html">Back to Menu <span>メニューへ</span></a>
+    </div>
+    <footer>Bryan's English School</footer>
   </div>
 
   <div id="result">
-    <h1>RESULT</h1>
+    <div class="header">
+      <h1>RESULT<small>けっか</small></h1>
+    </div>
     <div class="score" id="score"></div>
+
+    <div class="bottom">
+      <a class="back" href="index.html">Back to Menu <span>メニューへ</span></a>
+      <a class="back" href="" id="retryLink">Try Again <span>もう一回</span></a>
+    </div>
+    <footer>Bryan's English School</footer>
   </div>
 </div>
 
-<audio id="ding" src="assets/audio/ding.mp3"></audio>
-<audio id="fart" src="assets/audio/fart.mp3"></audio>
+<!-- ✅ SFX are in the SAME folder as this HTML -->
+<audio id="ding" src="ding.mp3" preload="auto"></audio>
+<audio id="fart" src="fart.mp3" preload="auto"></audio>
 
 <script>
+function $(q){ return document.querySelector(q); }
+
+const ding = $('#ding');
+const fart = $('#fart');
+
 const DATA = [
-  {en:'goal',jp:'目標',hi:'もくひょう'},
-  {en:'plan',jp:'計画',hi:'けいかく'},
-  {en:'future',jp:'未来',hi:'みらい'},
-  {en:'dream',jp:'夢',hi:'ゆめ'},
-  {en:'challenge',jp:'挑戦',hi:'ちょうせん'},
-  {en:'try',jp:'試す',hi:'ためす'},
-  {en:'change',jp:'変える',hi:'かえる'},
-  {en:'habit',jp:'習慣',hi:'しゅうかん'},
-  {en:'exercise',jp:'運動',hi:'うんどう'},
-  {en:'study',jp:'勉強',hi:'べんきょう'},
-  {en:'learn',jp:'学ぶ',hi:'まなぶ'},
-  {en:'practice',jp:'練習',hi:'れんしゅう'},
-  {en:'success',jp:'成功',hi:'せいこう'},
-  {en:'focus',jp:'集中',hi:'しゅうちゅう'},
-  {en:'motivation',jp:'やる気',hi:'やるき'},
-  {en:'morning',jp:'朝',hi:'あさ'},
-  {en:'night',jp:'夜',hi:'よる'},
-  {en:'breakfast',jp:'朝ごはん',hi:'あさごはん'},
-  {en:'lunch',jp:'昼ごはん',hi:'ひるごはん'},
-  {en:'dinner',jp:'夕食',hi:'ゆうしょく'},
-  {en:'brush',jp:'歯をみがく',hi:'は を みがく'},
-  {en:'wash',jp:'洗う',hi:'あらう'},
-  {en:'go',jp:'行く',hi:'いく'},
-  {en:'come',jp:'来る',hi:'くる'},
-  {en:'body',jp:'体',hi:'からだ'},
-  {en:'head',jp:'頭',hi:'あたま'},
-  {en:'stomach',jp:'お腹',hi:'おなか'},
-  {en:'sleep',jp:'寝る',hi:'ねる'},
-  {en:'food',jp:'食べ物',hi:'たべもの'},
-  {en:'fruit',jp:'果物',hi:'くだもの'},
-  {en:'vegetable',jp:'野菜',hi:'やさい'},
-  {en:'walk',jp:'歩く',hi:'あるく'},
-  {en:'run',jp:'走る',hi:'はしる'},
-  {en:'drink',jp:'飲む',hi:'のむ'},
-  {en:'water',jp:'水',hi:'みず'},
-  {en:'strong',jp:'強い',hi:'つよい'},
-  {en:'tired',jp:'疲れた',hi:'つかれた'},
-  {en:'healthy',jp:'健康',hi:'けんこう'},
-  {en:'homework',jp:'宿題',hi:'しゅくだい'},
-  {en:'clean',jp:'掃除する',hi:'そうじ する'},
-  {en:'start',jp:'始める',hi:'はじめる'},
-  {en:'finish',jp:'終わる',hi:'おわる'},
-  {en:'mind',jp:'心',hi:'こころ'},
-  {en:'heart',jp:'心',hi:'こころ'},
-  {en:'relax',jp:'リラックスする',hi:'りらっくす する'},
-  {en:'mistake',jp:'間違い',hi:'まちがい'},
-  {en:'improve',jp:'上達する',hi:'じょうたつ する'},
-  {en:'believe',jp:'信じる',hi:'しんじる'},
-  {en:'effort',jp:'努力',hi:'どりょく'},
-  {en:'attitude',jp:'態度',hi:'たいど'},
-  {en:'courage',jp:'勇気',hi:'ゆうき'},
-  {en:'happy',jp:'幸せ',hi:'しあわせ'}
+  // Mind / attitude
+  {en:'mind', jp:'心', hi:'こころ'},
+  {en:'heart', jp:'心', hi:'こころ'},
+  {en:'focus', jp:'集中', hi:'しゅうちゅう'},
+  {en:'relax', jp:'リラックスする', hi:'りらっくす する'},
+  {en:'mistake', jp:'間違い', hi:'まちがい'},
+  {en:'improve', jp:'上達する', hi:'じょうたつ する'},
+  {en:'believe', jp:'信じる', hi:'しんじる'},
+  {en:'effort', jp:'努力', hi:'どりょく'},
+  {en:'attitude', jp:'態度', hi:'たいど'},
+  {en:'courage', jp:'勇気', hi:'ゆうき'},
+  {en:'happy', jp:'幸せ', hi:'しあわせ'},
+
+  // Body / health
+  {en:'body', jp:'体', hi:'からだ'},
+  {en:'head', jp:'頭', hi:'あたま'},
+  {en:'stomach', jp:'お腹', hi:'おなか'},
+  {en:'sleep', jp:'寝る', hi:'ねる'},
+  {en:'food', jp:'食べ物', hi:'たべもの'},
+  {en:'fruit', jp:'果物', hi:'くだもの'},
+  {en:'vegetable', jp:'野菜', hi:'やさい'},
+  {en:'exercise', jp:'運動', hi:'うんどう'},
+  {en:'walk', jp:'歩く', hi:'あるく'},
+  {en:'run', jp:'走る', hi:'はしる'},
+  {en:'drink', jp:'飲む', hi:'のむ'},
+  {en:'water', jp:'水', hi:'みず'},
+  {en:'strong', jp:'強い', hi:'つよい'},
+  {en:'tired', jp:'疲れた', hi:'つかれた'},
+  {en:'healthy', jp:'健康', hi:'けんこう'},
+
+  // Daily routine
+  {en:'morning', jp:'朝', hi:'あさ'},
+  {en:'night', jp:'夜', hi:'よる'},
+  {en:'breakfast', jp:'朝ごはん', hi:'あさごはん'},
+  {en:'lunch', jp:'昼ごはん', hi:'ひるごはん'},
+  {en:'dinner', jp:'夕食', hi:'ゆうしょく'},
+  {en:'brush', jp:'歯をみがく', hi:'は を みがく'},
+  {en:'wash', jp:'洗う', hi:'あらう'},
+  {en:'go', jp:'行く', hi:'いく'},
+  {en:'come', jp:'来る', hi:'くる'},
+  {en:'study', jp:'勉強', hi:'べんきょう'},
+  {en:'homework', jp:'宿題', hi:'しゅくだい'},
+  {en:'clean', jp:'掃除する', hi:'そうじ する'},
+  {en:'start', jp:'始める', hi:'はじめる'},
+  {en:'finish', jp:'終わる', hi:'おわる'},
+
+  // Goals / future
+  {en:'goal', jp:'目標', hi:'もくひょう'},
+  {en:'plan', jp:'計画', hi:'けいかく'},
+  {en:'future', jp:'未来', hi:'みらい'},
+  {en:'dream', jp:'夢', hi:'ゆめ'},
+  {en:'challenge', jp:'挑戦', hi:'ちょうせん'},
+  {en:'change', jp:'変える', hi:'かえる'},
+  {en:'habit', jp:'習慣', hi:'しゅうかん'},
+  {en:'practice', jp:'練習', hi:'れんしゅう'},
+  {en:'motivation', jp:'やる気', hi:'やるき'}
 ];
 
-// shuffle
-for(let i=DATA.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[DATA[i],DATA[j]]=[DATA[j],DATA[i]];}
+// shuffle each refresh
+for(let k=DATA.length-1;k>0;k--){
+  const j=Math.floor(Math.random()*(k+1));
+  [DATA[k],DATA[j]]=[DATA[j],DATA[k]];
+}
 
-let i=0, score=0, mistakes=0;
-const jp=$('#jp'), hira=$('#hira'), ans=$('#answer'), fb=$('#feedback'), hint=$('#hint'), counter=$('#counter');
+let idx=0, score=0, mistakes=0;
 
-function $(q){return document.querySelector(q)}
+const jpEl=$('#jp');
+const hiraEl=$('#hira');
+const ansEl=$('#answer');
+const fbEl=$('#feedback');
+const hintEl=$('#hint');
+const counterEl=$('#counter');
 
 function load(){
-  const d=DATA[i];
-  jp.textContent=d.jp;
-  hira.textContent=d.hi;
-  ans.value='';
-  fb.textContent='';
-  hint.textContent='';
+  const d=DATA[idx];
+  jpEl.textContent=d.jp;
+  hiraEl.textContent=d.hi;
+  ansEl.value='';
+  fbEl.textContent='';
+  hintEl.textContent='';
   mistakes=0;
-  counter.textContent=`${i+1} / ${DATA.length}`;
-  ans.focus();
+  counterEl.textContent=(idx+1)+' / '+DATA.length;
+  ansEl.focus();
+}
+
+function safePlay(aud){
+  if(!aud) return;
+  try{ aud.pause(); aud.currentTime=0; }catch(e){}
+  try{ aud.play().catch(()=>{}); }catch(e){}
 }
 
 function check(){
-  const d=DATA[i];
-  if(ans.value.trim().toLowerCase()===d.en){
+  const d=DATA[idx];
+  const typed = ansEl.value.trim().toLowerCase();
+  if(typed === d.en){
     score++;
-    fb.innerHTML='<div class="heart">❤</div>';
-    ding.play();
-    setTimeout(next,700);
+    fbEl.innerHTML='<div class="heart">❤</div>';
+    safePlay(ding);
+    setTimeout(next, 650);
   }else{
     mistakes++;
-    fb.innerHTML='<div class="fart">💨</div>';
-    fart.play();
-    if(mistakes>=3){ hint.textContent=`Hint: ${d.en[0]}...`; }
+    fbEl.innerHTML='<div class="fart">💨</div>';
+    safePlay(fart);
+    if(mistakes>=3){
+      hintEl.textContent='Hint: ' + d.en[0] + '...';
+    }
   }
 }
 
 function next(){
-  i++;
-  if(i>=DATA.length) finish(); else load();
+  idx++;
+  if(idx>=DATA.length) finish();
+  else load();
 }
 
 function finish(){
   $('#game').style.display='none';
   $('#result').style.display='block';
-  const pct=Math.round(score/DATA.length*100);
+  const pct=Math.round((score/DATA.length)*100);
   const s=$('#score');
   s.textContent=pct+'%';
   s.className='score '+(pct>=80?'good':pct>=50?'mid':'bad');
+
+  const retry = $('#retryLink');
+  if(retry) retry.href = window.location.pathname.split('/').pop() || '';
 }
 
-$('#submit').onclick=check;
-ans.addEventListener('keydown',e=>{if(e.key==='Enter')check();});
+$('#submit').addEventListener('click', check);
+ansEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') check(); });
 
 load();
 </script>
