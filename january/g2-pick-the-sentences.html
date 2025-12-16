@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Booha Review Decks – Pick the Sentence (January)</title>
+<meta name="theme-color" content="#0b1020" />
+<link rel="icon" type="image/png" href="booha-ghost.png">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet" />
+
+<style>
+:root{
+  --bg:#0b1020;
+  --panel:#0f172a;
+  --panel2:#0b1327;
+  --ink:#ffffff;
+  --muted:#cbd5e1;
+  --outline:rgba(255,255,255,.18);
+  --good:#22c55e;
+  --bad:#e53935;
+  --gold:#ffd17a;
+  --shadow: 0 18px 45px rgba(0,0,0,.45);
+  --radius:28px;
+  --btnR:22px;
+
+  /* big readable sizes */
+  --jpSize: clamp(26px, 3.3vw, 44px);
+  --hiSize: clamp(18px, 2.4vw, 30px);
+  --enSize: clamp(20px, 2.6vw, 34px);
+  --hudSize: 14px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background: radial-gradient(1100px 700px at 30% 20%, rgba(124,58,237,.25), transparent 55%),
+              radial-gradient(900px 650px at 70% 30%, rgba(94,230,255,.16), transparent 58%),
+              radial-gradient(900px 700px at 50% 90%, rgba(255,209,122,.14), transparent 60%),
+              var(--bg);
+  color:var(--ink);
+  font-family:'Cinzel', serif;
+  overflow:hidden;
+}
+
+/* ON FIRE mode */
+body.onfire{
+  background:
+    radial-gradient(1000px 700px at 50% 20%, rgba(255,209,122,.28), transparent 60%),
+    radial-gradient(900px 650px at 50% 50%, rgba(255,120,70,.18), transparent 62%),
+    radial-gradient(900px 650px at 50% 90%, rgba(255,209,122,.16), transparent 60%),
+    var(--bg);
+}
+
+.wrap{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
+  gap:12px;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.back{
+  appearance:none;
+  border:0;
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:999px;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.4px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.18);
+  cursor:pointer;
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+}
+.back span.jp{
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:900;
+  font-size:12px;
+  opacity:.95;
+}
+
+.hud{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:var(--hudSize);
+  color:var(--muted);
+  user-select:none;
+}
+.hud .pill{
+  padding:8px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+}
+.hud b{color:#fff}
+
+.stage{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  min-height:0;
+}
+
+.card{
+  width:min(980px, 100%);
+  border-radius:var(--radius);
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow: var(--shadow);
+  padding:18px 18px 16px;
+  position:relative;
+  overflow:hidden;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius:var(--radius);
+  background: radial-gradient(500px 200px at 30% 0%, rgba(255,255,255,.10), transparent 60%),
+              radial-gradient(500px 250px at 80% 0%, rgba(255,209,122,.10), transparent 62%);
+  pointer-events:none;
+}
+
+.prompt{
+  position:relative;
+  z-index:1;
+  text-align:center;
+  padding:14px 8px 8px;
+}
+
+.jp{
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:900;
+  font-size:var(--jpSize);
+  line-height:1.12;
+  text-shadow: 0 10px 26px rgba(0,0,0,.45);
+}
+
+.hira{
+  margin-top:10px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:800;
+  font-size:var(--hiSize);
+  line-height:1.12;
+  color: rgba(255,255,255,.92);
+  opacity:.95;
+}
+
+.grid{
+  width:min(980px, 100%);
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:12px;
+}
+
+@media (min-width: 820px){
+  .grid{grid-template-columns: 1fr 1fr;}
+}
+
+.choice{
+  position:relative;
+  border-radius:var(--btnR);
+  padding:16px 16px 18px;
+  background: rgba(15,23,42,.78);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
+  cursor:pointer;
+  user-select:none;
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+  overflow:hidden;
+}
+.choice:hover{transform: translateY(-1px)}
+.choice:active{transform: translateY(0px) scale(.995)}
+
+.choice .en{
+  font-size:var(--enSize);
+  font-weight:900;
+  letter-spacing:.2px;
+  line-height:1.12;
+}
+
+.choice.locked{pointer-events:none; opacity:.92}
+.choice.correct{
+  border-color: rgba(34,197,94,.85);
+  box-shadow: 0 0 0 4px rgba(34,197,94,.22), 0 0 24px rgba(34,197,94,.35), 0 12px 28px rgba(0,0,0,.35);
+}
+.choice.wrong{
+  border-color: rgba(229,57,53,.85);
+  box-shadow: 0 0 0 4px rgba(229,57,53,.18), 0 0 24px rgba(229,57,53,.25), 0 12px 28px rgba(0,0,0,.35);
+  animation: shake .45s ease;
+}
+
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-10px)}
+  40%{transform:translateX(10px)}
+  60%{transform:translateX(-7px)}
+  80%{transform:translateX(7px)}
+}
+
+/* ON FIRE ring */
+.fireRing{
+  position:absolute;
+  inset:10px;
+  border-radius: calc(var(--radius) - 10px);
+  pointer-events:none;
+  opacity:0;
+  transition: opacity .25s ease;
+  background:
+    radial-gradient(600px 220px at 30% 0%, rgba(255,209,122,.28), transparent 62%),
+    radial-gradient(600px 240px at 70% 0%, rgba(255,120,70,.20), transparent 62%),
+    radial-gradient(700px 260px at 50% 110%, rgba(255,209,122,.16), transparent 62%);
+  filter: drop-shadow(0 0 14px rgba(255,209,122,.30));
+}
+body.onfire .fireRing{opacity:1; animation: firePulse 1.2s ease-in-out infinite}
+@keyframes firePulse{
+  0%,100%{filter: drop-shadow(0 0 14px rgba(255,209,122,.28));}
+  50%{filter: drop-shadow(0 0 24px rgba(255,120,70,.30));}
+}
+
+/* You're on fire banner */
+.fireBanner{
+  position:fixed;
+  left:50%;
+  top: max(70px, env(safe-area-inset-top) + 46px);
+  transform: translateX(-50%);
+  z-index:50;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 18px;
+  border-radius:999px;
+  background: rgba(255,209,122,.18);
+  border:1px solid rgba(255,209,122,.35);
+  box-shadow: 0 18px 45px rgba(0,0,0,.45);
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.fireBanner.show{opacity:1; transform: translateX(-50%) translateY(0)}
+.fireBanner .en{font-family:'Cinzel',serif; font-weight:900; letter-spacing:.4px; font-size:18px;}
+.fireBanner .jp{font-family:'Noto Sans JP',sans-serif; font-weight:900; font-size:15px; opacity:.95;}
+.fireDot{
+  width:14px;height:14px;border-radius:999px;
+  background: radial-gradient(circle at 30% 30%, #fff6d8, #ffd17a 45%, #ff6b3d 100%);
+  box-shadow: 0 0 18px rgba(255,209,122,.45);
+}
+
+/* FX layers */
+.fx{position:fixed; inset:0; pointer-events:none; z-index:60;}
+
+/* BIG HEART */
+.heart{
+  position:absolute;
+  width:140px;
+  height:140px;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%) scale(.8);
+  opacity:0;
+  filter: drop-shadow(0 0 18px rgba(255,209,122,.35));
+}
+.heart:before, .heart:after{
+  content:"";
+  position:absolute;
+  width:80px;
+  height:120px;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(255,209,122,.95) 38%, rgba(255,126,185,.95) 100%);
+  border-radius:80px 80px 0 0;
+  top:18px;
+  left:38px;
+  transform: rotate(-45deg);
+  transform-origin: 0 100%;
+}
+.heart:after{
+  left:auto;
+  right:38px;
+  transform: rotate(45deg);
+  transform-origin: 100% 100%;
+}
+.heart.show{opacity:1; animation: popHeart .65s ease-out forwards;}
+@keyframes popHeart{
+  0%{transform: translate(-50%,-50%) scale(.6); opacity:0}
+  35%{transform: translate(-50%,-55%) scale(1.06); opacity:1}
+  70%{transform: translate(-50%,-62%) scale(.98); opacity:.95}
+  100%{transform: translate(-50%,-72%) scale(.92); opacity:0}
+}
+
+/* BIG FART CLOUD */
+.fart{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%) scale(.9);
+  width:220px;
+  height:160px;
+  opacity:0;
+}
+.fart .blob{
+  position:absolute;
+  inset:0;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.92), rgba(203,213,225,.92) 38%, rgba(148,163,184,.95) 100%);
+  filter: drop-shadow(0 0 18px rgba(0,0,0,.35));
+}
+.fart .puff{
+  position:absolute;
+  width:84px;height:84px;border-radius:999px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.92), rgba(203,213,225,.92) 44%, rgba(148,163,184,.95) 100%);
+  filter: drop-shadow(0 0 18px rgba(0,0,0,.35));
+}
+.fart .p1{left:-18px; top:54px}
+.fart .p2{right:-22px; top:62px}
+.fart .p3{left:48px; top:-18px; width:92px;height:92px}
+.fart .txt{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%);
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.6px;
+  font-size:18px;
+  color: rgba(11,16,32,.75);
+}
+.fart.show{opacity:1; animation: popFart .75s ease-out forwards;}
+@keyframes popFart{
+  0%{transform: translate(-50%,-50%) scale(.7); opacity:0}
+  25%{transform: translate(-50%,-52%) scale(1.03); opacity:1}
+  65%{transform: translate(-50%,-58%) scale(.98); opacity:.95}
+  100%{transform: translate(-50%,-68%) scale(.92); opacity:0}
+}
+
+/* Results */
+.results{
+  display:none;
+  width:min(980px, 100%);
+  border-radius:var(--radius);
+  background: rgba(15,23,42,.78);
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow: var(--shadow);
+  padding:22px 18px;
+  text-align:center;
+}
+.results.show{display:block}
+.results h2{margin:0 0 10px; font-size: clamp(22px, 3vw, 34px)}
+.results .sub{font-family:'Noto Sans JP',sans-serif; color:var(--muted); font-weight:800; margin-bottom:14px}
+.results .score{font-size: clamp(32px, 4.2vw, 56px); font-weight:900; letter-spacing:.3px}
+
+.btnRow{display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap}
+.bigBtn{
+  appearance:none;
+  border:0;
+  border-radius:999px;
+  padding:12px 18px;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.4px;
+  cursor:pointer;
+  background: rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
+}
+.bigBtn span{font-family:'Noto Sans JP',sans-serif; font-weight:900; font-size:12px; margin-left:10px; opacity:.95}
+
+.footer{
+  text-align:center;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.5px;
+  color: rgba(255,255,255,.85);
+  font-size: 14px;
+  padding: 4px 0 0;
+}
+.footer .jp{
+  display:block;
+  margin-top:2px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:900;
+  font-size:12px;
+  opacity:.9;
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .choice,.heart,.fart,.fireRing{animation:none !important; transition:none !important}
+  .choice:hover{transform:none}
+}
+</style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <button class="back" id="backBtn" aria-label="Back to menu">
+        <span aria-hidden="true">←</span> MENU <span class="jp">メニュー</span>
+      </button>
+      <div class="hud">
+        <div class="pill">Q <b id="qNum">1</b>/<span id="qTotal">15</span></div>
+        <div class="pill">Score <b id="score">0</b></div>
+        <div class="pill">Streak <b id="streak">0</b></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="card" id="card">
+        <div class="fireRing" aria-hidden="true"></div>
+        <div class="prompt">
+          <div class="jp" id="jpText">—</div>
+          <div class="hira" id="hiText">—</div>
+        </div>
+      </div>
+
+      <div class="grid" id="grid"></div>
+
+      <div class="results" id="results">
+        <h2>Finished!</h2>
+        <div class="sub">おつかれさま！</div>
+        <div class="score"><span id="finalScore">0</span>/15</div>
+        <div class="btnRow">
+          <button class="bigBtn" id="playAgain">PLAY AGAIN <span>もういちど</span></button>
+          <button class="bigBtn" id="back2">BACK TO MENU <span>メニュー</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Bryan’s English School
+      <span class="jp">ブライアン英会話教室</span>
+    </div>
+  </div>
+
+  <!-- On fire banner -->
+  <div class="fireBanner" id="fireBanner" role="status" aria-live="polite">
+    <span class="fireDot" aria-hidden="true"></span>
+    <div class="en">You’re on fire!</div>
+    <div class="jp">絶好調！</div>
+  </div>
+
+  <!-- FX -->
+  <div class="fx" id="fx">
+    <div class="heart" id="heart"></div>
+    <div class="fart" id="fart">
+      <div class="blob"></div>
+      <div class="puff p1"></div>
+      <div class="puff p2"></div>
+      <div class="puff p3"></div>
+      <div class="txt">NO!</div>
+    </div>
+  </div>
+
+<script>
+/* =========================
+   Booha Review – Pick the Sentence (January)
+   - No audio for prompts
+   - ding.mp3 correct, fart.mp3 wrong
+   - “On fire” mode after 3 correct in a row
+   ========================= */
+
+const SFX = {
+  ding: new Audio('assets/audio/ding.mp3'),
+  fart: new Audio('assets/audio/fart.mp3')
+};
+SFX.ding.preload = 'auto';
+SFX.fart.preload = 'auto';
+
+const DATA = [
+  // ===== Week 1–3 (Jan) =====
+  { jp:"私は毎日勉強します。", hira:"わたし は まいにち べんきょう します。", choices:[
+    "I will study every day.",
+    "I study will every day.",
+    "I will studying every day.",
+    "I will study everyday."
+  ], correct:0 },
+
+  { jp:"今年、私はベストを尽くします。", hira:"ことし、わたし は べすと を つくします。", choices:[
+    "I will do my best this year.",
+    "I do my best will this year.",
+    "I will doing my best this year.",
+    "I am do my best this year."
+  ], correct:0 },
+
+  { jp:"私は新しい友だちを作ります。", hira:"わたし は あたらしい ともだち を つくります。", choices:[
+    "I will make a new friend.",
+    "I will made a new friend.",
+    "I make will a new friend.",
+    "I will making a new friend."
+  ], correct:0 },
+
+  { jp:"私はもう遅刻しません。", hira:"わたし は もう ちこく しません。", choices:[
+    "I will not be late anymore.",
+    "I will not late anymore.",
+    "I not will be late anymore.",
+    "I will don't be late anymore."
+  ], correct:0 },
+
+  { jp:"私はもっと英語を話します。", hira:"わたし は もっと えいご を はなします。", choices:[
+    "I will speak more English.",
+    "I speak will more English.",
+    "I will speaking more English.",
+    "I will speak English more."
+  ], correct:0 },
+
+  { jp:"私は７時に起きます。", hira:"わたし は しちじ に おきます。", choices:[
+    "I wake up at seven.",
+    "I wakes up at seven.",
+    "I wake at up seven.",
+    "I am wake up at seven."
+  ], correct:0 },
+
+  { jp:"私は毎日朝ごはんを食べます。", hira:"わたし は まいにち あさごはん を たべます。", choices:[
+    "I eat breakfast every day.",
+    "I eats breakfast every day.",
+    "I eat breakfast everyday.",
+    "I am eat breakfast every day."
+  ], correct:0 },
+
+  { jp:"私は８時に学校へ行きます。", hira:"わたし は はちじ に がっこう へ いきます。", choices:[
+    "I go to school at eight.",
+    "I goes to school at eight.",
+    "I go school to at eight.",
+    "I am go to school at eight."
+  ], correct:0 },
+
+  { jp:"私は寝る前に宿題をします。", hira:"わたし は ねる まえ に しゅくだい を します。", choices:[
+    "I do my homework before bed.",
+    "I do my homework before the bed.",
+    "I am do my homework before bed.",
+    "I do homework my before bed."
+  ], correct:0 },
+
+  { jp:"私は毎日学校へ歩いて行きます。", hira:"わたし は まいにち がっこう へ あるいて いきます。", choices:[
+    "I walk to school every day.",
+    "I walks to school every day.",
+    "I walk school to every day.",
+    "I am walk to school every day."
+  ], correct:0 },
+
+  { jp:"朝ごはんを食べたほうがいいです。", hira:"あさごはん を たべた ほう が いい です。", choices:[
+    "You should eat breakfast.",
+    "You should to eat breakfast.",
+    "You should eating breakfast.",
+    "You eat breakfast should."
+  ], correct:0 },
+
+  { jp:"手を洗わなければなりません。", hira:"て を あらわ なければ なりません。", choices:[
+    "You must wash your hands.",
+    "You must to wash your hands.",
+    "You wash your hands must.",
+    "You must washing your hands."
+  ], correct:0 },
+
+  { jp:"ノートを持ってこなければなりません。", hira:"のーと を もってこ なければ なりません。", choices:[
+    "You have to bring your notebook.",
+    "You have bring to your notebook.",
+    "You must bringing your notebook.",
+    "You have to brought your notebook."
+  ], correct:0 },
+
+  { jp:"疲れたときは休んだほうがいいです。", hira:"つかれた とき は やすんだ ほう が いい です。", choices:[
+    "You should rest when you're tired.",
+    "You should resting when you're tired.",
+    "You should rest when you tired.",
+    "You rest should when you're tired."
+  ], correct:0 },
+
+  { jp:"ほかの人に親切にしなければなりません。", hira:"ほか の ひと に しんせつ に しなければ なりません。", choices:[
+    "You must be kind to others.",
+    "You must kind to others.",
+    "You must being kind to others.",
+    "You are must kind to others."
+  ], correct:0 },
+
+  // ===== Week 4: Goals / Can / Strengths =====
+  { jp:"私は英語を学びたいです。", hira:"わたし は えいご を まなびたい です。", choices:[
+    "I want to learn English.",
+    "I want learn English.",
+    "I want learning English.",
+    "I want to learning English."
+  ], correct:0 },
+
+  { jp:"私はもっとがんばりたいです。", hira:"わたし は もっと がんばりたい です。", choices:[
+    "I want to try harder.",
+    "I want try harder.",
+    "I want to trying harder.",
+    "I try want harder."
+  ], correct:0 },
+
+  { jp:"私はもっと本を読みたいです。", hira:"わたし は もっと ほん を よみたい です。", choices:[
+    "I want to read more books.",
+    "I want read more books.",
+    "I want reading more books.",
+    "I want to read books more."
+  ], correct:0 },
+
+  { jp:"私は新しい友だちを作りたいです。", hira:"わたし は あたらしい ともだち を つくりたい です。", choices:[
+    "I want to make new friends.",
+    "I want make new friends.",
+    "I want to making new friends.",
+    "I want make friends new."
+  ], correct:0 },
+
+  { jp:"私はベストを尽くすことができます。", hira:"わたし は べすと を つくす こと が できます。", choices:[
+    "I can do my best.",
+    "I can to do my best.",
+    "I do can my best.",
+    "I can doing my best."
+  ], correct:0 },
+
+  { jp:"私は少し英語を話せます。", hira:"わたし は すこし えいご を はなせます。", choices:[
+    "I can speak a little English.",
+    "I can speak little English.",
+    "I can to speak a little English.",
+    "I speak can a little English."
+  ], correct:0 },
+
+  { jp:"私は英語の歌を理解できます。", hira:"わたし は えいご の うた を りかい できます。", choices:[
+    "I can understand songs in English.",
+    "I can understand English songs in.",
+    "I understand can songs in English.",
+    "I can understanding songs in English."
+  ], correct:0 },
+
+  { jp:"私はクラスメートを手伝えます。", hira:"わたし は くらすめーと を てつだえます。", choices:[
+    "I can help my classmates.",
+    "I can to help my classmates.",
+    "I help can my classmates.",
+    "I can helping my classmates."
+  ], correct:0 },
+
+  { jp:"私は絵を描くのが得意です。", hira:"わたし は え を かく の が とくい です。", choices:[
+    "I'm good at drawing.",
+    "I'm good drawing.",
+    "I good at drawing.",
+    "I'm good at draw."
+  ], correct:0 },
+
+  { jp:"私は聞くことが得意です。", hira:"わたし は きく こと が とくい です。", choices:[
+    "I'm good at listening.",
+    "I'm good listening.",
+    "I good at listening.",
+    "I'm good at listen."
+  ], correct:0 },
+
+  { jp:"私は数学が得意ではありません。", hira:"わたし は すうがく が とくい では ありません。", choices:[
+    "I'm not good at math.",
+    "I'm not good in math.",
+    "I not good at math.",
+    "I'm not good to math."
+  ], correct:0 },
+
+  { jp:"私は名前を覚えるのが得意です。", hira:"わたし は なまえ を おぼえる の が とくい です。", choices:[
+    "I'm good at remembering names.",
+    "I'm good remembering names.",
+    "I'm good at remember names.",
+    "I good at remembering names."
+  ], correct:0 },
+
+  { jp:"私は人を元気づけるのが得意です。", hira:"わたし は ひと を げんきづける の が とくい です。", choices:[
+    "I'm good at cheering people up.",
+    "I'm good cheering people up.",
+    "I'm good at cheer people up.",
+    "I good at cheering people up."
+  ], correct:0 },
+
+  { jp:"私は失敗から学ぶことができます。", hira:"わたし は しっぱい から まなぶ こと が できます。", choices:[
+    "I can learn from mistakes.",
+    "I can learn of mistakes.",
+    "I learn can from mistakes.",
+    "I can learning from mistakes."
+  ], correct:0 },
+
+  { jp:"私は前向きでいられます。", hira:"わたし は まえむき で いられます。", choices:[
+    "I can stay positive.",
+    "I can stay positivity.",
+    "I stay can positive.",
+    "I can staying positive."
+  ], correct:0 },
+
+  // ===== Extra January sentences to reach 50 total =====
+  { jp:"私は新しいことに挑戦するつもりです。", hira:"わたし は あたらしい こと に ちょうせん する つもり です。", choices:[
+    "I'm going to try something new.",
+    "I'm going try something new.",
+    "I going to try something new.",
+    "I'm going to trying something new."
+  ], correct:0 },
+
+  { jp:"私はクラスメートを手伝います。", hira:"わたし は くらすめーと を てつだいます。", choices:[
+    "I will help my classmates.",
+    "I will helps my classmates.",
+    "I help will my classmates.",
+    "I will helping my classmates."
+  ], correct:0 },
+
+  { jp:"私は今日、机を掃除します。", hira:"わたし は きょう つくえ を そうじ します。", choices:[
+    "I will clean my desk today.",
+    "I will cleaning my desk today.",
+    "I clean will my desk today.",
+    "I will clean my desk in today."
+  ], correct:0 },
+
+  { jp:"私はもっと本を読みます。", hira:"わたし は もっと ほん を よみます。", choices:[
+    "I will read more books.",
+    "I will reading more books.",
+    "I read will more books.",
+    "I will read books more."
+  ], correct:0 },
+
+  { jp:"私は良い習慣を始めます。", hira:"わたし は いい しゅうかん を はじめます。", choices:[
+    "I will start a good habit.",
+    "I will start good habit.",
+    "I will starting a good habit.",
+    "I start will a good habit."
+  ], correct:0 },
+
+  { jp:"私は毎週、日記を書きます。", hira:"わたし は まいしゅう にっき を かきます。", choices:[
+    "I will write in my diary every week.",
+    "I will write my diary every week.",
+    "I will writing in my diary every week.",
+    "I write will in my diary every week."
+  ], correct:0 },
+
+  { jp:"私はもっと早く起きます。", hira:"わたし は もっと はやく おきます。", choices:[
+    "I will wake up earlier.",
+    "I will wake earlier.",
+    "I will waking up earlier.",
+    "I wake will up earlier."
+  ], correct:0 },
+
+  { jp:"私は授業でよく聞きます。", hira:"わたし は じゅぎょう で よく ききます。", choices:[
+    "I will listen carefully in class.",
+    "I will listen careful in class.",
+    "I will listening carefully in class.",
+    "I listen will carefully in class."
+  ], correct:0 },
+
+  { jp:"私はもっと笑います。", hira:"わたし は もっと わらいます。", choices:[
+    "I will smile more.",
+    "I will smiling more.",
+    "I smile will more.",
+    "I will smile many."
+  ], correct:0 },
+
+  { jp:"私は学ぶことを楽しみます。", hira:"わたし は まなぶ こと を たのしみます。", choices:[
+    "I will enjoy learning.",
+    "I will enjoying learning.",
+    "I enjoy will learning.",
+    "I will enjoy to learn."
+  ], correct:0 },
+
+  { jp:"私は朝にシャワーを浴びます。", hira:"わたし は あさ に しゃわー を あびます。", choices:[
+    "I take a shower in the morning.",
+    "I takes a shower in the morning.",
+    "I take a shower at the morning.",
+    "I am take a shower in the morning."
+  ], correct:0 },
+
+  { jp:"私は食事のあとに歯をみがきます。", hira:"わたし は しょくじ の あと に は を みがきます。", choices:[
+    "I brush my teeth after meals.",
+    "I brushes my teeth after meals.",
+    "I brush my teeth after meal.",
+    "I am brush my teeth after meals."
+  ], correct:0 },
+
+  { jp:"私は夕食のあとに英語を勉強します。", hira:"わたし は ゆうしょく の あと に えいご を べんきょう します。", choices:[
+    "I study English after dinner.",
+    "I studies English after dinner.",
+    "I study English after the dinner.",
+    "I am study English after dinner."
+  ], correct:0 },
+
+  { jp:"私は夕方に家族を手伝います。", hira:"わたし は ゆうがた に かぞく を てつだいます。", choices:[
+    "I help my family in the evening.",
+    "I helps my family in the evening.",
+    "I help my family on the evening.",
+    "I am help my family in the evening."
+  ], correct:0 },
+
+  { jp:"私は毎週日曜日に部屋を掃除します。", hira:"わたし は まいしゅう にちようび に へや を そうじ します。", choices:[
+    "I clean my room every Sunday.",
+    "I cleans my room every Sunday.",
+    "I clean my room in every Sunday.",
+    "I am clean my room every Sunday."
+  ], correct:0 },
+
+  { jp:"私は１０時に寝ます。", hira:"わたし は じゅうじ に ねます。", choices:[
+    "I sleep at ten o'clock.",
+    "I sleeps at ten o'clock.",
+    "I sleep in ten o'clock.",
+    "I am sleep at ten o'clock."
+  ], correct:0 },
+
+  { jp:"私はときどき夜に読みます。", hira:"わたし は ときどき よる に よみます。", choices:[
+    "I sometimes read at night.",
+    "I sometime read at night.",
+    "I sometimes reads at night.",
+    "I am sometimes read at night."
+  ], correct:0 },
+
+  { jp:"私は学校の前にテレビを決して見ません。", hira:"わたし は がっこう の まえ に てれび を けっして みません。", choices:[
+    "I never watch TV before school.",
+    "I never watches TV before school.",
+    "I don't never watch TV before school.",
+    "I never watch TV before the school."
+  ], correct:0 },
+
+  { jp:"私はたいてい友だちと昼ごはんを食べます。", hira:"わたし は たいてい ともだち と ひるごはん を たべます。", choices:[
+    "I usually eat lunch with friends.",
+    "I usually eats lunch with friends.",
+    "I eat usually lunch with friends.",
+    "I am usually eat lunch with friends."
+  ], correct:0 },
+
+  { jp:"私は授業のあとにリラックスします。", hira:"わたし は じゅぎょう の あと に りらっくす します。", choices:[
+    "I relax after class.",
+    "I relaxes after class.",
+    "I am relax after class.",
+    "I relax after the class."
+  ], correct:0 }
+];
+
+const $ = (s)=>document.querySelector(s);
+const grid = $('#grid');
+const jpText = $('#jpText');
+const hiText = $('#hiText');
+const qNum = $('#qNum');
+const qTotal = $('#qTotal');
+const scoreEl = $('#score');
+const streakEl = $('#streak');
+const results = $('#results');
+const finalScore = $('#finalScore');
+const heart = $('#heart');
+const fart = $('#fart');
+const fireBanner = $('#fireBanner');
+
+qTotal.textContent = String(DATA.length);
+
+let i = 0;
+let score = 0;
+let streak = 0;
+let locked = false;
+let onFire = false;
+
+function stopSfx(){
+  for(const k in SFX){
+    try{ SFX[k].pause(); SFX[k].currentTime = 0; }catch{}
+  }
+}
+
+async function playSfx(name){
+  try{
+    stopSfx();
+    // iOS unlock is handled by user tap; still safe to try.
+    await SFX[name].play();
+  }catch{}
+}
+
+function showHeart(){
+  heart.classList.remove('show');
+  // reflow
+  void heart.offsetWidth;
+  heart.classList.add('show');
+}
+
+function showFart(){
+  fart.classList.remove('show');
+  void fart.offsetWidth;
+  fart.classList.add('show');
+}
+
+function setOnFire(active, showBanner=false){
+  onFire = active;
+  document.body.classList.toggle('onfire', active);
+  if(showBanner){
+    fireBanner.classList.add('show');
+    setTimeout(()=>fireBanner.classList.remove('show'), 1150);
+  }
+}
+
+function lockChoices(lock){
+  locked = lock;
+  [...grid.children].forEach(btn=>btn.classList.toggle('locked', lock));
+}
+
+function render(){
+  results.classList.remove('show');
+  grid.style.display = '';
+  $('#card').style.display = '';
+
+  const item = DATA[i];
+  qNum.textContent = String(i+1);
+  scoreEl.textContent = String(score);
+  streakEl.textContent = String(streak);
+
+  jpText.textContent = item.jp;
+  hiText.textContent = item.hira;
+
+  grid.innerHTML = '';
+  lockChoices(false);
+
+  item.choices.forEach((txt, idx)=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'choice';
+    btn.innerHTML = `<div class="en">${escapeHtml(txt)}</div>`;
+
+    btn.addEventListener('click', ()=>handlePick(btn, idx));
+    grid.appendChild(btn);
+  });
+}
+
+function handlePick(btn, idx){
+  if(locked) return;
+  lockChoices(true);
+
+  const item = DATA[i];
+  const correct = (idx === item.correct);
+
+  // mark correct choice
+  [...grid.children].forEach((b, j)=>{
+    if(j === item.correct) b.classList.add('correct');
+  });
+
+  if(correct){
+    btn.classList.add('correct');
+    score++;
+    streak++;
+    scoreEl.textContent = String(score);
+    streakEl.textContent = String(streak);
+
+    showHeart();
+    playSfx('ding');
+
+    // 🔥 On fire threshold
+    if(streak === 3){
+      setOnFire(true, true);
+    }
+
+    setTimeout(next, 850);
+  }else{
+    btn.classList.add('wrong');
+    showFart();
+    playSfx('fart');
+
+    streak = 0;
+    streakEl.textContent = '0';
+    // fire turns off immediately on mistake
+    if(onFire) setOnFire(false, false);
+
+    setTimeout(next, 1050);
+  }
+}
+
+function next(){
+  i++;
+  if(i >= DATA.length){
+    finish();
+  }else{
+    render();
+  }
+}
+
+function finish(){
+  lockChoices(true);
+  grid.style.display = 'none';
+  $('#card').style.display = 'none';
+  finalScore.textContent = String(score);
+  results.classList.add('show');
+  // reset fire
+  setOnFire(false, false);
+}
+
+function resetGame(){
+  i = 0;
+  score = 0;
+  streak = 0;
+  setOnFire(false, false);
+  render();
+}
+
+function escapeHtml(s){
+  return String(s)
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'",'&#039;');
+}
+
+// Buttons
+$('#backBtn').addEventListener('click', ()=>{ window.location.href = 'index.html'; });
+$('#back2').addEventListener('click', ()=>{ window.location.href = 'index.html'; });
+$('#playAgain').addEventListener('click', resetGame);
+
+// ===== Shuffle (questions + answers) =====
+function shuffleArray(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+shuffleArray(DATA);
+DATA.forEach(q=>{
+  const correctText = q.choices[q.correct];
+  shuffleArray(q.choices);
+  q.correct = q.choices.indexOf(correctText);
+});
+
+// Init
+render();
+</script>
+</body>
+</html>
