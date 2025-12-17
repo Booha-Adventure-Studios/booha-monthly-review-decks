@@ -881,31 +881,33 @@ const DATA = [
 ];
 
 /* =========================
-   Helpers / Hooks
+   Helpers / Hooks (FIXED)
    ========================= */
-const grid = document.querySelector("#grid");
-const jpText = document.querySelector("#jpText");
-const hiText = document.querySelector("#hiText");
-const qNum = document.querySelector("#qNum");
-const qTotal = document.querySelector("#qTotal");
-const scoreEl = document.querySelector("#score");
-const streakEl = document.querySelector("#streak");
-const results = document.querySelector("#results");
+const grid       = document.querySelector("#grid");
+const jpText     = document.querySelector("#jpText");
+const hiText     = document.querySelector("#hiText");
+const qNum       = document.querySelector("#qNum");
+const qTotal     = document.querySelector("#qTotal");
+const scoreEl    = document.querySelector("#score");
+const streakEl   = document.querySelector("#streak");
+const results    = document.querySelector("#results");
 const finalScore = document.querySelector("#finalScore");
 
+const fireBanner = document.querySelector("#fireBanner");
+const fireEn     = document.querySelector("#fireEn");
+const fireJp     = document.querySelector("#fireJp");
 
-const fireBanner = $("#fireBanner");
-const fireEn = $("#fireEn");
-const fireJp = $("#fireJp");
+const heart      = document.querySelector("#heart");
+const fart       = document.querySelector("#fart");
 
-const heart = $("#heart");
-const fart = $("#fart");
+const backBtn    = document.querySelector("#backBtn");
+const back2      = document.querySelector("#back2");
+const playAgain  = document.querySelector("#playAgain");
 
 let idx = 0;
 let score = 0;
 let streak = 0;
 let locked = false;
-
 let bannerTimer = null;
 
 qTotal.textContent = DATA.length;
@@ -919,7 +921,7 @@ function shuffle(arr){
   return a;
 }
 
-/* ✅ Fire level backgrounds: 3 / 6 / 10 */
+/* Fire level backgrounds: 3 / 6 / 10 */
 function setFireLevelFromStreak(){
   document.body.classList.remove("fire1","fire2","fire3");
   if(streak >= 10) document.body.classList.add("fire3");
@@ -927,12 +929,12 @@ function setFireLevelFromStreak(){
   else if(streak >= 3) document.body.classList.add("fire1");
 }
 
-/* ✅ Centered notification (bigger, EN/JP, 3–4s) */
+/* Centered notification (EN/JP, 3–4s) */
 function showFireBanner(level){
   const msg = {
-    1: { en:"You’re on fire!",         jp:"ノってきた！" },
-    2: { en:"You’re on mega fire!",    jp:"まじでノってる！" },
-    3: { en:"You are a Sūpā Saiya-jin!", jp:"スーパーサイヤ人だ！" }
+    1: { en:"You’re on fire!",          jp:"ノってきた！" },
+    2: { en:"You’re on mega fire!",     jp:"まじでノってる！" },
+    3: { en:"You are a Sūpā Saiya-jin!",jp:"スーパーサイヤ人だ！" }
   }[level];
   if(!msg) return;
 
@@ -944,7 +946,7 @@ function showFireBanner(level){
   bannerTimer = setTimeout(()=>fireBanner.classList.remove("show"), 3500);
 }
 
-/* ✅ FX */
+/* FX */
 function popHeart(){
   heart.classList.remove("show");
   void heart.getBoundingClientRect();
@@ -954,6 +956,15 @@ function popFart(){
   fart.classList.remove("show");
   void fart.getBoundingClientRect();
   fart.classList.add("show");
+}
+
+/* SFX safe play (important for rapid clicks) */
+function playSfx(aud){
+  try{
+    aud.currentTime = 0;
+    const p = aud.play();
+    if(p && typeof p.catch === "function") p.catch(()=>{});
+  }catch(e){}
 }
 
 function render(){
@@ -966,7 +977,6 @@ function render(){
   jpText.textContent = item.jp;
   hiText.textContent = item.hira;
 
-  // randomize choices but keep correct mapping
   const choices = item.choices.map((t, i)=>({t, i}));
   const mixed = shuffle(choices);
 
@@ -997,9 +1007,9 @@ function pick(tile, originalIndex){
     tile.classList.add("correct");
     score++;
     streak++;
+    playSfx(SFX.ding);
     popHeart();
 
-    // ✅ Fire notifications at 3/6/10
     if(streak === 3)  showFireBanner(1);
     if(streak === 6)  showFireBanner(2);
     if(streak === 10) showFireBanner(3);
@@ -1007,6 +1017,7 @@ function pick(tile, originalIndex){
   }else{
     tile.classList.add("wrong");
     streak = 0;
+    playSfx(SFX.fart);
     popFart();
   }
 
@@ -1014,11 +1025,9 @@ function pick(tile, originalIndex){
   streakEl.textContent = String(streak);
   setFireLevelFromStreak();
 
-  // continue after a short beat (keep your original timing if you had one)
   setTimeout(()=>{
     idx++;
     if(idx >= DATA.length){
-      // finish
       results.classList.add("show");
       finalScore.textContent = String(score);
       grid.innerHTML = "";
@@ -1029,3 +1038,27 @@ function pick(tile, originalIndex){
     render();
   }, 650);
 }
+
+/* Buttons */
+function goMenu(){
+  history.back();
+}
+backBtn && backBtn.addEventListener("click", goMenu);
+back2 && back2.addEventListener("click", goMenu);
+
+playAgain && playAgain.addEventListener("click", ()=>{
+  idx = 0;
+  score = 0;
+  streak = 0;
+  locked = false;
+  document.body.classList.remove("fire1","fire2","fire3");
+  fireBanner.classList.remove("show");
+  clearTimeout(bannerTimer);
+  render();
+});
+
+/* Boot */
+render();
+</script>
+</body>
+</html>
