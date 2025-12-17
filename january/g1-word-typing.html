@@ -37,12 +37,15 @@
   --stormB: rgba(94,230,255,.00);
   --stormC: rgba(255,209,122,.00);
   --fireSpark: 0;
+
+  --hudSize: 14px;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 
 body{
+  margin:0;
   background:
     radial-gradient(1200px 760px at 28% 18%, var(--bgP), transparent 58%),
     radial-gradient(980px 720px  at 76% 26%, var(--bgB), transparent 60%),
@@ -50,10 +53,6 @@ body{
     var(--bg);
   color:var(--ink);
   font-family:'Cinzel',serif;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:16px;
   overflow:hidden;
 }
 
@@ -173,35 +172,74 @@ body.fire3{
   --fireSpark: 1;
 }
 
-/* Top-left Back button */
-.backTop{
-  position:fixed;
-  top:14px;
-  left:14px;
-  z-index:1000;
-  display:inline-flex;
+/* ===== Layout like g2 (topbar + centered stage) ===== */
+.wrap{
+  position:relative;
+  z-index:1;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
+  gap:12px;
+}
+.topbar{
+  display:flex;
   align-items:center;
+  justify-content:space-between;
   gap:10px;
-  padding:10px 14px;
-  border-radius:14px;
-  text-decoration:none;
-  background:rgba(0,0,0,.45);
-  border:1px solid rgba(255,255,255,.22);
+}
+.backBtn{
+  appearance:none;
+  border:0;
+  background:rgba(255,255,255,.10);
   color:#fff;
+  padding:10px 14px;
+  border-radius:999px;
   font-family:'Cinzel',serif;
   font-weight:900;
-  backdrop-filter: blur(4px);
+  letter-spacing:.4px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.18);
+  cursor:pointer;
+  display:flex;
+  align-items:baseline;
+  gap:10px;
   -webkit-tap-highlight-color: transparent;
 }
-.backTop span{
-  font-family:'Noto Sans JP',system-ui;
+.backBtn span.jp{
+  font-family:'Noto Sans JP',sans-serif;
   font-weight:900;
-  color:#d7d7d7;
+  font-size:12px;
+  opacity:.95;
+}
+.hud{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:var(--hudSize);
+  color:#cbd5e1;
+  user-select:none;
+}
+.hud .pill{
+  padding:8px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+}
+.hud b{color:#fff}
+
+.stage{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:0;
 }
 
 /* Card */
 .card{
-  width:min(760px,94vw);
+  width:min(760px, 100%);
   background:rgba(0,0,0,.35);
   border-radius:26px;
   padding:26px 22px 20px;
@@ -209,12 +247,12 @@ body.fire3{
   box-shadow:0 20px 60px rgba(0,0,0,.5);
   border:1px solid var(--outline);
   position:relative;
-  z-index:1;
+  overflow:hidden;
   transform: scale(var(--unlockScale)) rotate(var(--unlockWobble));
   transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 
-/* fire ring on card (same vibe as Pick the Sentence) */
+/* fire ring on card */
 .fireRing{
   position:absolute;
   inset:10px;
@@ -297,11 +335,6 @@ h1 small{
   color:#d7d7d7;
   letter-spacing:.02em;
 }
-.counter{
-  margin-top:10px;
-  font-size:14px;
-  color:#cbd5e1;
-}
 
 /* Prompt */
 .jp{
@@ -329,7 +362,7 @@ input{
   outline:none;
   text-align:center;
 }
-button{
+button.primary{
   margin-top:14px;
   width:100%;
   padding:14px;
@@ -381,7 +414,7 @@ button{
 
 /* Result */
 #result{display:none}
-.score{
+.resultScore{
   margin-top:18px;
   font-size:44px;
   font-weight:900;
@@ -502,61 +535,79 @@ a.back span{
 
 @media (max-width: 520px){
   input{font-size:20px}
-  button{font-size:19px}
-  .backTop{top:10px;left:10px;padding:9px 12px}
+  button.primary{font-size:19px}
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){
+  body::before, body::after{animation:none !important}
+  .fireRing,.card{animation:none !important; transition:none !important}
 }
 </style>
 </head>
 <body>
 
-<a class="backTop" href="index.html">Back to Menu <span>メニューへ</span></a>
+<div class="wrap">
+  <div class="topbar">
+    <button class="backBtn" id="backBtn" aria-label="Back to menu">
+      <span aria-hidden="true">←</span> MENU <span class="jp">メニュー</span>
+    </button>
 
-<div class="card" id="card">
-  <div class="fireRing" aria-hidden="true"></div>
-
-  <div id="game">
-    <div class="header">
-      <h1>Word Typing<small>タイピング</small></h1>
-      <div class="counter" id="counter">1 / 60</div>
+    <div class="hud" aria-label="Progress">
+      <div class="pill">Q <b id="qNum">1</b>/<span id="qTotal">0</span></div>
+      <div class="pill">Score <b id="hudScore">0</b></div>
+      <div class="pill">Streak <b id="hudStreak">0</b></div>
     </div>
-
-    <div class="jp" id="jp"></div>
-    <div class="hira" id="hira"></div>
-
-    <input id="answer" autocomplete="off" autocapitalize="none" spellcheck="false" />
-    <button id="submit">OK</button>
-
-    <div class="feedback" id="feedback"></div>
-    <div class="hint" id="hint"></div>
-
-    <footer>Bryan's English School</footer>
   </div>
 
-  <div id="result">
-    <div class="header">
-      <h1>RESULT<small>けっか</small></h1>
-    </div>
+  <div class="stage">
+    <div class="card" id="card">
+      <div class="fireRing" aria-hidden="true"></div>
 
-    <div class="score" id="score"></div>
-    <div class="perfectTag" id="perfectTag" style="display:none;">
-      PERFECT RUN
-      <small>パーフェクト！</small>
-    </div>
+      <div id="game">
+        <div class="header">
+          <h1>Word Typing<small>タイピング</small></h1>
+        </div>
 
-    <div class="bottom">
-      <a class="back" href="index.html">Back to Menu <span>メニューへ</span></a>
-      <a class="back" href="" id="retryLink">Try Again <span>もう一回</span></a>
-    </div>
+        <div class="jp" id="jp"></div>
+        <div class="hira" id="hira"></div>
 
-    <footer>Bryan's English School</footer>
+        <input id="answer" autocomplete="off" autocapitalize="none" spellcheck="false" />
+        <button class="primary" id="submit">OK</button>
+
+        <div class="feedback" id="feedback"></div>
+        <div class="hint" id="hint"></div>
+
+        <footer>Bryan's English School</footer>
+      </div>
+
+      <div id="result">
+        <div class="header">
+          <h1>RESULT<small>けっか</small></h1>
+        </div>
+
+        <div class="resultScore" id="resultScore"></div>
+        <div class="perfectTag" id="perfectTag" style="display:none;">
+          PERFECT RUN
+          <small>パーフェクト！</small>
+        </div>
+
+        <div class="bottom">
+          <a class="back" href="index.html">Back to Menu <span>メニューへ</span></a>
+          <a class="back" href="" id="retryLink">Try Again <span>もう一回</span></a>
+        </div>
+
+        <footer>Bryan's English School</footer>
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- Fire popup -->
-<div class="fireBanner" id="fireBanner" role="status" aria-live="polite">
-  <span class="fireDot" aria-hidden="true"></span>
-  <div class="en" id="fireEn">You’re on fire!</div>
-  <div class="jp" id="fireJp">ノってきた！</div>
+  <!-- Fire popup -->
+  <div class="fireBanner" id="fireBanner" role="status" aria-live="polite">
+    <span class="fireDot" aria-hidden="true"></span>
+    <div class="en" id="fireEn">You’re on fire!</div>
+    <div class="jp" id="fireJp">ノってきた！</div>
+  </div>
 </div>
 
 <script>
@@ -705,13 +756,25 @@ const hiraEl = $('#hira');
 const ansEl = $('#answer');
 const fbEl = $('#feedback');
 const hintEl = $('#hint');
-const counterEl = $('#counter');
 const submitBtn = $('#submit');
 const cardEl = $('#card');
+
+const qNumEl = $('#qNum');
+const qTotalEl = $('#qTotal');
+const hudScoreEl = $('#hudScore');
+const hudStreakEl = $('#hudStreak');
 
 const fireBanner = $('#fireBanner');
 const fireEn = $('#fireEn');
 const fireJp = $('#fireJp');
+
+/* HUD update */
+function updateHud(){
+  qNumEl.textContent = String(Math.min(idx+1, DATA.length));
+  qTotalEl.textContent = String(DATA.length);
+  hudScoreEl.textContent = String(score);
+  hudStreakEl.textContent = String(streak);
+}
 
 /* fire level from streak */
 function setFireLevelFromStreak(){
@@ -757,6 +820,9 @@ function resetGame(){
   $('#result').style.display='none';
   cardEl.classList.remove('perfect');
   $('#perfectTag').style.display='none';
+
+  updateHud();
+  setFireLevelFromStreak();
 }
 
 /* load prompt */
@@ -768,10 +834,13 @@ function load(){
   fbEl.textContent='';
   hintEl.textContent='';
   mistakes=0;
-  counterEl.textContent = (idx+1) + ' / ' + DATA.length;
   submitBtn.textContent = 'OK';
+
+  updateHud();
   setFireLevelFromStreak();
-  ansEl.focus();
+
+  // focus (small delay helps iOS)
+  setTimeout(()=>{ try{ ansEl.focus(); }catch(e){} }, 40);
 }
 
 /* check answer */
@@ -786,7 +855,6 @@ function check(){
     hintEl.textContent = '';
     submitBtn.textContent = 'OK';
 
-    // play first (snappier)
     SFX.ding.play(1);
 
     if(streak === 3)  showFireBanner(1);
@@ -794,6 +862,8 @@ function check(){
     if(streak === 10) showFireBanner(3);
 
     setFireLevelFromStreak();
+    updateHud();
+
     setTimeout(next, 650);
   }else{
     anyWrongEver = true;
@@ -805,6 +875,7 @@ function check(){
 
     SFX.fart.play(1);
     setFireLevelFromStreak();
+    updateHud();
 
     if(mistakes >= 3){
       hintEl.textContent = 'Hint: ' + d.en[0] + '...';
@@ -824,10 +895,16 @@ function finish(){
   $('#game').style.display='none';
   $('#result').style.display='block';
 
+  // freeze HUD at end
+  qNumEl.textContent = String(DATA.length);
+  qTotalEl.textContent = String(DATA.length);
+  hudScoreEl.textContent = String(score);
+  hudStreakEl.textContent = String(streak);
+
   const pct = Math.round((score / DATA.length) * 100);
-  const s = $('#score');
+  const s = $('#resultScore');
   s.textContent = pct + '%';
-  s.className = 'score ' + (pct>=80?'good':pct>=50?'mid':'bad');
+  s.className = 'resultScore ' + (pct>=80?'good':pct>=50?'mid':'bad');
 
   const retry = $('#retryLink');
   if(retry) retry.href = window.location.pathname.split('/').pop() || '';
@@ -837,6 +914,12 @@ function finish(){
     $('#perfectTag').style.display='block';
   }
 }
+
+/* back */
+function goMenu(){
+  window.location.href = "index.html";
+}
+$('#backBtn').addEventListener('click', goMenu);
 
 /* events */
 submitBtn.addEventListener('click', check);
