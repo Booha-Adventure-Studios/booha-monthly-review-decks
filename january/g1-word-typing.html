@@ -252,6 +252,33 @@ body.fire3{
   transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 
+/* subtle inner sheen */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  pointer-events:none;
+  border-radius:26px;
+  background:
+    radial-gradient(520px 220px at 30% 0%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(560px 260px at 80% 0%, rgba(255,209,122,.14), transparent 62%),
+    radial-gradient(900px 380px at 50% 120%, rgba(255,120,70, calc(.06 + var(--fireSpark)*.10)), transparent 62%);
+  opacity:.9;
+}
+
+body.fire2 .card,
+body.fire3 .card{
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.50),
+    0 0 50px var(--unlockGlow),
+    0 0 120px rgba(255,209,122, calc(.06 + var(--fireSpark)*.10));
+}
+body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
+@keyframes cardThrill{
+  0%,100%{ transform: scale(var(--unlockScale)) rotate(calc(var(--unlockWobble) * -1)); }
+  50%{ transform: scale(calc(var(--unlockScale) + .015)) rotate(var(--unlockWobble)); }
+}
+
 /* fire ring on card */
 .fireRing{
   position:absolute;
@@ -319,6 +346,8 @@ body.fire3 .fireRing{animation-duration:.65s;}
   align-items:center;
   justify-content:center;
   gap:6px;
+  position:relative;
+  z-index:1;
 }
 h1{
   font-size:clamp(26px,4.6vw,44px);
@@ -343,12 +372,24 @@ h1 small{
   font-size:clamp(28px,5.2vw,40px);
   font-weight:900;
   letter-spacing:.02em;
+  position:relative;
+  z-index:1;
+  /* stronger pop */
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.95),
+    0 6px 18px rgba(0,0,0,.75),
+    0 0 22px rgba(0,0,0,.55);
 }
 .hira{
   margin-top:6px;
   font-family:'Noto Sans JP',system-ui;
   font-size:clamp(14px,2.6vw,18px);
   color:#cbd5e1;
+  position:relative;
+  z-index:1;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.85),
+    0 6px 16px rgba(0,0,0,.55);
 }
 
 /* Input + button */
@@ -361,7 +402,11 @@ input{
   border:none;
   outline:none;
   text-align:center;
+  background:#ffffff;
+  color:#0b1020;
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
 }
+input::placeholder{color:rgba(11,16,32,.45)}
 button.primary{
   margin-top:14px;
   width:100%;
@@ -371,7 +416,30 @@ button.primary{
   border:none;
   font-weight:900;
   cursor:pointer;
-  background:linear-gradient(145deg,var(--gold),#fff1b3);
+  color:#0b1020;
+  background: rgba(255,209,122,.95);
+  border:1px solid rgba(255,209,122,.85);
+  box-shadow:
+    0 16px 40px rgba(0,0,0,.45),
+    0 0 70px rgba(255,120,70,.28);
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap:10px;
+  -webkit-tap-highlight-color: transparent;
+}
+button.primary span.jpBtn{
+  font-family:'Noto Sans JP',system-ui;
+  font-weight:900;
+  font-size:14px;
+  color:#0b1020;
+  text-shadow:none;
+}
+button.primary:active{transform: translateY(1px)}
+button.primary:disabled{
+  opacity:.65;
+  cursor:not-allowed;
+  filter:saturate(.85);
 }
 
 .feedback{
@@ -380,12 +448,16 @@ button.primary{
   display:flex;
   align-items:center;
   justify-content:center;
+  position:relative;
+  z-index:1;
 }
 
+/* feedback visuals */
 .heart{
   font-size:46px;
   color:var(--good);
   animation:pop .6s ease;
+  filter: drop-shadow(0 0 16px rgba(34,197,94,.45));
 }
 @keyframes pop{
   0%{transform:scale(.6);opacity:0}
@@ -396,6 +468,7 @@ button.primary{
   font-size:44px;
   color:var(--bad);
   animation:shake .4s ease;
+  filter: drop-shadow(0 0 16px rgba(239,68,68,.35));
 }
 @keyframes shake{
   0%{transform:translateX(0)}
@@ -405,11 +478,36 @@ button.primary{
   100%{transform:translateX(0)}
 }
 
+/* input shake + glow */
+@keyframes inputShake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-10px)}
+  40%{transform:translateX(10px)}
+  60%{transform:translateX(-7px)}
+  80%{transform:translateX(7px)}
+}
+input.wrong{
+  animation: inputShake .45s ease;
+  box-shadow:
+    0 0 0 6px rgba(239,68,68,.22),
+    0 0 40px rgba(239,68,68,.35),
+    0 12px 28px rgba(0,0,0,.35);
+}
+input.good{
+  box-shadow:
+    0 0 0 6px rgba(34,197,94,.18),
+    0 0 40px rgba(34,197,94,.45),
+    0 12px 28px rgba(0,0,0,.35);
+}
+
 .hint{
   margin-top:6px;
   font-size:14px;
   color:#ffd166;
   min-height:18px;
+  position:relative;
+  z-index:1;
+  text-shadow: 0 2px 0 rgba(0,0,0,.85), 0 8px 18px rgba(0,0,0,.55);
 }
 
 /* Result */
@@ -542,6 +640,7 @@ a.back span{
 @media (prefers-reduced-motion: reduce){
   body::before, body::after{animation:none !important}
   .fireRing,.card{animation:none !important; transition:none !important}
+  .heart,.fart,input.wrong{animation:none !important}
 }
 </style>
 </head>
@@ -572,8 +671,8 @@ a.back span{
         <div class="jp" id="jp"></div>
         <div class="hira" id="hira"></div>
 
-        <input id="answer" autocomplete="off" autocapitalize="none" spellcheck="false" />
-        <button class="primary" id="submit">OK</button>
+        <input id="answer" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="type in English" />
+        <button class="primary" id="submit">OK <span class="jpBtn">つぎ</span></button>
 
         <div class="feedback" id="feedback"></div>
         <div class="hint" id="hint"></div>
@@ -614,69 +713,80 @@ a.back span{
 function $(q){ return document.querySelector(q); }
 
 /* =========================
-   SFX (pool + preload + iOS unlock)
-   Files are in SAME folder:
+   WebAudio SFX (instant) — SAME FOLDER:
    ding.mp3, fart.mp3, fire.mp3
    ========================= */
-function makePool(src, size){
-  const pool = [];
-  for(let i=0;i<size;i++){
-    const a = new Audio(src);
-    a.preload = "auto";
-    a.volume = 1;
-    pool.push(a);
-  }
-  let n = 0;
-  return {
-    play(vol=1){
-      const a = pool[n];
-      n = (n+1) % pool.length;
-      try{
-        a.volume = vol;
-        a.currentTime = 0;
-        const p = a.play();
-        if(p && p.catch) p.catch(()=>{});
-      }catch(e){}
-    },
-    prime(){
-      pool.forEach(a=>{
-        try{
-          const prev = a.volume;
-          a.volume = 0;
-          a.currentTime = 0;
-          const p = a.play();
-          if(p && p.then){
-            p.then(()=>setTimeout(()=>{
-              try{ a.pause(); a.currentTime=0; a.volume=prev; }catch(e){}
-            }, 30)).catch(()=>{ try{ a.volume=prev; }catch(e){} });
-          }else{
-            setTimeout(()=>{ try{ a.pause(); a.currentTime=0; a.volume=prev; }catch(e){} }, 30);
-          }
-        }catch(e){}
-      });
+const SFX = (() => {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let ctx = null;
+  let master = null;
+  const buf = new Map();
+  let unlocked = false;
+
+  function ensure(){
+    if (!ctx) {
+      ctx = new AudioCtx();
+      master = ctx.createGain();
+      master.gain.value = 1;
+      master.connect(ctx.destination);
     }
-  };
-}
+  }
 
-const SFX = {
-  ding: makePool("ding.mp3", 4),
-  fart: makePool("fart.mp3", 4),
-  fire: makePool("fire.mp3", 3)
-};
+  async function loadOne(name, url){
+    ensure();
+    const res = await fetch(url, { cache: "force-cache" });
+    const arr = await res.arrayBuffer();
+    const b = await ctx.decodeAudioData(arr);
+    buf.set(name, b);
+  }
 
-let audioUnlocked = false;
-function unlockAudioOnce(){
-  if(audioUnlocked) return;
-  audioUnlocked = true;
-  SFX.ding.prime();
-  SFX.fart.prime();
-  SFX.fire.prime();
-}
-window.addEventListener("pointerdown", unlockAudioOnce, { once:true, passive:true });
-window.addEventListener("touchstart", unlockAudioOnce, { once:true, passive:true });
+  async function preload(){
+    ensure();
+    await Promise.all([
+      loadOne("ding", "ding.mp3"),
+      loadOne("fart", "fart.mp3"),
+      loadOne("fire", "fire.mp3"),
+    ]);
+  }
+
+  function unlock(){
+    ensure();
+    if (unlocked) return;
+    unlocked = true;
+
+    if (ctx.state === "suspended") ctx.resume().catch(()=>{});
+    const b = ctx.createBuffer(1, 1, 22050);
+    const src = ctx.createBufferSource();
+    src.buffer = b;
+    src.connect(master);
+    try { src.start(0); } catch(e) {}
+  }
+
+  function play(name, volume=1){
+    if (!ctx) return;
+    const b = buf.get(name);
+    if (!b) return;
+
+    if (ctx.state === "suspended") ctx.resume().catch(()=>{});
+
+    const src = ctx.createBufferSource();
+    src.buffer = b;
+
+    const g = ctx.createGain();
+    g.gain.value = Math.max(0, Math.min(1, volume));
+
+    src.connect(g);
+    g.connect(master);
+
+    try { src.start(0); } catch(e) {}
+  }
+
+  return { preload, unlock, play };
+})();
 
 /* =========================
    DATA (shuffle order each run)
+   NOTE: Never reveal answer; hints only.
    ========================= */
 const DATA = [
   {en:'mind', jp:'心', hi:'こころ'},
@@ -742,13 +852,18 @@ function shuffle(arr){
   return a;
 }
 
+/* =========================
+   State
+   ========================= */
 let order = [];
 let idx = 0;
 let score = 0;
-let mistakes = 0;
-let anyWrongEver = false;
 let streak = 0;
 let bannerTimer = null;
+
+let hintLevel = 0;          // increases with wrong attempts (per word)
+let wrongCountForWord = 0;  // wrong attempts for current word
+let anyWrongEver = false;
 
 /* hooks */
 const jpEl = $('#jp');
@@ -768,7 +883,10 @@ const fireBanner = $('#fireBanner');
 const fireEn = $('#fireEn');
 const fireJp = $('#fireJp');
 
-/* HUD update */
+/* helpers */
+function norm(s){
+  return (s || "").toLowerCase().replace(/\s+/g," ").trim();
+}
 function updateHud(){
   qNumEl.textContent = String(Math.min(idx+1, DATA.length));
   qTotalEl.textContent = String(DATA.length);
@@ -800,17 +918,57 @@ function showFireBanner(level){
   clearTimeout(bannerTimer);
   bannerTimer = setTimeout(()=>fireBanner.classList.remove("show"), 3500);
 
-  SFX.fire.play(1);
+  SFX.play("fire", 1);
+}
+
+/* hint builder — NEVER reveals full answer */
+function buildHint(target, level, typed){
+  const t = target.toLowerCase();
+  const len = t.length;
+
+  // Level 0: length only
+  if(level <= 0){
+    return `Hint: (${len} letters)`;
+  }
+
+  // Level 1: first letter + length
+  if(level === 1){
+    return `Hint: ${t[0]}...  (${len})`;
+  }
+
+  // Level 2: show pattern with vowels only (consonants masked)
+  if(level === 2){
+    const v = t.replace(/[bcdfghjklmnpqrstvwxyz]/g, "_");
+    return `Hint: ${v}  (${len})`;
+  }
+
+  // Level 3+: show correct letters in correct positions based on what they typed
+  const a = (typed || "").toLowerCase();
+  let out = "";
+  for(let i=0;i<t.length;i++){
+    const ch = t[i];
+    if(ch === " "){ out += " "; continue; }
+    if(a[i] && a[i] === ch) out += ch.toUpperCase();
+    else out += "_";
+  }
+  return `Hint: ${out}  (${len})`;
+}
+
+function renderHint(){
+  const d = DATA[order[idx]];
+  hintEl.textContent = buildHint(d.en, hintLevel, ansEl.value);
 }
 
 /* reset / shuffle */
 function resetGame(){
-  order = shuffle([...Array(DATA.length)].map((_,i)=>i)); // shuffle QUESTIONS
+  order = shuffle([...Array(DATA.length)].map((_,i)=>i));
   idx = 0;
   score = 0;
-  mistakes = 0;
-  anyWrongEver = false;
   streak = 0;
+  anyWrongEver = false;
+
+  hintLevel = 0;
+  wrongCountForWord = 0;
 
   document.body.classList.remove("fire1","fire2","fire3");
   fireBanner.classList.remove("show");
@@ -825,61 +983,100 @@ function resetGame(){
   setFireLevelFromStreak();
 }
 
+function resetWordState(){
+  hintLevel = 0;
+  wrongCountForWord = 0;
+  fbEl.textContent = "";
+  hintEl.textContent = "";
+  submitBtn.innerHTML = `OK <span class="jpBtn">つぎ</span>`;
+  ansEl.classList.remove("wrong","good");
+}
+
 /* load prompt */
 function load(){
   const d = DATA[order[idx]];
   jpEl.textContent = d.jp;
   hiraEl.textContent = d.hi;
-  ansEl.value='';
-  fbEl.textContent='';
-  hintEl.textContent='';
-  mistakes=0;
-  submitBtn.textContent = 'OK';
+
+  ansEl.value = '';
+  resetWordState();
 
   updateHud();
   setFireLevelFromStreak();
 
-  // focus (small delay helps iOS)
   setTimeout(()=>{ try{ ansEl.focus(); }catch(e){} }, 40);
+}
+
+/* correct path */
+function onCorrect(){
+  score++;
+  streak++;
+
+  fbEl.innerHTML = '<div class="heart">❤</div>';
+  hintEl.textContent = '';
+  ansEl.classList.remove("wrong");
+  ansEl.classList.add("good");
+
+  SFX.play("ding", 1);
+
+  if(streak === 3)  showFireBanner(1);
+  if(streak === 6)  showFireBanner(2);
+  if(streak === 10) showFireBanner(3);
+
+  setFireLevelFromStreak();
+  updateHud();
+
+  // quick advance
+  submitBtn.disabled = true;
+  setTimeout(()=>{ submitBtn.disabled = false; next(); }, 650);
+}
+
+/* wrong path (no moving on, never reveal answer) */
+function onWrong(){
+  anyWrongEver = true;
+  wrongCountForWord++;
+  streak = 0;
+
+  fbEl.innerHTML = '<div class="fart">💨</div>';
+  submitBtn.innerHTML = `TRY AGAIN <span class="jpBtn">もう一回</span>`;
+
+  ansEl.classList.remove("good");
+  ansEl.classList.add("wrong");
+
+  SFX.play("fart", 1);
+  setFireLevelFromStreak();
+  updateHud();
+
+  // increase hint level gradually (still never full answer)
+  if(wrongCountForWord === 1) hintLevel = Math.max(hintLevel, 1);
+  else if(wrongCountForWord === 2) hintLevel = Math.max(hintLevel, 2);
+  else hintLevel = Math.max(hintLevel, 3);
+
+  renderHint();
+
+  // keep them here
+  setTimeout(()=>{
+    ansEl.classList.remove("wrong");
+    try{
+      ansEl.focus();
+      ansEl.select();
+    }catch(e){}
+  }, 180);
 }
 
 /* check answer */
 function check(){
   const d = DATA[order[idx]];
-  const typed = ansEl.value.trim().toLowerCase();
+  const typed = norm(ansEl.value);
+  const target = norm(d.en);
 
-  if(typed === d.en){
-    score++;
-    streak++;
-    fbEl.innerHTML = '<div class="heart">❤</div>';
-    hintEl.textContent = '';
-    submitBtn.textContent = 'OK';
+  // update hint in level 3+ using current typing
+  if(hintLevel >= 3) renderHint();
 
-    SFX.ding.play(1);
-
-    if(streak === 3)  showFireBanner(1);
-    if(streak === 6)  showFireBanner(2);
-    if(streak === 10) showFireBanner(3);
-
-    setFireLevelFromStreak();
-    updateHud();
-
-    setTimeout(next, 650);
+  if(typed === target){
+    onCorrect();
   }else{
-    anyWrongEver = true;
-    mistakes++;
-    streak = 0;
-
-    fbEl.innerHTML = '<div class="fart">💨</div>';
-    submitBtn.textContent = 'もう一回';
-
-    SFX.fart.play(1);
-    setFireLevelFromStreak();
-    updateHud();
-
-    if(mistakes >= 3){
-      hintEl.textContent = 'Hint: ' + d.en[0] + '...';
-    }
+    onWrong();
   }
 }
 
@@ -895,7 +1092,6 @@ function finish(){
   $('#game').style.display='none';
   $('#result').style.display='block';
 
-  // freeze HUD at end
   qNumEl.textContent = String(DATA.length);
   qTotalEl.textContent = String(DATA.length);
   hudScoreEl.textContent = String(score);
@@ -924,10 +1120,19 @@ $('#backBtn').addEventListener('click', goMenu);
 /* events */
 submitBtn.addEventListener('click', check);
 ansEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') check(); });
+ansEl.addEventListener('input', ()=>{
+  // for hintLevel 3+, update live feedback without revealing answer
+  if(hintLevel >= 3) renderHint();
+});
 
-/* boot */
-resetGame();
-load();
+/* boot: preload audio, unlock on first gesture */
+(async function boot(){
+  try{ await SFX.preload(); }catch(e){}
+  resetGame();
+  load();
+})();
+window.addEventListener("pointerdown", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
+window.addEventListener("touchstart", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 </script>
 </body>
 </html>
