@@ -225,13 +225,12 @@ body.fire1, body.fire2, body.fire3{
 .choice:active{transform: translateY(0px) scale(.995)}
 
 .choice .en{
-  font-size:var(--enSize);
-  font-weight:900;
-  letter-spacing:.2px;
-  line-height:1.12;
-  color:#0b1020;
-  text-shadow:none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 800;            /* bold */
+  letter-spacing: 0;           /* remove “fancy” spacing */
+  text-transform: none;        /* not all caps */
 }
+
 
 .choice.locked{pointer-events:none; opacity:.92}
 .choice.correct{
