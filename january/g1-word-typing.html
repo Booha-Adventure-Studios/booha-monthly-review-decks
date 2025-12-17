@@ -193,7 +193,12 @@ body.fire3{
   border:0;
   background:rgba(255,255,255,.10);
   color:#fff;
-  padding:10px 14px;
+
+  /* smaller */
+  padding:7px 10px;      /* was 10px 14px */
+  font-size:14px;        /* NEW */
+  gap:8px;               /* was 10px */
+
   border-radius:999px;
   font-family:'Cinzel',serif;
   font-weight:900;
@@ -203,15 +208,23 @@ body.fire3{
   cursor:pointer;
   display:flex;
   align-items:baseline;
-  gap:10px;
   -webkit-tap-highlight-color: transparent;
 }
+
+/* shrink the Japanese label */
 .backBtn span.jp{
   font-family:'Noto Sans JP',sans-serif;
   font-weight:900;
-  font-size:12px;
+  font-size:10px;        /* was 12px */
   opacity:.95;
 }
+
+/* OPTIONAL: shrink the arrow only */
+.backBtn span[aria-hidden="true"]{
+  font-size:14px;
+  line-height:1;
+}
+
 .hud{
   display:flex;
   align-items:center;
