@@ -194,10 +194,9 @@ body.fire3{
   background:rgba(255,255,255,.10);
   color:#fff;
 
-  /* smaller */
-  padding:7px 10px;      /* was 10px 14px */
-  font-size:14px;        /* NEW */
-  gap:8px;               /* was 10px */
+  padding:7px 10px;
+  font-size:14px;
+  gap:8px;
 
   border-radius:999px;
   font-family:'Cinzel',serif;
@@ -206,10 +205,13 @@ body.fire3{
   box-shadow: 0 10px 24px rgba(0,0,0,.35);
   border:1px solid rgba(255,255,255,.18);
   cursor:pointer;
+
   display:flex;
-  align-items:baseline;
+  align-items:center;   /* ← THIS is the fix */
+
   -webkit-tap-highlight-color: transparent;
 }
+
 
 /* shrink the Japanese label */
 .backBtn span.jp{
