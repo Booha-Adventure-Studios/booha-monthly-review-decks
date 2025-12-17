@@ -296,6 +296,8 @@ body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
   z-index:1;
   text-align:center;
   padding:14px 8px 8px;
+  transform-origin: 50% 50%;
+  will-change: transform;
 }
 
 .jp{
@@ -303,7 +305,13 @@ body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
   font-weight:900;
   font-size:var(--jpSize);
   line-height:1.12;
-  text-shadow: 0 10px 26px rgba(0,0,0,.45);
+
+  /* ✅ stronger black glow so JP pops */
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.90),
+    0 0 10px rgba(0,0,0,.80),
+    0 0 18px rgba(0,0,0,.60),
+    0 10px 26px rgba(0,0,0,.45);
 }
 .hira{
   margin-top:10px;
@@ -313,6 +321,10 @@ body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
   line-height:1.12;
   color: rgba(255,255,255,.92);
   opacity:.95;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.85),
+    0 0 10px rgba(0,0,0,.70),
+    0 0 18px rgba(0,0,0,.50);
 }
 
 .grid{
@@ -376,26 +388,14 @@ body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
   80%{transform:translateX(7px)}
 }
 
-.choice.revealCorrect{
-  border-color: rgba(255,209,122,.95);
+/* ✅ WRONG reveal: no pill popup. Just glow the correct answer green. */
+.choice.correctGlow{
+  border-color: rgba(34,197,94,.95);
   box-shadow:
-    0 0 0 6px rgba(255,209,122,.32),
-    0 0 48px rgba(255,209,122,.55),
+    0 0 0 6px rgba(34,197,94,.22),
+    0 0 40px rgba(34,197,94,.70),
+    0 0 90px rgba(34,197,94,.40),
     0 12px 28px rgba(0,0,0,.35);
-}
-.choice.revealCorrect::after{
-  content:"✓ CORRECT";
-  position:absolute;
-  right:14px; top:12px;
-  font-family:'Cinzel',serif;
-  font-weight:900;
-  letter-spacing:.5px;
-  font-size:12px;
-  padding:6px 10px;
-  border-radius:999px;
-  color:#0b1020;
-  background: rgba(255,209,122,.95);
-  box-shadow: 0 10px 24px rgba(0,0,0,.35);
 }
 
 .fireRing{
@@ -462,6 +462,11 @@ body.fire3 .fireRing{animation-duration:.65s;}
   font-size:18px;
   line-height:1.05;
   opacity:.95;
+  /* ✅ black glow on banner JP too */
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.90),
+    0 0 10px rgba(0,0,0,.75),
+    0 0 18px rgba(0,0,0,.55);
 }
 .fireDot{
   width:16px;height:16px;border-radius:999px;
@@ -577,7 +582,7 @@ body.fire3 .fireRing{animation-duration:.65s;}
   padding: 4px 0 0;
 }
 
-/* NEW: Next button overlay (shown only after WRONG) */
+/* Next button overlay (shown only after WRONG) */
 .nextWrap{
   width:min(980px, 100%);
   display:none;
@@ -637,7 +642,7 @@ body.fire3 .fireRing{animation-duration:.65s;}
     <div class="stage">
       <div class="card" id="card">
         <div class="fireRing" aria-hidden="true"></div>
-        <div class="prompt">
+        <div class="prompt" id="prompt">
           <div class="jp" id="jpText">—</div>
           <div class="hira" id="hiText">—</div>
         </div>
@@ -645,7 +650,6 @@ body.fire3 .fireRing{animation-duration:.65s;}
 
       <div class="grid" id="grid"></div>
 
-      <!-- NEW: next button row shown on wrong answers -->
       <div class="nextWrap" id="nextWrap">
         <button class="nextBtn" id="nextBtn">NEXT <span class="jp">つぎ</span></button>
       </div>
@@ -694,11 +698,10 @@ body.fire3 .fireRing{animation-duration:.65s;}
 <script>
 /* =========================
    Booha Review – Pick the Sentence (January)
-   FIXES:
-   ✅ WebAudio (instant) SFX from SAME FOLDER: ding.mp3, fart.mp3, fire.mp3
-   ✅ Shuffle questions + shuffle answers
-   ✅ Wrong answer: reveal correct + show NEXT button (no auto-advance)
-   ✅ Correct answer: auto-advance quickly
+   UPDATES:
+   ✅ JP text: stronger black glow
+   ✅ Wrong answer: NO "✓ CORRECT" pill; correct answer glows green; student clicks NEXT
+   ✅ Fire level 3: keep JP/Hira text from moving (card can still wobble)
    ========================= */
 
 /* ---------- WebAudio SFX (same-folder) ---------- */
@@ -740,7 +743,6 @@ const SFX = (() => {
     if (unlocked) return;
     unlocked = true;
 
-    // iOS: resume + silent tick to fully unlock
     if (ctx.state === "suspended") ctx.resume().catch(()=>{});
     const b = ctx.createBuffer(1, 1, 22050);
     const src = ctx.createBufferSource();
@@ -1150,6 +1152,9 @@ const playAgain  = document.querySelector("#playAgain");
 const nextWrap   = document.querySelector("#nextWrap");
 const nextBtn    = document.querySelector("#nextBtn");
 
+const card       = document.querySelector("#card");
+const prompt     = document.querySelector("#prompt");
+
 /* ---------- State ---------- */
 let order = [];
 let idx = 0;
@@ -1157,8 +1162,9 @@ let score = 0;
 let streak = 0;
 let locked = false;
 let bannerTimer = null;
-let pendingAdvance = false; // NEW: wrong answer requires NEXT
+let pendingAdvance = false;
 
+/* ---------- Shuffle ---------- */
 function shuffle(arr){
   const a = arr.slice();
   for(let i=a.length-1;i>0;i--){
@@ -1168,6 +1174,7 @@ function shuffle(arr){
   return a;
 }
 
+/* ---------- Fire level ---------- */
 function setFireLevelFromStreak(){
   document.body.classList.remove("fire1","fire2","fire3");
   if(streak >= 10) document.body.classList.add("fire3");
@@ -1175,6 +1182,7 @@ function setFireLevelFromStreak(){
   else if(streak >= 3) document.body.classList.add("fire1");
 }
 
+/* ---------- FX ---------- */
 function popHeart(){
   heart.classList.remove("show");
   void heart.getBoundingClientRect();
@@ -1204,6 +1212,7 @@ function showFireBanner(level){
   SFX.play("fire", 1);
 }
 
+/* ---------- Game ---------- */
 function resetGame(){
   order = shuffle([...Array(DATA.length)].map((_,i)=>i));
   idx = 0;
@@ -1248,7 +1257,6 @@ function render(){
   setFireLevelFromStreak();
 }
 
-/* Advance helper (used by correct auto-advance + NEXT button) */
 function advance(){
   idx++;
   if(idx >= order.length){
@@ -1274,7 +1282,6 @@ function pick(tile, originalIndex){
 
   const isCorrect = (originalIndex === item.correct);
 
-  // Play sound immediately (WebAudio is instant after preload/unlock)
   if(isCorrect) SFX.play("ding", 1);
   else SFX.play("fart", 1);
 
@@ -1292,7 +1299,6 @@ function pick(tile, originalIndex){
     streakEl.textContent = String(streak);
     setFireLevelFromStreak();
 
-    // QUICK auto-advance on correct
     setTimeout(advance, 650);
 
   }else{
@@ -1300,26 +1306,87 @@ function pick(tile, originalIndex){
     popFart();
     streak = 0;
 
-    // Reveal correct tile
+    // ✅ Reveal correct tile with GREEN GLOW (no pill)
     const correctText = item.choices[item.correct];
     const correctTile = tiles.find(t=>{
       const el = t.querySelector(".en");
       return el && el.textContent === correctText;
     });
-    if(correctTile) correctTile.classList.add("revealCorrect");
+    if(correctTile) correctTile.classList.add("correctGlow");
 
     scoreEl.textContent = String(score);
     streakEl.textContent = String(streak);
     setFireLevelFromStreak();
 
-    // WRONG: do NOT auto-advance. Show NEXT so student can read.
     pendingAdvance = true;
     nextWrap.classList.add("show");
     locked = false; // allow NEXT button interaction
   }
 }
 
-/* Buttons */
+/* ---------- Fire3: keep JP text from moving while card animates ---------- */
+const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function parseMatrix2D(t){
+  // returns [a,b,c,d,e,f] or null
+  if(!t || t === "none") return null;
+  const m = t.match(/matrix\(([^)]+)\)/);
+  if(!m) return null;
+  const parts = m[1].split(",").map(s=>parseFloat(s.trim()));
+  if(parts.length !== 6 || parts.some(n=>Number.isNaN(n))) return null;
+  return parts;
+}
+
+function invertMatrix2D(m){
+  const [a,b,c,d,e,f] = m;
+  const det = a*d - b*c;
+  if(!det) return null;
+  const id = 1/det;
+  const na =  d*id;
+  const nb = -b*id;
+  const nc = -c*id;
+  const nd =  a*id;
+  const ne = -(na*e + nc*f);
+  const nf = -(nb*e + nd*f);
+  return [na,nb,nc,nd,ne,nf];
+}
+
+let stabilizeRAF = 0;
+function stabilizePromptLoop(){
+  cancelAnimationFrame(stabilizeRAF);
+  if(prefersReduced) { prompt.style.transform = "none"; return; }
+
+  const tick = ()=>{
+    const isFire3 = document.body.classList.contains("fire3");
+    if(!isFire3){
+      prompt.style.transform = "none";
+      stabilizeRAF = requestAnimationFrame(tick);
+      return;
+    }
+
+    const m = parseMatrix2D(getComputedStyle(card).transform);
+    if(!m){
+      prompt.style.transform = "none";
+      stabilizeRAF = requestAnimationFrame(tick);
+      return;
+    }
+
+    const inv = invertMatrix2D(m);
+    if(!inv){
+      prompt.style.transform = "none";
+      stabilizeRAF = requestAnimationFrame(tick);
+      return;
+    }
+
+    // Apply inverse so net motion of prompt is ~0 (text stays still)
+    prompt.style.transform = `matrix(${inv[0]},${inv[1]},${inv[2]},${inv[3]},${inv[4]},${inv[5]})`;
+    stabilizeRAF = requestAnimationFrame(tick);
+  };
+
+  stabilizeRAF = requestAnimationFrame(tick);
+}
+
+/* ---------- Buttons ---------- */
 function goMenu(){ history.back(); }
 backBtn && backBtn.addEventListener("click", goMenu);
 back2 && back2.addEventListener("click", goMenu);
@@ -1329,7 +1396,6 @@ playAgain && playAgain.addEventListener("click", ()=>{
   render();
 });
 
-/* NEXT button (only on wrong) */
 nextBtn && nextBtn.addEventListener("click", ()=>{
   if(!pendingAdvance) return;
   pendingAdvance = false;
@@ -1337,18 +1403,14 @@ nextBtn && nextBtn.addEventListener("click", ()=>{
   advance();
 });
 
-/* ---------- Boot: preload audio ASAP, but unlock+resume on first gesture ---------- */
+/* ---------- Boot ---------- */
 (async function boot(){
-  try{
-    await SFX.preload();
-  }catch(e){
-    // If preload fails (offline/blocked), game still runs without audio.
-  }
+  try{ await SFX.preload(); }catch(e){}
   resetGame();
   render();
+  stabilizePromptLoop();
 })();
 
-/* iOS/Safari: unlock must be a real gesture */
 window.addEventListener("pointerdown", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 window.addEventListener("touchstart", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 </script>
