@@ -1387,9 +1387,11 @@ function stabilizePromptLoop(){
     prompt.style.transform =
       `matrix(${inv[0]},${inv[1]},${inv[2]},${inv[3]},${inv[4]},${inv[5]})`;
 
+    // keep looping
     stabilizeRAF = requestAnimationFrame(tick);
   };
 
+  // start once
   stabilizeRAF = requestAnimationFrame(tick);
 }
 
