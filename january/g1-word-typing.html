@@ -1,3 +1,16 @@
+<!-- =========================
+REMINDERS (READ ME)
+✅ Put these files in the SAME folder as this HTML:
+   - ding.mp3
+   - fart.mp3
+   - fire.mp3
+   - level4.mp3  (NEW: required for Fire Level 4)
+✅ Keep @keyframes wildSpin defined ONCE (used by card + banner)
+✅ Fire levels must exist in BOTH CSS + JS:
+   - CSS: body.fire1..body.fire4
+   - JS: getFireLevelFromStreak() thresholds 3/6/10/15
+========================= -->
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -110,66 +123,116 @@ body::after{
   100% {transform: translate(-1.5%, -1%) rotate(-2deg) scale(1.02)}
 }
 
-/* fire levels */
+/* ✅ IMPORTANT: define wildSpin ONCE (used by card + banner) */
+@keyframes wildSpin{to{transform: rotate(360deg);}}
+
+/* ===========================
+   FIRE LEVELS (MATCH g2 + LEVEL 4)
+   =========================== */
 body.fire1{
-  --fireA: rgba(255,209,122,.30);
-  --fireB: rgba(255,120,70,.18);
-  --ringA: rgba(255,209,122,.44);
-  --ringB: rgba(255,120,70,.30);
-  --pulse1: rgba(255,209,122,.46);
-  --pulse2: rgba(255,120,70,.34);
+  --fireA: rgba(255,209,122,.48);
+  --fireB: rgba(255,120,70,.32);
+  --ringA: rgba(255,209,122,.72);
+  --ringB: rgba(255,120,70,.54);
+  --pulse1: rgba(255,209,122,.82);
+  --pulse2: rgba(255,120,70,.70);
+
+  --bgP: rgba(124,58,237,.78);
+  --bgB: rgba(94,230,255,.56);
+  --bgG: rgba(255,209,122,.60);
+
+  --stormA: rgba(255,126,185,.36);
+  --stormB: rgba(94,230,255,.32);
+  --stormC: rgba(255,209,122,.32);
+  --fireSpark: .75;
+
   --unlockGlow: rgba(255,209,122,.22);
   --unlockScale: 1.00;
   --unlockWobble: 0deg;
-
-  --bgP: rgba(124,58,237,.62);
-  --bgB: rgba(94,230,255,.42);
-  --bgG: rgba(255,209,122,.44);
-
-  --stormA: rgba(255,126,185,.20);
-  --stormB: rgba(94,230,255,.18);
-  --stormC: rgba(255,209,122,.18);
-  --fireSpark: .45;
 }
+
 body.fire2{
-  --fireA: rgba(255,209,122,.54);
-  --fireB: rgba(255,120,70,.34);
-  --ringA: rgba(255,209,122,.68);
-  --ringB: rgba(255,120,70,.52);
-  --pulse1: rgba(255,209,122,.70);
-  --pulse2: rgba(255,120,70,.64);
+  --fireA: rgba(255,209,122,.82);
+  --fireB: rgba(255,120,70,.62);
+  --ringA: rgba(255,209,122,.98);
+  --ringB: rgba(255,120,70,.92);
+  --pulse1: rgba(255,209,122,1.00);
+  --pulse2: rgba(255,120,70,1.00);
+
+  --bgP: rgba(124,58,237,1.00);
+  --bgB: rgba(94,230,255,.78);
+  --bgG: rgba(255,209,122,.82);
+
+  --stormA: rgba(255,126,185,.58);
+  --stormB: rgba(94,230,255,.50);
+  --stormC: rgba(255,209,122,.50);
+  --fireSpark: 1.10;
+
   --unlockGlow: rgba(255,120,70,.28);
   --unlockScale: 1.01;
   --unlockWobble: 0.4deg;
-
-  --bgP: rgba(124,58,237,.78);
-  --bgB: rgba(94,230,255,.52);
-  --bgG: rgba(255,209,122,.56);
-
-  --stormA: rgba(255,126,185,.32);
-  --stormB: rgba(94,230,255,.28);
-  --stormC: rgba(255,209,122,.28);
-  --fireSpark: .75;
 }
+
 body.fire3{
-  --fireA: rgba(255,209,122,.74);
-  --fireB: rgba(255,120,70,.56);
-  --ringA: rgba(255,209,122,.90);
-  --ringB: rgba(255,120,70,.74);
-  --pulse1: rgba(255,209,122,.95);
-  --pulse2: rgba(255,120,70,.90);
+  --fireA: rgba(255,255,255,.18);
+  --fireB: rgba(255,209,122,1.00);
+  --ringA: rgba(255,255,255,.40);
+  --ringB: rgba(255,120,70,1.00);
+  --pulse1: rgba(255,255,255,.42);
+  --pulse2: rgba(94,230,255,.70);
+
+  --bgP: rgba(255,126,185,.44);
+  --bgB: rgba(94,230,255,.62);
+  --bgG: rgba(255,209,122,.94);
+
+  --stormA: rgba(255,126,185,.78);
+  --stormB: rgba(94,230,255,.68);
+  --stormC: rgba(255,209,122,.68);
+  --fireSpark: 1.35;
+
   --unlockGlow: rgba(94,230,255,.30);
   --unlockScale: 1.03;
   --unlockWobble: 0.9deg;
+}
 
-  --bgP: rgba(124,58,237,.92);
-  --bgB: rgba(94,230,255,.66);
-  --bgG: rgba(255,209,122,.72);
+body.fire4{
+  --fireA: rgba(255,255,255,.28);
+  --fireB: rgba(255,214,102,1.00);
+  --ringA: rgba(255,255,255,.75);
+  --ringB: rgba(255,90,160,1.00);
+  --pulse1: rgba(255,255,255,.85);
+  --pulse2: rgba(90,255,214,.92);
 
-  --stormA: rgba(255,126,185,.44);
-  --stormB: rgba(94,230,255,.38);
-  --stormC: rgba(255,209,122,.38);
-  --fireSpark: 1;
+  --bgP: rgba(255,90,160,.72);
+  --bgB: rgba(90,255,214,.62);
+  --bgG: rgba(255,214,102,.72);
+
+  --stormA: rgba(255,90,160,.78);
+  --stormB: rgba(90,255,214,.70);
+  --stormC: rgba(255,214,102,.70);
+  --fireSpark: 1.75;
+
+  --unlockGlow: rgba(255,255,255,.22);
+  --unlockScale: 1.04;
+  --unlockWobble: 1.1deg;
+}
+
+/* ensure fire background overlays kick in */
+body.fire1, body.fire2, body.fire3, body.fire4{
+  background:
+    radial-gradient(1100px 760px at 50% 16%, var(--fireA), transparent 60%),
+    radial-gradient(980px 720px  at 50% 46%, var(--fireB), transparent 62%),
+    radial-gradient(980px 760px  at 50% 92%, rgba(255,209,122,.24), transparent 62%),
+    radial-gradient(1200px 760px at 28% 18%, var(--bgP), transparent 58%),
+    radial-gradient(980px 720px  at 76% 26%, var(--bgB), transparent 60%),
+    radial-gradient(980px 760px  at 52% 92%, var(--bgG), transparent 62%),
+    var(--bg);
+}
+
+body.fire4::after{
+  animation-duration: 1.75s;
+  filter: blur(14px) saturate(1.95) contrast(1.12);
+  opacity: .98;
 }
 
 /* ===== Layout like g2 (topbar + centered stage) ===== */
@@ -207,21 +270,16 @@ body.fire3{
   cursor:pointer;
 
   display:flex;
-  align-items:center;   /* ← THIS is the fix */
+  align-items:center;
 
   -webkit-tap-highlight-color: transparent;
 }
-
-
-/* shrink the Japanese label */
 .backBtn span.jp{
   font-family:'Noto Sans JP',sans-serif;
   font-weight:900;
-  font-size:10px;        /* was 12px */
+  font-size:10px;
   opacity:.95;
 }
-
-/* OPTIONAL: shrink the arrow only */
 .backBtn span[aria-hidden="true"]{
   font-size:14px;
   line-height:1;
@@ -282,16 +340,24 @@ body.fire3{
 }
 
 body.fire2 .card,
-body.fire3 .card{
+body.fire3 .card,
+body.fire4 .card{
   box-shadow:
     0 20px 60px rgba(0,0,0,.50),
     0 0 50px var(--unlockGlow),
     0 0 120px rgba(255,209,122, calc(.06 + var(--fireSpark)*.10));
 }
+
 body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
+body.fire4 .card{ animation: cardThrillWild 0.70s ease-in-out infinite; }
+
 @keyframes cardThrill{
   0%,100%{ transform: scale(var(--unlockScale)) rotate(calc(var(--unlockWobble) * -1)); }
   50%{ transform: scale(calc(var(--unlockScale) + .015)) rotate(var(--unlockWobble)); }
+}
+@keyframes cardThrillWild{
+  0%,100%{ transform: scale(var(--unlockScale)) rotate(calc(var(--unlockWobble) * -1)); }
+  50%{ transform: scale(calc(var(--unlockScale) + .02)) rotate(var(--unlockWobble)); }
 }
 
 /* fire ring on card */
@@ -309,14 +375,20 @@ body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
 }
 body.fire1 .fireRing,
 body.fire2 .fireRing,
-body.fire3 .fireRing{opacity:1; animation: firePulse 0.9s ease-in-out infinite}
+body.fire3 .fireRing,
+body.fire4 .fireRing{
+  opacity:1;
+  animation: firePulse 0.85s ease-in-out infinite;
+}
 body.fire3 .fireRing{animation-duration:.65s;}
+body.fire4 .fireRing{animation-duration:.55s;}
+
 @keyframes firePulse{
   0%,100%{filter: drop-shadow(0 0 22px var(--pulse1));}
   50%{filter: drop-shadow(0 0 44px var(--pulse2));}
 }
 
-/* Perfect run gold frame */
+/* Perfect run gold frame (keep yours) */
 .card.perfect{
   border:2px solid rgba(255,209,102,.65);
   box-shadow:
@@ -389,7 +461,6 @@ h1 small{
   letter-spacing:.02em;
   position:relative;
   z-index:1;
-  /* stronger pop */
   text-shadow:
     0 2px 0 rgba(0,0,0,.95),
     0 6px 18px rgba(0,0,0,.75),
@@ -596,54 +667,124 @@ a.back span{
   color:#d7d7d7;
 }
 
-/* Fire popup */
+/* ===========================
+   FIRE BANNER (MATCH g2: level classes + persistent)
+   =========================== */
 .fireBanner{
-  position:fixed;
-  left:50%;
-  top: calc(env(safe-area-inset-top) + 92px);
-  transform: translateX(-50%) translateY(-8px);
-  z-index:1200;
+  position: fixed;
+  left: 50%;
+  top: calc(max(12px, env(safe-area-inset-top)) + 6px);
+  transform: translateX(-50%);
+  z-index: 70;
 
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:16px 22px;
-  border-radius:999px;
+  display:grid;
+  grid-template-columns:16px 1fr;
+  grid-template-rows:auto auto;
+  column-gap:10px;
+  row-gap:2px;
 
-  background: rgba(255,209,122,.30);
-  border:1px solid rgba(255,209,122,.55);
-  box-shadow:
-    0 18px 50px rgba(0,0,0,.55),
-    0 0 90px rgba(255,120,70, calc(.10 + var(--fireSpark)*.12));
-  backdrop-filter: blur(6px);
+  padding:12px 14px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(15,23,42,.58);
+  box-shadow: 0 16px 50px rgba(0,0,0,.55);
 
-  opacity:0;
+  overflow:hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
   pointer-events:none;
-  transition: opacity .18s ease, transform .18s ease;
-  text-align:center;
+  opacity:0;
+  transition: opacity .18s ease;
 }
-.fireBanner.show{
-  opacity:1;
-  transform: translateX(-50%) translateY(0);
+.fireBanner.show{opacity:1}
+
+.fireBanner .bannerFX{
+  position:absolute;
+  inset:-40%;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(55% 45% at 20% 20%, rgba(255,214,102,.18), transparent 60%),
+    radial-gradient(55% 45% at 80% 20%, rgba(255,90,160,.16), transparent 60%),
+    radial-gradient(70% 60% at 50% 90%, rgba(90,255,214,.14), transparent 62%);
+  filter: blur(10px) saturate(1.4);
+  opacity:.85;
+  mix-blend-mode: screen;
+  animation: bannerDrift 2.8s ease-in-out infinite;
 }
+@keyframes bannerDrift{
+  0%{transform: translate(-1%, -1%) rotate(-1deg) scale(1.02)}
+  50%{transform: translate( 1%,  1%) rotate( 1deg) scale(1.06)}
+  100%{transform: translate(-1%, -1%) rotate(-1deg) scale(1.02)}
+}
+
+.fireDot{
+  width:14px;height:14px;border-radius:999px;
+  background: radial-gradient(circle at 30% 30%, #fff6d8, #ffd17a 45%, #ff6b3d 100%);
+  box-shadow: 0 0 26px rgba(255,209,122,.80);
+  grid-column:1;
+  grid-row:1 / span 2;
+  align-self:center;
+  position:relative;
+  z-index:2;
+}
+
 .fireBanner .en{
+  grid-column:2; grid-row:1;
   font-family:'Cinzel',serif;
   font-weight:900;
   letter-spacing:.4px;
-  font-size:22px;
+  font-size: clamp(18px, 3.1vw, 28px);
   line-height:1.05;
+  position:relative;
+  z-index:2;
+  text-shadow: 0 2px 0 rgba(0,0,0,.25);
 }
 .fireBanner .jp{
+  grid-column:2; grid-row:2;
+  margin-top:6px;
   font-family:'Noto Sans JP',sans-serif;
   font-weight:900;
-  font-size:18px;
+  font-size: clamp(14px, 2.7vw, 20px);
   line-height:1.05;
-  opacity:.95;
+  opacity:.98;
+  position:relative;
+  z-index:2;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.90),
+    0 0 10px rgba(0,0,0,.75),
+    0 0 18px rgba(0,0,0,.55);
 }
-.fireDot{
-  width:16px;height:16px;border-radius:999px;
-  background: radial-gradient(circle at 30% 30%, #fff6d8, #ffd17a 45%, #ff6b3d 100%);
-  box-shadow: 0 0 24px rgba(255,209,122,.70);
+
+/* banner level looks */
+.fireBanner.fire1{ background: radial-gradient(120% 140% at 20% 20%, rgba(255,214,102,.92), rgba(255,120,90,.45) 55%, rgba(20,30,60,.12) 100%); border-color: rgba(255,214,102,.58); }
+.fireBanner.fire2{ background: radial-gradient(120% 140% at 20% 20%, rgba(255,90,160,.92), rgba(255,214,102,.50) 55%, rgba(20,30,60,.12) 100%); border-color: rgba(255,90,160,.58); }
+.fireBanner.fire3{ background: radial-gradient(120% 140% at 20% 20%, rgba(90,255,214,.92), rgba(120,130,255,.52) 55%, rgba(20,30,60,.12) 100%); border-color: rgba(90,255,214,.58); }
+.fireBanner.fire4{
+  border-color: rgba(255,255,255,.38);
+  background: radial-gradient(120% 160% at 15% 20%,
+    rgba(255,255,255,.92),
+    rgba(255,214,102,.62) 22%,
+    rgba(255,90,160,.58) 48%,
+    rgba(90,255,214,.58) 70%,
+    rgba(120,130,255,.48) 100%
+  );
+}
+.fireBanner.fire4 .bannerFX{
+  background:
+    conic-gradient(from 0deg,
+      rgba(255,214,102,0),
+      rgba(255,214,102,.30),
+      rgba(255,90,160,.26),
+      rgba(90,255,214,.26),
+      rgba(120,130,255,.22),
+      rgba(255,214,102,.30),
+      rgba(255,214,102,0)
+    );
+  filter: blur(12px) saturate(1.8);
+  opacity:.95;
+  animation: wildSpin 1.2s linear infinite;
 }
 
 @media (max-width: 520px){
@@ -656,9 +797,17 @@ a.back span{
   body::before, body::after{animation:none !important}
   .fireRing,.card{animation:none !important; transition:none !important}
   .heart,.fart,input.wrong{animation:none !important}
+  .fireBanner .bannerFX{animation:none !important}
 }
 </style>
 </head>
+
+<!-- =========================
+REMINDERS
+✅ fireBanner now includes .bannerFX and will receive classes fire1..fire4
+✅ Keep IDs the same (fireBanner, fireEn, fireJp)
+========================= -->
+
 <body>
 
 <div class="wrap">
@@ -716,8 +865,9 @@ a.back span{
     </div>
   </div>
 
-  <!-- Fire popup -->
+  <!-- Fire popup (MATCH g2) -->
   <div class="fireBanner" id="fireBanner" role="status" aria-live="polite">
+    <div class="bannerFX" aria-hidden="true"></div>
     <span class="fireDot" aria-hidden="true"></span>
     <div class="en" id="fireEn">You’re on fire!</div>
     <div class="jp" id="fireJp">ノってきた！</div>
@@ -728,9 +878,17 @@ a.back span{
 function $(q){ return document.querySelector(q); }
 
 /* =========================
-   WebAudio SFX (instant) — SAME FOLDER:
-   ding.mp3, fart.mp3, fire.mp3
-   ========================= */
+REMINDERS
+✅ Same-folder SFX:
+   ding.mp3, fart.mp3, fire.mp3, level4.mp3
+✅ Level 4 sound key = "level4"
+✅ Fire banner logic:
+   - Triggers ONLY on level-up (prevents spam)
+   - Stays visible while streak remains in fire zone
+   - Hides when streak drops to 0
+========================= */
+
+/* ---------- WebAudio SFX (same-folder) ---------- */
 const SFX = (() => {
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   let ctx = null;
@@ -747,9 +905,14 @@ const SFX = (() => {
     }
   }
 
+  /* =========================
+     OPTIONAL DEBUG VISIBILITY
+     - Helps catch 404s or decode errors (esp. level4.mp3)
+     ========================= */
   async function loadOne(name, url){
     ensure();
     const res = await fetch(url, { cache: "force-cache" });
+    if(!res.ok) throw new Error(`SFX fetch failed: ${name} -> ${url} (${res.status})`);
     const arr = await res.arrayBuffer();
     const b = await ctx.decodeAudioData(arr);
     buf.set(name, b);
@@ -757,11 +920,13 @@ const SFX = (() => {
 
   async function preload(){
     ensure();
-    await Promise.all([
-      loadOne("ding", "ding.mp3"),
-      loadOne("fart", "fart.mp3"),
-      loadOne("fire", "fire.mp3"),
-    ]);
+    const jobs = [
+      ["ding","ding.mp3"],
+      ["fart","fart.mp3"],
+      ["fire","fire.mp3"],
+      ["level4","level4.mp3"], // ✅ NEW
+    ].map(([name,url]) => loadOne(name,url).catch(()=>null));
+    await Promise.all(jobs);
   }
 
   function unlock(){
@@ -779,7 +944,10 @@ const SFX = (() => {
 
   function play(name, volume=1){
     if (!ctx) return;
-    const b = buf.get(name);
+    let b = buf.get(name);
+
+    // ✅ fallback so level4 never feels silent
+    if (!b && name === "level4") b = buf.get("fire");
     if (!b) return;
 
     if (ctx.state === "suspended") ctx.resume().catch(()=>{});
@@ -804,8 +972,8 @@ const SFX = (() => {
    NOTE: Never reveal answer; hints only.
    ========================= */
 const DATA = [
-  {en:'mind', jp:'心', hi:'こころ'},
-  {en:'heart', jp:'心', hi:'こころ'},
+  {en:'mind',  jp:'精神', hi:'せいしん'},
+{en:'heart', jp:'心',   hi:'こころ'},
   {en:'focus', jp:'集中', hi:'しゅうちゅう'},
   {en:'relax', jp:'リラックスする', hi:'りらっくす する'},
   {en:'mistake', jp:'間違い', hi:'まちがい'},
@@ -874,10 +1042,9 @@ let order = [];
 let idx = 0;
 let score = 0;
 let streak = 0;
-let bannerTimer = null;
 
-let hintLevel = 0;          // increases with wrong attempts (per word)
-let wrongCountForWord = 0;  // wrong attempts for current word
+let hintLevel = 0;
+let wrongCountForWord = 0;
 let anyWrongEver = false;
 
 /* hooks */
@@ -909,31 +1076,75 @@ function updateHud(){
   hudStreakEl.textContent = String(streak);
 }
 
-/* fire level from streak */
-function setFireLevelFromStreak(){
-  document.body.classList.remove("fire1","fire2","fire3");
-  if(streak >= 10) document.body.classList.add("fire3");
-  else if(streak >= 6) document.body.classList.add("fire2");
-  else if(streak >= 3) document.body.classList.add("fire1");
+/* ---------- Fire level thresholds (MATCH g2) ---------- */
+function getFireLevelFromStreak(n){
+  if(n >= 15) return 4;
+  if(n >= 10) return 3;
+  if(n >= 6)  return 2;
+  if(n >= 3)  return 1;
+  return 0;
 }
 
-/* fire popup */
+/* ---------- Fire level (BODY) ---------- */
+function applyBodyFireFromStreak(){
+  const lv = getFireLevelFromStreak(streak);
+  document.body.classList.remove("fire1","fire2","fire3","fire4");
+  if(lv) document.body.classList.add(`fire${lv}`);
+}
+
+/* ---------- Fire Banner (MATCH messages + Level 4) ---------- */
+const FIRE_MSG = {
+  1: { en:"You are awesome!",                     jp:"すごい！" },
+  2: { en:"You are even more awesome!",           jp:"もっとすごい！" },
+  3: { en:"What? You are the most awesome!",      jp:"えっ！？一番すごい！" },
+  4: { en:"You are the smartest person alive!!!", jp:"あなたは世界一かしこい！！！" }
+};
+
+let lastFireLevel = 0; // prevents spam / only triggers on level-up
+
+function playLevelSound(lv){
+  if(lv === 1 || lv === 2 || lv === 3){
+    SFX.play("fire", 1);
+    return;
+  }
+  if(lv === 4){
+    try{ SFX.play("level4", 1); } catch(e){ SFX.play("fire", 1); }
+  }
+}
+
+function hideFireBanner(){
+  if(!fireBanner) return;
+  fireBanner.classList.remove("show","fire1","fire2","fire3","fire4");
+}
+
 function showFireBanner(level){
-  const msg = {
-    1: { en:"You’re on fire!",           jp:"ノってきた！" },
-    2: { en:"You’re on mega fire!",      jp:"まじでノってる！" },
-    3: { en:"You are a Sūpā Saiya-jin!", jp:"スーパーサイヤ人だ！" }
-  }[level];
-  if(!msg) return;
+  const msg = FIRE_MSG[level];
+  if(!msg || !fireBanner) return;
 
   fireEn.textContent = msg.en;
   fireJp.textContent = msg.jp;
 
-  fireBanner.classList.add("show");
-  clearTimeout(bannerTimer);
-  bannerTimer = setTimeout(()=>fireBanner.classList.remove("show"), 3500);
+  fireBanner.classList.remove("fire1","fire2","fire3","fire4");
+  fireBanner.classList.add(`fire${level}`);
 
-  SFX.play("fire", 1);
+  fireBanner.classList.add("show"); // persistent while streak keeps fire level
+  playLevelSound(level);
+}
+
+function maybeTriggerFire(){
+  const lv = getFireLevelFromStreak(streak);
+
+  if(lv === 0){
+    lastFireLevel = 0;
+    hideFireBanner();
+    return;
+  }
+
+  // only trigger on level-up
+  if(lv > lastFireLevel){
+    showFireBanner(lv);
+    lastFireLevel = lv;
+  }
 }
 
 /* hint builder — NEVER reveals full answer */
@@ -941,23 +1152,14 @@ function buildHint(target, level, typed){
   const t = target.toLowerCase();
   const len = t.length;
 
-  // Level 0: length only
-  if(level <= 0){
-    return `Hint: (${len} letters)`;
-  }
+  if(level <= 0) return `Hint: (${len} letters)`;
+  if(level === 1) return `Hint: ${t[0]}...  (${len})`;
 
-  // Level 1: first letter + length
-  if(level === 1){
-    return `Hint: ${t[0]}...  (${len})`;
-  }
-
-  // Level 2: show pattern with vowels only (consonants masked)
   if(level === 2){
     const v = t.replace(/[bcdfghjklmnpqrstvwxyz]/g, "_");
     return `Hint: ${v}  (${len})`;
   }
 
-  // Level 3+: show correct letters in correct positions based on what they typed
   const a = (typed || "").toLowerCase();
   let out = "";
   for(let i=0;i<t.length;i++){
@@ -985,9 +1187,9 @@ function resetGame(){
   hintLevel = 0;
   wrongCountForWord = 0;
 
-  document.body.classList.remove("fire1","fire2","fire3");
-  fireBanner.classList.remove("show");
-  clearTimeout(bannerTimer);
+  lastFireLevel = 0;
+  document.body.classList.remove("fire1","fire2","fire3","fire4");
+  hideFireBanner();
 
   $('#game').style.display='block';
   $('#result').style.display='none';
@@ -995,7 +1197,8 @@ function resetGame(){
   $('#perfectTag').style.display='none';
 
   updateHud();
-  setFireLevelFromStreak();
+  applyBodyFireFromStreak();
+  maybeTriggerFire();
 }
 
 function resetWordState(){
@@ -1017,7 +1220,8 @@ function load(){
   resetWordState();
 
   updateHud();
-  setFireLevelFromStreak();
+  applyBodyFireFromStreak();
+  maybeTriggerFire();
 
   setTimeout(()=>{ try{ ansEl.focus(); }catch(e){} }, 40);
 }
@@ -1034,14 +1238,10 @@ function onCorrect(){
 
   SFX.play("ding", 1);
 
-  if(streak === 3)  showFireBanner(1);
-  if(streak === 6)  showFireBanner(2);
-  if(streak === 10) showFireBanner(3);
-
-  setFireLevelFromStreak();
   updateHud();
+  applyBodyFireFromStreak();
+  maybeTriggerFire();
 
-  // quick advance
   submitBtn.disabled = true;
   setTimeout(()=>{ submitBtn.disabled = false; next(); }, 650);
 }
@@ -1059,17 +1259,17 @@ function onWrong(){
   ansEl.classList.add("wrong");
 
   SFX.play("fart", 1);
-  setFireLevelFromStreak();
-  updateHud();
 
-  // increase hint level gradually (still never full answer)
+  updateHud();
+  applyBodyFireFromStreak();
+  maybeTriggerFire(); // hides banner
+
   if(wrongCountForWord === 1) hintLevel = Math.max(hintLevel, 1);
   else if(wrongCountForWord === 2) hintLevel = Math.max(hintLevel, 2);
   else hintLevel = Math.max(hintLevel, 3);
 
   renderHint();
 
-  // keep them here
   setTimeout(()=>{
     ansEl.classList.remove("wrong");
     try{
@@ -1085,14 +1285,10 @@ function check(){
   const typed = norm(ansEl.value);
   const target = norm(d.en);
 
-  // update hint in level 3+ using current typing
   if(hintLevel >= 3) renderHint();
 
-  if(typed === target){
-    onCorrect();
-  }else{
-    onWrong();
-  }
+  if(typed === target) onCorrect();
+  else onWrong();
 }
 
 /* next */
@@ -1135,10 +1331,7 @@ $('#backBtn').addEventListener('click', goMenu);
 /* events */
 submitBtn.addEventListener('click', check);
 ansEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') check(); });
-ansEl.addEventListener('input', ()=>{
-  // for hintLevel 3+, update live feedback without revealing answer
-  if(hintLevel >= 3) renderHint();
-});
+ansEl.addEventListener('input', ()=>{ if(hintLevel >= 3) renderHint(); });
 
 /* boot: preload audio, unlock on first gesture */
 (async function boot(){
@@ -1149,5 +1342,7 @@ ansEl.addEventListener('input', ()=>{
 window.addEventListener("pointerdown", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 window.addEventListener("touchstart", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 </script>
+
 </body>
 </html>
+
