@@ -872,11 +872,20 @@ body.fire4 .fireRing{animation-duration:.55s;}
     <div class="footer">Bryan’s English School</div>
   </div>
 
-  <div class="fireBanner" id="fireBanner" role="status" aria-live="polite">
-    <span class="fireDot" aria-hidden="true"></span>
-    <div class="en" id="fireEn">You’re on fire!</div>
-    <div class="jp" id="fireJp">ノってきた！</div>
-  </div>
+ <!-- =========================
+     REMINDER: FIRE BANNER — make it a persistent LEVEL HUD
+     - Keep it as one container
+     - Add a background “layer” for level 4 concert vibes (beams/shimmer)
+     - Keep text readable (text stays on top)
+     ========================= -->
+<div class="fireBanner" id="fireBanner" role="status" aria-live="polite">
+  <div class="bannerFX" aria-hidden="true"></div> <!-- ✅ ADD (visual layer; CSS animates it) -->
+
+  <span class="fireDot" aria-hidden="true"></span>
+  <div class="en" id="fireEn">You’re on fire!</div>
+  <div class="jp" id="fireJp">ノってきた！</div>
+</div>
+
 
   <div class="fx" id="fx">
     <svg class="heartSvg" id="heart" viewBox="0 0 64 64" aria-hidden="true">
@@ -1451,6 +1460,11 @@ function playLevelSound(lv){
   }
 }
 
+/* =========================
+   REMINDER: FIRE BANNER PERSISTENCE
+   - Remove the timeout so banner stays ON during the level
+   - Banner will hide only when level becomes 0 elsewhere
+   ========================= */
 function showFireBanner(level){
   const msg = FIRE_MSG[level];
   if(!msg) return;
@@ -1462,11 +1476,18 @@ function showFireBanner(level){
   fireBanner.classList.remove("fire1","fire2","fire3","fire4");
   fireBanner.classList.add(`fire${level}`);
 
-  fireBanner.classList.add("show");
+  /* =========================
+   REMINDER: FIRE BANNER OFF WHEN STREAK = 0
+   ========================= */
+// when level becomes 0:
+fireBanner.classList.remove("show","fire1","fire2","fire3","fire4");
+
+
+  // ✅ NO timeout anymore (persistent)
   clearTimeout(bannerTimer);
-  bannerTimer = setTimeout(()=>{
-    fireBanner.classList.remove("show");
-  }, 1600); // readable but snappy
+  bannerTimer = null;
+}
+
 
   playLevelSound(level);
 }
