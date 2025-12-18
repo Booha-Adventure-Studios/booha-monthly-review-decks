@@ -254,18 +254,18 @@ body.fire4::after{
 /* =========================
    STANDARD g BACK BUTTON (FIXED)
    ========================= */
-/* ===== g BACK BUTTON (Safari baseline FIX) ===== */
+/* ===== g BACK BUTTON (FINAL SIMPLE VERSION) ===== */
 .backBtn{
   appearance:none;
   border:0;
   background:rgba(255,255,255,.10);
   color:#fff;
 
-  padding:7px 10px;
+  padding:7px 12px;
   font-size:14px;
 
   border-radius:999px;
-  font-family:'Cinzel',serif;
+  font-family:'Cinzel', serif;   /* ✅ ONE FONT */
   font-weight:900;
   letter-spacing:.4px;
 
@@ -273,40 +273,16 @@ body.fire4::after{
   border:1px solid rgba(255,255,255,.18);
 
   cursor:pointer;
-
   display:inline-flex;
-  align-items:center;        /* ✅ stop baseline weirdness */
+  align-items:center;
   justify-content:center;
-  gap:8px;
 
-  white-space:nowrap;        /* ✅ never wrap */
-  line-height:1;             /* ✅ remove hidden height */
+  line-height:1;                 /* ✅ no hidden height */
+  white-space:nowrap;            /* ✅ never wrap */
   -webkit-tap-highlight-color:transparent;
 }
 
-/* force all children to behave */
-.backBtn > *{
-  line-height:1;
-  display:inline-block;
-}
 
-/* Japanese label */
-.backBtn .jp{
-  font-family:'Noto Sans JP',sans-serif;
-  font-weight:900;
-  font-size:10px;
-  opacity:.95;
-
-  position:relative;         /* ✅ optical alignment */
-  top:0.5px;
-}
-
-/* Arrow */
-.backBtn .arrow{
-  font-size:14px;
-  position:relative;
-  top:0.5px;                 /* match jp nudge */
-}
 
 .hud{
   display:flex;
@@ -835,11 +811,9 @@ REMINDERS
 
 <div class="wrap">
   <div class="topbar">
-    <button class="backBtn" id="backBtn">
-  <span class="arrow" aria-hidden="true">←</span>
-  MENU <span class="jp">メニュー</span>
+   <button class="backBtn">
+  <span class="label">MENU・メニュー</span>
 </button>
-
 
 
     <div class="hud" aria-label="Progress">
