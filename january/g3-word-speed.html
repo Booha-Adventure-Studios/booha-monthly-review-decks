@@ -1048,25 +1048,7 @@ const SFX = (() => {
     try { src.start(0); } catch(e) {}
   }
 
-const startOverlay = document.getElementById("startOverlay");
-const startBtn     = document.getElementById("startBtn");
 
-function beginFromOverlay(){
-  // ✅ hide overlay
-  startOverlay.classList.add("hide");
-  setTimeout(()=> startOverlay.style.display="none", 220);
-
-  // ✅ start the meter / game loop
-  // Replace ONE of these with your real start function:
-  // startGame();
-  // startMeter();
-  // startTimer();
-  // runMeter();
-}
-
-startBtn.addEventListener("click", ()=>{
-  beginFromOverlay();
-});
 
 // optional: allow Enter/Space to start
 startBtn.addEventListener("keydown",(e)=>{
@@ -1120,42 +1102,36 @@ window.addEventListener("DOMContentLoaded", () => {
   SFX.preload();
 
   function beginFromOverlay(){
-    if (gameStarted) return;
-    gameStarted = true;
+  if(gameStarted) return;
+  gameStarted = true;
 
-    // ✅ unlock audio on the user gesture
-    SFX.unlock();
+  // unlock audio on user gesture (Safari)
+  try{ SFX.unlock(); }catch(e){}
 
-    // ✅ hide overlay
+  // hide overlay immediately (NO start-button delay)
+  if(startOverlay){
     startOverlay.classList.add("hide");
     setTimeout(()=>{ startOverlay.style.display = "none"; }, 220);
-
-    // ✅ tiny "get ready" delay before meter starts
-    setTimeout(() => {
-      // CALL YOUR REAL START FUNCTION HERE:
-      // startGame();
-      // startMeter();
-      // startTimer();
-      // runMeter();
-
-      // Example placeholder:
-      if (typeof startGame === "function") startGame();
-      else if (typeof startMeter === "function") startMeter();
-      else if (typeof startTimer === "function") startTimer();
-      else if (typeof runMeter === "function") runMeter();
-    }, 600); // ← adjust: 400–900 feels good
   }
 
-  // Click start button
-  startBtn.addEventListener("click", beginFromOverlay);
+  // prep game state now
+  resetGame();
 
-  // Allow Enter/Space
-  startBtn.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      beginFromOverlay();
-    }
-  });
+  // meter/game starts after 0.5 sec
+  setTimeout(()=>{
+    render();              // <-- this starts the meter via startHeat()
+    stabilizePromptLoop();
+  }, 500);
+}
+
+startBtn && startBtn.addEventListener("click", beginFromOverlay);
+startBtn && startBtn.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter" || e.key === " "){
+    e.preventDefault();
+    beginFromOverlay();
+  }
+});
+
 
   // Optional: clicking the dark overlay also starts (if you want)
   // startOverlay.addEventListener("click", (e)=>{
@@ -1682,11 +1658,11 @@ startBtn && startBtn.addEventListener("keydown", (e)=>{
 
 /* ---------- Boot ---------- */
 (async function boot(){
-  // preload quietly (does NOT start the game)
   try{ await SFX.preload(); }catch(e){}
   resetGame();
   stabilizePromptLoop();
 })();
+
 
 
 
