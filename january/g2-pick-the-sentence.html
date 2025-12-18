@@ -951,9 +951,6 @@ function play(name, volume=1){
 })();
 
 const DATA = [
-  // ...
-];
-
   { jp:"私は毎日勉強します。", hira:"わたし は まいにち べんきょう します。", choices:[
     "I will study every day.",
     "I study will every day.",
@@ -1305,6 +1302,7 @@ const DATA = [
   ], correct:0 }
 ];
 
+
 /* ---------- Hooks ---------- */
 const grid       = document.querySelector("#grid");
 const jpText     = document.querySelector("#jpText");
@@ -1654,5 +1652,6 @@ nextBtn && nextBtn.addEventListener("click", ()=>{
 window.addEventListener("pointerdown", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 window.addEventListener("touchstart", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 
+</script>
 </body>
 </html>
