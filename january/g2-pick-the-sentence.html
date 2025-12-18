@@ -28,6 +28,7 @@
   --enSize: clamp(20px, 2.6vw, 34px);
   --hudSize: 14px;
 
+  /* default calm */
   --fireA: rgba(255,209,122,.12);
   --fireB: rgba(255,120,70,.08);
   --ringA: rgba(255,209,122,.22);
@@ -115,76 +116,114 @@ body::after{
   100% {transform: translate(-1.5%, -1%) rotate(-2deg) scale(1.02)}
 }
 
+/* =========================
+   🔥 FIRE LEVELS (BRIGHTER)
+   - 1..3 upgraded brightness
+   - NEW fire4 (wild but readable)
+   ========================= */
 body.fire1{
-  --fireA: rgba(255,209,122,.30);
-  --fireB: rgba(255,120,70,.18);
-  --ringA: rgba(255,209,122,.44);
-  --ringB: rgba(255,120,70,.30);
-  --pulse1: rgba(255,209,122,.46);
-  --pulse2: rgba(255,120,70,.34);
-  --unlockGlow: rgba(255,209,122,.22);
-  --unlockScale: 1.00;
+  --fireA: rgba(255,209,122,.42);
+  --fireB: rgba(255,120,70,.26);
+  --ringA: rgba(255,209,122,.62);
+  --ringB: rgba(255,120,70,.44);
+  --pulse1: rgba(255,209,122,.70);
+  --pulse2: rgba(255,120,70,.58);
+  --unlockGlow: rgba(255,209,122,.32);
+  --unlockScale: 1.005;
   --unlockWobble: 0deg;
 
-  --bgP: rgba(124,58,237,.62);
-  --bgB: rgba(94,230,255,.42);
-  --bgG: rgba(255,209,122,.44);
+  --bgP: rgba(124,58,237,.72);
+  --bgB: rgba(94,230,255,.50);
+  --bgG: rgba(255,209,122,.52);
 
-  --stormA: rgba(255,126,185,.20);
-  --stormB: rgba(94,230,255,.18);
-  --stormC: rgba(255,209,122,.18);
-  --fireSpark: .45;
+  --stormA: rgba(255,126,185,.30);
+  --stormB: rgba(94,230,255,.26);
+  --stormC: rgba(255,209,122,.26);
+  --fireSpark: .60;
 }
 body.fire2{
-  --fireA: rgba(255,209,122,.54);
-  --fireB: rgba(255,120,70,.34);
-  --ringA: rgba(255,209,122,.68);
-  --ringB: rgba(255,120,70,.52);
-  --pulse1: rgba(255,209,122,.70);
-  --pulse2: rgba(255,120,70,.64);
-  --unlockGlow: rgba(255,120,70,.28);
-  --unlockScale: 1.01;
-  --unlockWobble: 0.4deg;
+  --fireA: rgba(255,209,122,.70);
+  --fireB: rgba(255,120,70,.48);
+  --ringA: rgba(255,209,122,.88);
+  --ringB: rgba(255,120,70,.72);
+  --pulse1: rgba(255,209,122,1.00);
+  --pulse2: rgba(255,120,70,.92);
+  --unlockGlow: rgba(255,120,70,.38);
+  --unlockScale: 1.02;
+  --unlockWobble: 0.55deg;
 
-  --bgP: rgba(124,58,237,.78);
-  --bgB: rgba(94,230,255,.52);
-  --bgG: rgba(255,209,122,.56);
-
-  --stormA: rgba(255,126,185,.32);
-  --stormB: rgba(94,230,255,.28);
-  --stormC: rgba(255,209,122,.28);
-  --fireSpark: .75;
-}
-body.fire3{
-  --fireA: rgba(255,209,122,.74);
-  --fireB: rgba(255,120,70,.56);
-  --ringA: rgba(255,209,122,.90);
-  --ringB: rgba(255,120,70,.74);
-  --pulse1: rgba(255,209,122,.95);
-  --pulse2: rgba(255,120,70,.90);
-  --unlockGlow: rgba(94,230,255,.30);
-  --unlockScale: 1.03;
-  --unlockWobble: 0.9deg;
-
-  --bgP: rgba(124,58,237,.92);
+  --bgP: rgba(124,58,237,.98);
   --bgB: rgba(94,230,255,.66);
   --bgG: rgba(255,209,122,.72);
 
-  --stormA: rgba(255,126,185,.44);
-  --stormB: rgba(94,230,255,.38);
-  --stormC: rgba(255,209,122,.38);
-  --fireSpark: 1;
+  --stormA: rgba(255,126,185,.46);
+  --stormB: rgba(94,230,255,.40);
+  --stormC: rgba(255,209,122,.40);
+  --fireSpark: .95;
 }
-body.fire1, body.fire2, body.fire3{
+body.fire3{
+  --fireA: rgba(255,209,122,.98);
+  --fireB: rgba(255,120,70,.84);
+  --ringA: rgba(255,209,122,1.00);
+  --ringB: rgba(255,120,70,1.00);
+  --pulse1: rgba(255,209,122,1.00);
+  --pulse2: rgba(255,120,70,1.00);
+  --unlockGlow: rgba(94,230,255,.46);
+  --unlockScale: 1.05;
+  --unlockWobble: 1.1deg;
+
+  --bgP: rgba(124,58,237,1.00);
+  --bgB: rgba(94,230,255,.78);
+  --bgG: rgba(255,209,122,.90);
+
+  --stormA: rgba(255,126,185,.62);
+  --stormB: rgba(94,230,255,.52);
+  --stormC: rgba(255,209,122,.52);
+  --fireSpark: 1.25;
+}
+
+/* NEW: FIRE 4 — wild (extra layers + faster storm), still readable */
+body.fire4{
+  --fireA: rgba(255,255,255,.22);
+  --fireB: rgba(255,209,122,1.00);
+  --ringA: rgba(255,255,255,.65);
+  --ringB: rgba(255,120,70,1.00);
+  --pulse1: rgba(255,255,255,.75);
+  --pulse2: rgba(94,230,255,.80);
+  --unlockGlow: rgba(255,255,255,.38);
+  --unlockScale: 1.07;
+  --unlockWobble: 1.6deg;
+
+  --bgP: rgba(255,90,160,.60);
+  --bgB: rgba(90,255,214,.48);
+  --bgG: rgba(255,214,102,.58);
+
+  --stormA: rgba(255,90,160,.62);
+  --stormB: rgba(90,255,214,.54);
+  --stormC: rgba(255,214,102,.54);
+  --fireSpark: 1.55;
+}
+
+/* apply enhanced background layering when in any fire state */
+body.fire1, body.fire2, body.fire3, body.fire4{
   background:
     radial-gradient(1100px 760px at 50% 16%, var(--fireA), transparent 60%),
     radial-gradient(980px 720px  at 50% 46%, var(--fireB), transparent 62%),
-    radial-gradient(980px 760px  at 50% 92%, rgba(255,209,122,.20), transparent 62%),
+    radial-gradient(980px 760px  at 50% 92%, rgba(255,209,122,.24), transparent 62%),
     radial-gradient(1200px 760px at 28% 18%, var(--bgP), transparent 58%),
     radial-gradient(980px 720px  at 76% 26%, var(--bgB), transparent 60%),
     radial-gradient(980px 760px  at 52% 92%, var(--bgG), transparent 62%),
     var(--bg);
 }
+
+/* make the storm more energetic in fire4 */
+body.fire4::after{
+  animation-duration: 2.2s;
+  filter: blur(14px) saturate(1.75) contrast(1.08);
+  opacity: .95;
+}
+
+/* ========================= */
 
 .wrap{
   position:relative;
@@ -208,7 +247,12 @@ body.fire1, body.fire2, body.fire3{
   border:0;
   background:rgba(255,255,255,.10);
   color:#fff;
-  padding:10px 14px;
+
+  /* smaller + tighter (standardized) */
+  padding:7px 10px;
+  font-size:14px;
+  gap:8px;
+
   border-radius:999px;
   font-family:'Cinzel',serif;
   font-weight:900;
@@ -218,14 +262,15 @@ body.fire1, body.fire2, body.fire3{
   cursor:pointer;
   display:flex;
   align-items:baseline;
-  gap:10px;
+  -webkit-tap-highlight-color: transparent;
 }
 .back span.jp{
   font-family:'Noto Sans JP',sans-serif;
   font-weight:900;
-  font-size:12px;
+  font-size:10px;
   opacity:.95;
 }
+.back span[aria-hidden="true"]{font-size:14px;}
 
 .hud{
   display:flex;
@@ -267,16 +312,24 @@ body.fire1, body.fire2, body.fire3{
   transition: transform .25s ease, box-shadow .25s ease;
 }
 body.fire2 .card,
-body.fire3 .card{
+body.fire3 .card,
+body.fire4 .card{
   box-shadow:
     var(--shadow),
-    0 0 50px var(--unlockGlow),
-    0 0 120px rgba(255,209,122, calc(.06 + var(--fireSpark)*.10));
+    0 0 60px var(--unlockGlow),
+    0 0 140px rgba(255,209,122, calc(.08 + var(--fireSpark)*.10));
 }
 body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
+
+/* fire4: wilder (but not unreadable) */
+body.fire4 .card{ animation: cardThrillWild 0.70s ease-in-out infinite; }
 @keyframes cardThrill{
   0%,100%{ transform: scale(var(--unlockScale)) rotate(calc(var(--unlockWobble) * -1)); }
   50%{ transform: scale(calc(var(--unlockScale) + .015)) rotate(var(--unlockWobble)); }
+}
+@keyframes cardThrillWild{
+  0%,100%{ transform: scale(var(--unlockScale)) rotate(calc(var(--unlockWobble) * -1)); }
+  50%{ transform: scale(calc(var(--unlockScale) + .02)) rotate(var(--unlockWobble)); }
 }
 
 .card::before{
@@ -290,6 +343,28 @@ body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
     radial-gradient(900px 380px at 50% 120%, rgba(255,120,70, calc(.06 + var(--fireSpark)*.10)), transparent 62%);
   pointer-events:none;
 }
+
+/* extra shimmer overlay for fire4 */
+body.fire4 .card::after{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background: conic-gradient(from 0deg at 50% 50%,
+    rgba(255,214,102,0),
+    rgba(255,214,102,.22),
+    rgba(255,90,160,.18),
+    rgba(90,255,214,.18),
+    rgba(120,130,255,.16),
+    rgba(255,214,102,.22),
+    rgba(255,214,102,0)
+  );
+  filter: blur(12px);
+  opacity:.55;
+  mix-blend-mode: screen;
+  animation: wildSpin 1.8s linear infinite;
+  pointer-events:none;
+}
+@keyframes wildSpin{to{transform: rotate(360deg);} }
 
 .prompt{
   position:relative;
@@ -305,8 +380,6 @@ body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
   font-weight:900;
   font-size:var(--jpSize);
   line-height:1.12;
-
-  /* ✅ stronger black glow so JP pops */
   text-shadow:
     0 2px 0 rgba(0,0,0,.90),
     0 0 10px rgba(0,0,0,.80),
@@ -413,66 +486,167 @@ body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
 }
 body.fire1 .fireRing,
 body.fire2 .fireRing,
-body.fire3 .fireRing{opacity:1; animation: firePulse 0.9s ease-in-out infinite}
+body.fire3 .fireRing,
+body.fire4 .fireRing{
+  opacity:1;
+  animation: firePulse 0.85s ease-in-out infinite;
+}
 body.fire3 .fireRing{animation-duration:.65s;}
+body.fire4 .fireRing{animation-duration:.55s;}
 @keyframes firePulse{
-  0%,100%{filter: drop-shadow(0 0 22px var(--pulse1));}
-  50%{filter: drop-shadow(0 0 44px var(--pulse2));}
+  0%,100%{filter: drop-shadow(0 0 28px var(--pulse1));}
+  50%{filter: drop-shadow(0 0 58px var(--pulse2));}
 }
 
+/* =========================
+   🔥 FIRE BANNER (UPGRADED)
+   - brighter per level
+   - readable motion
+   - NEW .fire4 styling
+   ========================= */
 .fireBanner{
   position:fixed;
   left:50%;
-  top: calc(env(safe-area-inset-top) + 92px);
-  transform: translateX(-50%) translateY(-8px);
+  top: max(calc(env(safe-area-inset-top) + 10px), 10px);
+  transform: translateX(-50%) translateY(-10px);
   z-index:90;
 
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:16px 22px;
-  border-radius:999px;
+  width: min(92vw, 720px);
+  padding: 14px 16px;
+  border-radius: 18px;
 
-  background: rgba(255,209,122,.30);
-  border:1px solid rgba(255,209,122,.55);
+  background: rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.18);
   box-shadow:
-    0 18px 50px rgba(0,0,0,.55),
-    0 0 90px rgba(255,120,70, calc(.10 + var(--fireSpark)*.12));
-  backdrop-filter: blur(6px);
+    0 18px 56px rgba(0,0,0,.55),
+    0 0 70px rgba(255,120,70, .12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 
   opacity:0;
   pointer-events:none;
   transition: opacity .18s ease, transform .18s ease;
   text-align:center;
+  overflow:hidden;
 }
 .fireBanner.show{
   opacity:1;
   transform: translateX(-50%) translateY(0);
+  animation: fireIn .22s ease-out;
 }
+@keyframes fireIn{
+  from{transform: translateX(-50%) translateY(-10px) scale(.985); opacity:0;}
+  to{transform: translateX(-50%) translateY(0) scale(1); opacity:1;}
+}
+
+/* readable motion (kids can read) */
+.fireBanner.show .en,
+.fireBanner.show .jp{
+  animation: floatRead 1.8s ease-in-out infinite;
+}
+@keyframes floatRead{
+  0%{transform: translateY(0)}
+  50%{transform: translateY(-3px)}
+  100%{transform: translateY(0)}
+}
+
 .fireBanner .en{
   font-family:'Cinzel',serif;
   font-weight:900;
   letter-spacing:.4px;
-  font-size:22px;
+  font-size: clamp(18px, 3.1vw, 28px);
   line-height:1.05;
+  position:relative;
+  z-index:2;
+  text-shadow: 0 2px 0 rgba(0,0,0,.25);
 }
 .fireBanner .jp{
+  margin-top:6px;
   font-family:'Noto Sans JP',sans-serif;
   font-weight:900;
-  font-size:18px;
+  font-size: clamp(14px, 2.7vw, 20px);
   line-height:1.05;
-  opacity:.95;
-  /* ✅ black glow on banner JP too */
+  opacity:.98;
+  position:relative;
+  z-index:2;
   text-shadow:
     0 2px 0 rgba(0,0,0,.90),
     0 0 10px rgba(0,0,0,.75),
     0 0 18px rgba(0,0,0,.55);
 }
+
+/* decorative dot stays but toned */
 .fireDot{
-  width:16px;height:16px;border-radius:999px;
+  width:14px;height:14px;border-radius:999px;
   background: radial-gradient(circle at 30% 30%, #fff6d8, #ffd17a 45%, #ff6b3d 100%);
-  box-shadow: 0 0 24px rgba(255,209,122,.70);
+  box-shadow: 0 0 26px rgba(255,209,122,.80);
 }
+
+/* Banner level looks (you will toggle .fire1/.fire2/.fire3/.fire4 on fireBanner) */
+.fireBanner.fire1{
+  background: radial-gradient(120% 140% at 20% 20%, rgba(255,214,102,.92), rgba(255,120,90,.45) 55%, rgba(20,30,60,.12) 100%);
+  border-color: rgba(255,214,102,.58);
+  box-shadow: 0 18px 64px rgba(0,0,0,.55), 0 0 40px rgba(255,214,102,.26);
+}
+.fireBanner.fire1 .en{ filter: drop-shadow(0 0 10px rgba(255,214,102,.55)); }
+.fireBanner.fire1 .jp{ filter: drop-shadow(0 0 10px rgba(255,214,102,.45)); }
+
+.fireBanner.fire2{
+  background: radial-gradient(120% 140% at 20% 20%, rgba(255,90,160,.92), rgba(255,214,102,.50) 55%, rgba(20,30,60,.12) 100%);
+  border-color: rgba(255,90,160,.58);
+  box-shadow: 0 18px 70px rgba(0,0,0,.55), 0 0 48px rgba(255,90,160,.26);
+}
+.fireBanner.fire2 .en{ filter: drop-shadow(0 0 12px rgba(255,90,160,.55)); }
+.fireBanner.fire2 .jp{ filter: drop-shadow(0 0 12px rgba(255,214,102,.45)); }
+
+.fireBanner.fire3{
+  background: radial-gradient(120% 140% at 20% 20%, rgba(90,255,214,.92), rgba(120,130,255,.52) 55%, rgba(20,30,60,.12) 100%);
+  border-color: rgba(90,255,214,.58);
+  box-shadow: 0 18px 78px rgba(0,0,0,.55), 0 0 56px rgba(90,255,214,.26);
+}
+.fireBanner.fire3 .en{ filter: drop-shadow(0 0 14px rgba(90,255,214,.55)); }
+.fireBanner.fire3 .jp{ filter: drop-shadow(0 0 14px rgba(120,130,255,.45)); }
+
+/* Level 4: wild overlay + glow pulse (still readable) */
+.fireBanner.fire4{
+  border-color: rgba(255,255,255,.30);
+  background:
+    radial-gradient(100% 140% at 15% 20%, rgba(255,255,255,.92), rgba(255,214,102,.55) 28%, rgba(255,90,160,.55) 52%, rgba(90,255,214,.55) 74%, rgba(120,130,255,.45) 100%);
+  box-shadow:
+    0 22px 110px rgba(255,255,255,.16),
+    0 0 56px rgba(255,214,102,.22),
+    0 0 56px rgba(255,90,160,.20),
+    0 0 56px rgba(90,255,214,.20);
+}
+.fireBanner.fire4::before{
+  content:"";
+  position:absolute; inset:-40%;
+  background:
+    conic-gradient(from 0deg,
+      rgba(255,214,102,.0),
+      rgba(255,214,102,.32),
+      rgba(255,90,160,.28),
+      rgba(90,255,214,.28),
+      rgba(120,130,255,.24),
+      rgba(255,214,102,.32),
+      rgba(255,214,102,.0)
+    );
+  filter: blur(12px);
+  opacity: .62;
+  animation: wildSpin 1.6s linear infinite;
+  z-index: 0;
+}
+.fireBanner.fire4 .en,
+.fireBanner.fire4 .jp{
+  animation: floatRead 1.6s ease-in-out infinite, glowPulse 1.1s ease-in-out infinite;
+}
+@keyframes glowPulse{
+  0%{ text-shadow: 0 2px 0 rgba(0,0,0,.25), 0 0 10px rgba(255,255,255,.34); }
+  50%{ text-shadow: 0 2px 0 rgba(0,0,0,.25), 0 0 18px rgba(255,255,255,.62); }
+  100%{ text-shadow: 0 2px 0 rgba(0,0,0,.25), 0 0 10px rgba(255,255,255,.34); }
+}
+
+/* ========================= */
 
 .fx{position:fixed; inset:0; pointer-events:none; z-index:60;}
 
@@ -622,9 +796,12 @@ body.fire3 .fireRing{animation-duration:.65s;}
   body::before, body::after{animation:none !important}
   .choice,.heartSvg,.fart,.fireRing,.card{animation:none !important; transition:none !important}
   .choice:hover{transform:none}
+  .fireBanner.show .en,
+  .fireBanner.show .jp{animation:none !important}
 }
 </style>
 </head>
+
 
 <body>
   <div class="wrap">
@@ -1163,6 +1340,7 @@ let streak = 0;
 let locked = false;
 let bannerTimer = null;
 let pendingAdvance = false;
+let lastFireLevel = 0;   // ✅ NEW: prevents banner/sound spam
 
 /* ---------- Shuffle ---------- */
 function shuffle(arr){
@@ -1174,12 +1352,20 @@ function shuffle(arr){
   return a;
 }
 
-/* ---------- Fire level ---------- */
+/* ---------- Fire level thresholds ---------- */
+function getFireLevelFromStreak(n){
+  if(n >= 15) return 4;  // ✅ NEW
+  if(n >= 10) return 3;
+  if(n >= 6)  return 2;
+  if(n >= 3)  return 1;
+  return 0;
+}
+
+/* ---------- Fire level (BODY) ---------- */
 function setFireLevelFromStreak(){
-  document.body.classList.remove("fire1","fire2","fire3");
-  if(streak >= 10) document.body.classList.add("fire3");
-  else if(streak >= 6) document.body.classList.add("fire2");
-  else if(streak >= 3) document.body.classList.add("fire1");
+  const lv = getFireLevelFromStreak(streak);
+  document.body.classList.remove("fire1","fire2","fire3","fire4");
+  if(lv) document.body.classList.add(`fire${lv}`);
 }
 
 /* ---------- FX ---------- */
@@ -1194,22 +1380,59 @@ function popFart(){
   fart.classList.add("show");
 }
 
+/* ---------- Fire Banner (EN/JP + brighter levels + NEW level 4) ---------- */
+const FIRE_MSG = {
+  1: { en:"You are awesome!",                 jp:"すごい！" },
+  2: { en:"You are even more awesome!",       jp:"もっとすごい！" },
+  3: { en:"What? You are the most awesome!",  jp:"えっ！？一番すごい！" },
+  4: { en:"You are the smartest person alive!!!", jp:"あなたは世界一かしこい！！！" }
+};
+
+function playLevelSound(lv){
+  // ✅ Keep your existing sound system. We only add level4.mp3.
+  // If you already have SFX registered as "level1/2/3", add "level4" there too.
+  if(lv === 1 || lv === 2 || lv === 3){
+    SFX.play("fire", 1); // keep same sound behavior you already had
+    return;
+  }
+  if(lv === 4){
+    // NEW: level4.mp3 should be preloaded like the others
+    // Make sure SFX has it:
+    // SFX.add("level4","assets/audio/level4.mp3") (or your existing method)
+    try{ SFX.play("level4", 1); }catch(e){ SFX.play("fire", 1); }
+  }
+}
+
 function showFireBanner(level){
-  const msg = {
-    1: { en:"You’re on fire!",           jp:"ノってきた！" },
-    2: { en:"You’re on mega fire!",      jp:"まじでノってる！" },
-    3: { en:"You are a Sūpā Saiya-jin!", jp:"スーパーサイヤ人だ！" }
-  }[level];
+  const msg = FIRE_MSG[level];
   if(!msg) return;
 
   fireEn.textContent = msg.en;
   fireJp.textContent = msg.jp;
 
+  // ✅ banner gets class fire1..fire4 (for color/excitement)
+  fireBanner.classList.remove("fire1","fire2","fire3","fire4");
+  fireBanner.classList.add(`fire${level}`);
+
   fireBanner.classList.add("show");
   clearTimeout(bannerTimer);
-  bannerTimer = setTimeout(()=>fireBanner.classList.remove("show"), 3500);
+  bannerTimer = setTimeout(()=>{
+    fireBanner.classList.remove("show");
+  }, 1600); // readable but snappy
 
-  SFX.play("fire", 1);
+  playLevelSound(level);
+}
+
+/* Call this after streak changes */
+function maybeTriggerFire(streakNow){
+  const lv = getFireLevelFromStreak(streakNow);
+
+  // only trigger when leveling up
+  if(lv > lastFireLevel){
+    showFireBanner(lv);
+    lastFireLevel = lv;
+  }
+  if(lv === 0) lastFireLevel = 0;
 }
 
 /* ---------- Game ---------- */
@@ -1220,9 +1443,10 @@ function resetGame(){
   streak = 0;
   locked = false;
   pendingAdvance = false;
+  lastFireLevel = 0;
 
-  document.body.classList.remove("fire1","fire2","fire3");
-  fireBanner.classList.remove("show");
+  document.body.classList.remove("fire1","fire2","fire3","fire4");
+  fireBanner.classList.remove("show","fire1","fire2","fire3","fire4");
   clearTimeout(bannerTimer);
 
   qTotal.textContent = String(DATA.length);
@@ -1291,9 +1515,8 @@ function pick(tile, originalIndex){
     streak++;
     popHeart();
 
-    if(streak === 3)  showFireBanner(1);
-    if(streak === 6)  showFireBanner(2);
-    if(streak === 10) showFireBanner(3);
+    // ✅ NEW: fire logic centralized + includes level 4 at 15
+    maybeTriggerFire(streak);
 
     scoreEl.textContent = String(score);
     streakEl.textContent = String(streak);
@@ -1318,17 +1541,20 @@ function pick(tile, originalIndex){
     streakEl.textContent = String(streak);
     setFireLevelFromStreak();
 
+    // reset fire state
+    lastFireLevel = 0;
+    fireBanner.classList.remove("fire1","fire2","fire3","fire4");
+
     pendingAdvance = true;
     nextWrap.classList.add("show");
     locked = false; // allow NEXT button interaction
   }
 }
 
-/* ---------- Fire3: keep JP text from moving while card animates ---------- */
+/* ---------- Fire3/4: keep JP text from moving while card animates ---------- */
 const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function parseMatrix2D(t){
-  // returns [a,b,c,d,e,f] or null
   if(!t || t === "none") return null;
   const m = t.match(/matrix\(([^)]+)\)/);
   if(!m) return null;
@@ -1357,8 +1583,8 @@ function stabilizePromptLoop(){
   if(prefersReduced) { prompt.style.transform = "none"; return; }
 
   const tick = ()=>{
-    const isFire3 = document.body.classList.contains("fire3");
-    if(!isFire3){
+    const isFire = document.body.classList.contains("fire3") || document.body.classList.contains("fire4");
+    if(!isFire){
       prompt.style.transform = "none";
       stabilizeRAF = requestAnimationFrame(tick);
       return;
@@ -1378,7 +1604,6 @@ function stabilizePromptLoop(){
       return;
     }
 
-    // Apply inverse so net motion of prompt is ~0 (text stays still)
     prompt.style.transform = `matrix(${inv[0]},${inv[1]},${inv[2]},${inv[3]},${inv[4]},${inv[5]})`;
     stabilizeRAF = requestAnimationFrame(tick);
   };
@@ -1413,6 +1638,7 @@ nextBtn && nextBtn.addEventListener("click", ()=>{
 
 window.addEventListener("pointerdown", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 window.addEventListener("touchstart", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
+
 </script>
 </body>
 </html>
