@@ -1104,6 +1104,68 @@ startBtn.addEventListener("keydown",(e)=>{
 })();
 
 /* =========================
+   START OVERLAY GATE (FIXED)
+   - game does NOT start until overlay click
+   - unlock audio on click (Safari)
+   - small delay before meter starts
+   ========================= */
+
+let gameStarted = false;
+
+window.addEventListener("DOMContentLoaded", () => {
+  const startOverlay = document.getElementById("startOverlay");
+  const startBtn     = document.getElementById("startBtn");
+
+  // Optional: preload SFX early (silent). Does NOT start game.
+  SFX.preload();
+
+  function beginFromOverlay(){
+    if (gameStarted) return;
+    gameStarted = true;
+
+    // ✅ unlock audio on the user gesture
+    SFX.unlock();
+
+    // ✅ hide overlay
+    startOverlay.classList.add("hide");
+    setTimeout(()=>{ startOverlay.style.display = "none"; }, 220);
+
+    // ✅ tiny "get ready" delay before meter starts
+    setTimeout(() => {
+      // CALL YOUR REAL START FUNCTION HERE:
+      // startGame();
+      // startMeter();
+      // startTimer();
+      // runMeter();
+
+      // Example placeholder:
+      if (typeof startGame === "function") startGame();
+      else if (typeof startMeter === "function") startMeter();
+      else if (typeof startTimer === "function") startTimer();
+      else if (typeof runMeter === "function") runMeter();
+    }, 600); // ← adjust: 400–900 feels good
+  }
+
+  // Click start button
+  startBtn.addEventListener("click", beginFromOverlay);
+
+  // Allow Enter/Space
+  startBtn.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      beginFromOverlay();
+    }
+  });
+
+  // Optional: clicking the dark overlay also starts (if you want)
+  // startOverlay.addEventListener("click", (e)=>{
+  //   if(e.target === startOverlay) beginFromOverlay();
+  // });
+});
+
+
+  
+/* =========================
    DATA (your exact list)
    ========================= */
 const DATA = [
@@ -1199,6 +1261,10 @@ const heatFill   = document.querySelector("#heatFill");
 const card       = document.querySelector("#card");
 const prompt     = document.querySelector("#prompt");
 
+/* ---------- Start Overlay Hooks ---------- */
+const startOverlay = document.querySelector("#startOverlay");
+const startBtn     = document.querySelector("#startBtn");
+
 /* ---------- State ---------- */
 let order = [];
 let idx = 0;
@@ -1211,6 +1277,8 @@ let anyWrongEver = false;
 let heatRAF = 0;
 let heatStart = 0;
 let heatDur = 0;
+
+let gameStarted = false;
 
 /* ---------- Fire level thresholds (same as g2) ---------- */
 function getFireLevelFromStreak(n){
@@ -1294,11 +1362,6 @@ function popFart(){
 
 /* =========================
    HEAT BAR TIMER
-
-   REMINDERS:
-   - Start/reset each round
-   - Timeout counts as WRONG (fart + streak reset + same word)
-   - Speed increases with fire level
    ========================= */
 function getHeatDurationMs(){
   const lv = getFireLevelFromStreak(streak);
@@ -1336,7 +1399,6 @@ function startHeat(){
     setHeatProgress01(p);
 
     if(elapsed >= heatDur){
-      // TIMEOUT = WRONG
       onTimeout();
       return;
     }
@@ -1353,10 +1415,6 @@ function resetHeat(){
 
 /* =========================
    WORD SPEED CHOICE BUILD
-
-   REMINDERS:
-   - Always 4 choices (1 correct + 3 random)
-   - Wrong stays on same prompt, reshuffle choices
    ========================= */
 function buildChoices(correctEn){
   const pool = DATA.map(d=>d.en).filter(x=>x !== correctEn);
@@ -1388,6 +1446,11 @@ function resetGame(){
 
   stopHeat();
   setHeatProgress01(1);
+
+  // Optional: neutral prompt before start
+  jpText.textContent = "—";
+  hiText.textContent = "—";
+  qNum.textContent = "0";
 }
 
 function render(){
@@ -1473,7 +1536,6 @@ function onWrong(tile){
   applyBodyFireFromStreak();
   maybeTriggerFire();
 
-  // stay on same item: re-render choices quickly
   setTimeout(()=>{
     locked = false;
     render();
@@ -1481,7 +1543,6 @@ function onWrong(tile){
 }
 
 function onTimeout(){
-  // acts like a wrong, but without a clicked tile
   locked = true;
   stopHeat();
   anyWrongEver = true;
@@ -1503,7 +1564,7 @@ function onTimeout(){
 
 function pick(tile, word){
   if(locked) return;
-  const tiles = lockChoices();
+  lockChoices();
 
   const item = DATA[order[idx]];
   const isCorrect = (word === item.en);
@@ -1579,16 +1640,55 @@ back2 && back2.addEventListener("click", goMenu);
 
 playAgain && playAgain.addEventListener("click", ()=>{
   resetGame();
-  render();
+  // Show overlay again on replay (optional)
+  if(startOverlay){
+    startOverlay.style.display = "flex";
+    startOverlay.classList.remove("hide");
+  }
+  gameStarted = false;
+});
+
+/* =========================
+   START OVERLAY GATE (must click to start)
+   ========================= */
+function beginFromOverlay(){
+  if(gameStarted) return;
+  gameStarted = true;
+
+  // unlock audio on user gesture (Safari)
+  try{ SFX.unlock(); }catch(e){}
+
+  if(startOverlay){
+    startOverlay.classList.add("hide");
+    setTimeout(()=>{ startOverlay.style.display = "none"; }, 220);
+  }
+
+  // reset + small delay for "get ready"
+  resetGame();
+
+  setTimeout(()=>{
+    render();
+    stabilizePromptLoop();
+  }, 650); // tweak: 400–900
+}
+
+startBtn && startBtn.addEventListener("click", beginFromOverlay);
+startBtn && startBtn.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter" || e.key === " "){
+    e.preventDefault();
+    beginFromOverlay();
+  }
 });
 
 /* ---------- Boot ---------- */
 (async function boot(){
+  // preload quietly (does NOT start the game)
   try{ await SFX.preload(); }catch(e){}
   resetGame();
-  render();
   stabilizePromptLoop();
 })();
+
+
 
 window.addEventListener("pointerdown", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 window.addEventListener("touchstart", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
