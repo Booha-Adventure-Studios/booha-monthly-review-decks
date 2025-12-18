@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Booha Review – Spot the Mistake</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0b1020;
+  --panel:#0f172a;
+  --ink:#ffffff;
+  --good:#22c55e;
+  --bad:#e53935;
+  --gold:#ffd166;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:radial-gradient(1200px 600px at 50% -200px,#1a255a 0%,var(--bg) 60%);
+  font-family:'Cinzel',serif;
+  color:var(--ink);
+}
+
+.wrap{
+  max-width:860px;
+  margin:0 auto;
+  padding:16px;
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.pill{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:999px;
+  padding:6px 12px;
+  font-weight:900;
+  font-size:14px;
+}
+
+.main{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.card{
+  width:100%;
+  background:linear-gradient(180deg,#14204a,#0c1434);
+  border-radius:22px;
+  padding:26px 24px;
+  box-shadow:0 24px 60px rgba(0,0,0,.5);
+  border:1px solid rgba(255,255,255,.18);
+  position:relative;
+}
+
+.sentence{
+  font-size:30px;
+  line-height:1.4;
+  text-align:center;
+  font-weight:900;
+  word-wrap:break-word;
+}
+
+.word{
+  display:inline-block;
+  padding:4px 6px;
+  margin:2px 2px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:transform .12s, background .12s, box-shadow .12s;
+}
+
+.word:hover{
+  background:rgba(255,255,255,.08);
+}
+
+.word.correct{
+  background:rgba(34,197,94,.25);
+  box-shadow:0 0 18px rgba(34,197,94,.9);
+}
+
+.word.wrong{
+  background:rgba(229,57,53,.35);
+  animation:shake .35s;
+}
+
+@keyframes shake{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-5px)}
+  50%{transform:translateX(5px)}
+  75%{transform:translateX(-5px)}
+  100%{transform:translateX(0)}
+}
+
+.fireBanner{
+  position:absolute;
+  top:-18px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:8px 16px;
+  border-radius:999px;
+  font-weight:900;
+  opacity:0;
+  transition:.25s;
+}
+
+.fireBanner.show{opacity:1}
+
+.fire1{background:#2563eb}
+.fire2{background:#f59e0b}
+.fire3{background:#ec4899}
+.fire4{background:#7c3aed; animation:pulse 1s infinite}
+
+@keyframes pulse{
+  0%{box-shadow:0 0 10px #fff}
+  50%{box-shadow:0 0 30px #fff}
+  100%{box-shadow:0 0 10px #fff}
+}
+
+.footer{
+  margin-top:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="pill">Q <span id="qNum">1</span>/<span id="qTotal">15</span></div>
+    <div class="pill">Score <span id="score">0</span></div>
+    <div class="pill">🔥 <span id="fire">0</span></div>
+  </div>
+
+  <div class="main">
+    <div class="card">
+      <div class="fireBanner" id="fireBanner"></div>
+      <div class="sentence" id="sentence"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="pill">First-Try % <span id="acc">100</span>%</div>
+    <div class="pill">Streak <span id="streak">0</span></div>
+  </div>
+
+</div>
+
+<audio id="ding" src="ding.mp3"></audio>
+<audio id="fart" src="fart.mp3"></audio>
+
+<script>
+/* ================= DATA ================= */
+const DATA = [
+  { wrong:"What do you did after school?", correct:"What do you do after school?", mistake:"did" },
+  { wrong:"What time you wake up?", correct:"What time do you wake up?", mistake:"you" },
+  { wrong:"How do you stay positively?", correct:"How do you stay positive?", mistake:"positively" },
+  { wrong:"What do you want learn this year?", correct:"What do you want to learn this year?", mistake:"learn" },
+  { wrong:"Do you plays sports?", correct:"Do you play sports?", mistake:"plays" },
+  { wrong:"What time do you eats dinner?", correct:"What time do you eat dinner?", mistake:"eats" },
+  { wrong:"How many hours do you sleeps?", correct:"How many hours do you sleep?", mistake:"sleeps" },
+  { wrong:"Is health important for you?", correct:"Is health important to you?", mistake:"for" },
+  { wrong:"What food give you energy?", correct:"What food gives you energy?", mistake:"give" },
+  { wrong:"What do you do in weekends?", correct:"What do you do on weekends?", mistake:"in" },
+  { wrong:"Do you study everyday?", correct:"Do you study every day?", mistake:"everyday" },
+  { wrong:"What do you usually eats breakfast?", correct:"What do you usually eat for breakfast?", mistake:"eats" },
+  { wrong:"Who inspire you?", correct:"Who inspires you?", mistake:"inspire" },
+  { wrong:"How do you keeps trying?", correct:"How do you keep trying?", mistake:"keeps" },
+  { wrong:"What is your biggest goal now?", correct:"What is your biggest goal right now?", mistake:"now" }
+];
+
+/* ================= STATE ================= */
+let idx = 0;
+let score = 0;
+let streak = 0;
+let fire = 0;
+let attempts = 0;
+let firstTryHits = 0;
+let locked = false;
+
+/* ================= ELEMENTS ================= */
+const sentenceEl = document.getElementById("sentence");
+const qNumEl = document.getElementById("qNum");
+const qTotalEl = document.getElementById("qTotal");
+const scoreEl = document.getElementById("score");
+const streakEl = document.getElementById("streak");
+const fireEl = document.getElementById("fire");
+const accEl = document.getElementById("acc");
+const fireBanner = document.getElementById("fireBanner");
+const ding = document.getElementById("ding");
+const fart = document.getElementById("fart");
+
+/* ================= INIT ================= */
+qTotalEl.textContent = DATA.length;
+render();
+
+/* ================= FUNCTIONS ================= */
+function render(){
+  const item = DATA[idx];
+  qNumEl.textContent = idx+1;
+  attempts = 0;
+  sentenceEl.innerHTML = "";
+
+  item.wrong.split(" ").forEach(word=>{
+    const span = document.createElement("span");
+    span.className = "word";
+    span.textContent = word;
+    span.onclick = ()=>tapWord(span, word);
+    sentenceEl.appendChild(span);
+    sentenceEl.append(" ");
+  });
+}
+
+function tapWord(span, word){
+  if(locked) return;
+  attempts++;
+
+  const item = DATA[idx];
+
+  if(word.replace(/[^\w]/g,"") === item.mistake){
+    locked = true;
+    span.classList.add("correct");
+    ding.play();
+
+    if(attempts === 1){
+      score += 2;
+      streak++;
+      firstTryHits++;
+    }else if(attempts === 2){
+      score += 1;
+      streak = 0;
+    }else{
+      streak = 0;
+    }
+
+    updateFire();
+    updateHUD();
+
+    setTimeout(next, 650);
+  }else{
+    span.classList.add("wrong");
+    fart.play();
+    streak = 0;
+    updateHUD();
+  }
+}
+
+function updateFire(){
+  if(streak >= 8) fire = 4;
+  else if(streak >= 5) fire = 3;
+  else if(streak >= 3) fire = 2;
+  else if(streak >= 1) fire = 1;
+  else fire = 0;
+
+  if(fire>0){
+    fireBanner.textContent = ["","Nice!","On Fire!","Unstoppable!","ROCK PARTY!!!"][fire];
+    fireBanner.className = "fireBanner show fire"+fire;
+    setTimeout(()=>fireBanner.classList.remove("show"),1200);
+  }
+}
+
+function updateHUD(){
+  scoreEl.textContent = score;
+  streakEl.textContent = streak;
+  fireEl.textContent = fire;
+  accEl.textContent = Math.round((firstTryHits / (idx+1)) * 100);
+}
+
+function next(){
+  locked = false;
+  idx++;
+  if(idx < DATA.length){
+    render();
+  }else{
+    alert(
+      "FINISH!\n\nScore: "+score+
+      "\nFirst-Try Accuracy: "+accEl.textContent+"%"
+    );
+    location.reload();
+  }
+}
+</script>
+</body>
+</html>
