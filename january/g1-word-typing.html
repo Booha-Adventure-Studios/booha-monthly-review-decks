@@ -254,17 +254,14 @@ body.fire4::after{
 /* =========================
    BACK BUTTON — match g2 Pick-the-Sentence
    ========================= */
-.backBtn{
+.back{
   appearance:none;
   border:0;
   background:rgba(255,255,255,.10);
   color:#fff;
-
-  /* smaller like g2 */
   padding:7px 10px;
   font-size:14px;
   gap:8px;
-
   border-radius:999px;
   font-family:'Cinzel',serif;
   font-weight:900;
@@ -272,25 +269,17 @@ body.fire4::after{
   box-shadow: 0 10px 24px rgba(0,0,0,.35);
   border:1px solid rgba(255,255,255,.18);
   cursor:pointer;
-
   display:flex;
-  align-items:baseline;   /* ✅ g2 look */
+  align-items:baseline;
   -webkit-tap-highlight-color: transparent;
 }
-
-/* shrink Japanese label like g2 */
-.backBtn span.jp{
+.back span.jp{
   font-family:'Noto Sans JP',sans-serif;
   font-weight:900;
   font-size:10px;
   opacity:.95;
 }
-
-/* shrink arrow like g2 */
-.backBtn span[aria-hidden="true"]{
-  font-size:14px;
-  line-height:1;
-}
+.back span[aria-hidden="true"]{font-size:14px;}
 
 .hud{
   display:flex;
