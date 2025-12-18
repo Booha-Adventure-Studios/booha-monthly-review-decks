@@ -811,9 +811,8 @@ REMINDERS
 
 <div class="wrap">
   <div class="topbar">
-   <button class="backBtn">
-  <span class="label">MENU・メニュー</span>
-</button>
+  <button class="backBtn" id="backBtn">MENU・メニュー</button>
+
 
 
     <div class="hud" aria-label="Progress">
@@ -1419,16 +1418,22 @@ function finish(){
   }
 }
 
-/* back */
-function goMenu(){
-  window.location.href = "index.html";
-}
-$('#backBtn').addEventListener('click', goMenu);
+function goMenu(e){
+  e.preventDefault();
+  e.stopPropagation();
 
-/* events */
-submitBtn.addEventListener('click', check);
-ansEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') check(); });
-ansEl.addEventListener('input', ()=>{ if(hintLevel >= 3) renderHint(); });
+  // best: go back if there is history, otherwise go home
+  if (history.length > 1) history.back();
+  else window.location.href = "../index.html"; // ← change to your real menu page
+}
+
+const backBtn = document.getElementById("backBtn");
+if(backBtn){
+  // pointer events are more reliable than click in some overlays / iOS cases
+  backBtn.addEventListener("pointerup", goMenu, { passive:false });
+  backBtn.addEventListener("click", goMenu, { passive:false }); // fallback
+}
+
 
 /* boot: preload audio, unlock on first gesture */
 (async function boot(){
