@@ -1049,16 +1049,6 @@ const SFX = (() => {
   }
 
 
-
-// optional: allow Enter/Space to start
-startBtn.addEventListener("keydown",(e)=>{
-  if(e.key==="Enter" || e.key===" "){
-    e.preventDefault();
-    beginFromOverlay();
-  }
-});
-
-
   
   function play(name, volume=1){
     if (!ctx) return;
@@ -1625,7 +1615,9 @@ playAgain && playAgain.addEventListener("click", ()=>{
 });
 
 /* =========================
-   START OVERLAY GATE (must click to start)
+   START OVERLAY GATE (FIXED + BULLETPROOF)
+   - Start click is instant
+   - Meter starts after 0.5s
    ========================= */
 function beginFromOverlay(){
   if(gameStarted) return;
@@ -1634,34 +1626,38 @@ function beginFromOverlay(){
   // unlock audio on user gesture (Safari)
   try{ SFX.unlock(); }catch(e){}
 
-  if(startOverlay){
-    startOverlay.classList.add("hide");
-    setTimeout(()=>{ startOverlay.style.display = "none"; }, 220);
+  const overlay = document.querySelector("#startOverlay");
+  if(overlay){
+    overlay.classList.add("hide");
+    setTimeout(()=>{ overlay.style.display = "none"; }, 180);
   }
 
-  // reset + small delay for "get ready"
   resetGame();
 
+  // meter delay only
   setTimeout(()=>{
-    render();
+    render();              // <-- starts heat meter via startHeat()
     stabilizePromptLoop();
-  }, 650); // tweak: 400–900
+  }, 500);
 }
 
-startBtn && startBtn.addEventListener("click", beginFromOverlay);
-startBtn && startBtn.addEventListener("keydown", (e)=>{
-  if(e.key === "Enter" || e.key === " "){
+// Click (event delegation)
+document.addEventListener("click", (e)=>{
+  const btn = e.target.closest("#startBtn");
+  if(btn) beginFromOverlay();
+});
+
+// Keyboard (Enter/Space) (event delegation)
+document.addEventListener("keydown", (e)=>{
+  if(e.key !== "Enter" && e.key !== " ") return;
+  const btn = document.activeElement && document.activeElement.closest
+    ? document.activeElement.closest("#startBtn")
+    : null;
+  if(btn){
     e.preventDefault();
     beginFromOverlay();
   }
 });
-
-/* ---------- Boot ---------- */
-(async function boot(){
-  try{ await SFX.preload(); }catch(e){}
-  resetGame();
-  stabilizePromptLoop();
-})();
 
 
 
