@@ -116,93 +116,86 @@ body::after{
   100% {transform: translate(-1.5%, -1%) rotate(-2deg) scale(1.02)}
 }
 
-/* =========================
-   🔥 FIRE LEVELS (BRIGHTER)
-   - 1..3 upgraded brightness
-   - NEW fire4 (wild but readable)
-   ========================= */
+/* ===========================
+   REMINDER: FIRE LEVELS — make each level MORE colorful + brighter
+   (Edit these existing blocks)
+   =========================== */
 body.fire1{
-  --fireA: rgba(255,209,122,.42);
-  --fireB: rgba(255,120,70,.26);
-  --ringA: rgba(255,209,122,.62);
-  --ringB: rgba(255,120,70,.44);
-  --pulse1: rgba(255,209,122,.70);
-  --pulse2: rgba(255,120,70,.58);
-  --unlockGlow: rgba(255,209,122,.32);
-  --unlockScale: 1.005;
-  --unlockWobble: 0deg;
+  /* bump these a bit more */
+  --fireA: rgba(255,209,122,.48);
+  --fireB: rgba(255,120,70,.32);
+  --ringA: rgba(255,209,122,.72);
+  --ringB: rgba(255,120,70,.54);
+  --pulse1: rgba(255,209,122,.82);
+  --pulse2: rgba(255,120,70,.70);
 
-  --bgP: rgba(124,58,237,.72);
-  --bgB: rgba(94,230,255,.50);
-  --bgG: rgba(255,209,122,.52);
+  --bgP: rgba(124,58,237,.78);
+  --bgB: rgba(94,230,255,.56);
+  --bgG: rgba(255,209,122,.60);
 
-  --stormA: rgba(255,126,185,.30);
-  --stormB: rgba(94,230,255,.26);
-  --stormC: rgba(255,209,122,.26);
-  --fireSpark: .60;
+  --stormA: rgba(255,126,185,.36);
+  --stormB: rgba(94,230,255,.32);
+  --stormC: rgba(255,209,122,.32);
+  --fireSpark: .75;
 }
+
 body.fire2{
-  --fireA: rgba(255,209,122,.70);
-  --fireB: rgba(255,120,70,.48);
-  --ringA: rgba(255,209,122,.88);
-  --ringB: rgba(255,120,70,.72);
-  --pulse1: rgba(255,209,122,1.00);
-  --pulse2: rgba(255,120,70,.92);
-  --unlockGlow: rgba(255,120,70,.38);
-  --unlockScale: 1.02;
-  --unlockWobble: 0.55deg;
-
-  --bgP: rgba(124,58,237,.98);
-  --bgB: rgba(94,230,255,.66);
-  --bgG: rgba(255,209,122,.72);
-
-  --stormA: rgba(255,126,185,.46);
-  --stormB: rgba(94,230,255,.40);
-  --stormC: rgba(255,209,122,.40);
-  --fireSpark: .95;
-}
-body.fire3{
-  --fireA: rgba(255,209,122,.98);
-  --fireB: rgba(255,120,70,.84);
-  --ringA: rgba(255,209,122,1.00);
-  --ringB: rgba(255,120,70,1.00);
+  /* push saturation/brightness */
+  --fireA: rgba(255,209,122,.82);
+  --fireB: rgba(255,120,70,.62);
+  --ringA: rgba(255,209,122,.98);
+  --ringB: rgba(255,120,70,.92);
   --pulse1: rgba(255,209,122,1.00);
   --pulse2: rgba(255,120,70,1.00);
-  --unlockGlow: rgba(94,230,255,.46);
-  --unlockScale: 1.05;
-  --unlockWobble: 1.1deg;
 
   --bgP: rgba(124,58,237,1.00);
   --bgB: rgba(94,230,255,.78);
-  --bgG: rgba(255,209,122,.90);
+  --bgG: rgba(255,209,122,.82);
 
-  --stormA: rgba(255,126,185,.62);
-  --stormB: rgba(94,230,255,.52);
-  --stormC: rgba(255,209,122,.52);
-  --fireSpark: 1.25;
+  --stormA: rgba(255,126,185,.58);
+  --stormB: rgba(94,230,255,.50);
+  --stormC: rgba(255,209,122,.50);
+  --fireSpark: 1.10;
 }
 
-/* NEW: FIRE 4 — wild (extra layers + faster storm), still readable */
-body.fire4{
-  --fireA: rgba(255,255,255,.22);
+body.fire3{
+  /* make this feel like “MAX” before 4 */
+  --fireA: rgba(255,255,255,.18);
   --fireB: rgba(255,209,122,1.00);
-  --ringA: rgba(255,255,255,.65);
+  --ringA: rgba(255,255,255,.40);
   --ringB: rgba(255,120,70,1.00);
-  --pulse1: rgba(255,255,255,.75);
-  --pulse2: rgba(94,230,255,.80);
-  --unlockGlow: rgba(255,255,255,.38);
-  --unlockScale: 1.07;
-  --unlockWobble: 1.6deg;
+  --pulse1: rgba(255,255,255,.42);
+  --pulse2: rgba(94,230,255,.70);
 
-  --bgP: rgba(255,90,160,.60);
-  --bgB: rgba(90,255,214,.48);
-  --bgG: rgba(255,214,102,.58);
+  --bgP: rgba(255,126,185,.44);
+  --bgB: rgba(94,230,255,.62);
+  --bgG: rgba(255,209,122,.94);
 
-  --stormA: rgba(255,90,160,.62);
-  --stormB: rgba(90,255,214,.54);
-  --stormC: rgba(255,214,102,.54);
-  --fireSpark: 1.55;
+  --stormA: rgba(255,126,185,.78);
+  --stormB: rgba(94,230,255,.68);
+  --stormC: rgba(255,209,122,.68);
+  --fireSpark: 1.35;
 }
+
+body.fire4{
+  /* “rock concert party” = neon + white-hot highlights */
+  --fireA: rgba(255,255,255,.28);
+  --fireB: rgba(255,214,102,1.00);
+  --ringA: rgba(255,255,255,.75);
+  --ringB: rgba(255,90,160,1.00);
+  --pulse1: rgba(255,255,255,.85);
+  --pulse2: rgba(90,255,214,.92);
+
+  --bgP: rgba(255,90,160,.72);
+  --bgB: rgba(90,255,214,.62);
+  --bgG: rgba(255,214,102,.72);
+
+  --stormA: rgba(255,90,160,.78);
+  --stormB: rgba(90,255,214,.70);
+  --stormC: rgba(255,214,102,.70);
+  --fireSpark: 1.75;
+}
+
 
 /* apply enhanced background layering when in any fire state */
 body.fire1, body.fire2, body.fire3, body.fire4{
@@ -216,12 +209,48 @@ body.fire1, body.fire2, body.fire3, body.fire4{
     var(--bg);
 }
 
-/* make the storm more energetic in fire4 */
+/* ===========================
+   REMINDER: FIRE4 STORM — make it feel louder
+   (Edit this existing block)
+   =========================== */
 body.fire4::after{
-  animation-duration: 2.2s;
-  filter: blur(14px) saturate(1.75) contrast(1.08);
-  opacity: .95;
+  animation-duration: 1.75s;                 /* faster */
+  filter: blur(14px) saturate(1.95) contrast(1.12);
+  opacity: .98;
 }
+
+
+/* ===========================
+   REMINDER: FIRE4 ROCK-CONCERT LIGHT BEAMS (ADD THIS NEW BLOCK)
+   Put this near your other fire4-only effects, e.g. near body.fire4::after
+   =========================== */
+body.fire4::before{
+  content:"";
+  position:fixed;
+  inset:-20%;
+  pointer-events:none;
+  z-index:0;
+
+  /* stage beams */
+  background:
+    linear-gradient(115deg, rgba(255,255,255,.10), transparent 35%),
+    linear-gradient(245deg, rgba(90,255,214,.12), transparent 40%),
+    linear-gradient(300deg, rgba(255,90,160,.12), transparent 42%),
+    radial-gradient(900px 700px at 50% 50%, rgba(255,214,102,.10), transparent 60%);
+
+  mix-blend-mode: screen;
+  filter: blur(1px) saturate(1.2);
+  opacity:.95;
+  transform: translate3d(0,0,0);
+  animation: concertBeams 2.2s ease-in-out infinite;
+}
+
+@keyframes concertBeams{
+  0%   {transform: translate(-1%, -1%) rotate(-1.5deg) scale(1.02)}
+  50%  {transform: translate( 1%,  1%) rotate( 1.5deg) scale(1.06)}
+  100% {transform: translate(-1%, -1%) rotate(-1.5deg) scale(1.02)}
+}
+  
 
 /* ========================= */
 
@@ -498,42 +527,26 @@ body.fire4 .fireRing{animation-duration:.55s;}
   50%{filter: drop-shadow(0 0 58px var(--pulse2));}
 }
 
-/* =========================
-   🔥 FIRE BANNER (UPGRADED)
-   - brighter per level
-   - readable motion
-   - NEW .fire4 styling
-   ========================= */
+/* ===========================
+   REMINDER: FIRE BANNER — stop “toast behavior” and make it persistent
+   (Edit these existing lines inside .fireBanner)
+   =========================== */
 .fireBanner{
-  position:fixed;
-  left:50%;
-  top: max(calc(env(safe-area-inset-top) + 10px), 10px);
-  transform: translateX(-50%) translateY(-10px);
-  z-index:90;
-
-  width: min(92vw, 720px);
-  padding: 14px 16px;
-  border-radius: 18px;
-
-  background: rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.18);
-  box-shadow:
-    0 18px 56px rgba(0,0,0,.55),
-    0 0 70px rgba(255,120,70, .12);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  opacity:0;
+  /* change from "only shows briefly" to "stays when JS toggles show" */
   pointer-events:none;
+
+  /* keep it visible-friendly */
+  opacity:0;
+  transform: translateX(-50%) translateY(0);
   transition: opacity .18s ease, transform .18s ease;
-  text-align:center;
-  overflow:hidden;
 }
+
+/* keep .show as the ON state */
 .fireBanner.show{
   opacity:1;
   transform: translateX(-50%) translateY(0);
-  animation: fireIn .22s ease-out;
 }
+
 @keyframes fireIn{
   from{transform: translateX(-50%) translateY(-10px) scale(.985); opacity:0;}
   to{transform: translateX(-50%) translateY(0) scale(1); opacity:1;}
@@ -607,35 +620,49 @@ body.fire4 .fireRing{animation-duration:.55s;}
 .fireBanner.fire3 .en{ filter: drop-shadow(0 0 14px rgba(90,255,214,.55)); }
 .fireBanner.fire3 .jp{ filter: drop-shadow(0 0 14px rgba(120,130,255,.45)); }
 
-/* Level 4: wild overlay + glow pulse (still readable) */
+/* ===========================
+   REMINDER: LEVEL 4 BANNER — make it feel like a concert screen (EDIT)
+   Replace your existing .fireBanner.fire4 with this
+   =========================== */
 .fireBanner.fire4{
-  border-color: rgba(255,255,255,.30);
+  border-color: rgba(255,255,255,.38);
   background:
-    radial-gradient(100% 140% at 15% 20%, rgba(255,255,255,.92), rgba(255,214,102,.55) 28%, rgba(255,90,160,.55) 52%, rgba(90,255,214,.55) 74%, rgba(120,130,255,.45) 100%);
+    radial-gradient(120% 160% at 15% 20%,
+      rgba(255,255,255,.92),
+      rgba(255,214,102,.62) 22%,
+      rgba(255,90,160,.58) 48%,
+      rgba(90,255,214,.58) 70%,
+      rgba(120,130,255,.48) 100%
+    );
   box-shadow:
-    0 22px 110px rgba(255,255,255,.16),
-    0 0 56px rgba(255,214,102,.22),
-    0 0 56px rgba(255,90,160,.20),
-    0 0 56px rgba(90,255,214,.20);
+    0 24px 140px rgba(255,255,255,.18),
+    0 0 70px rgba(255,214,102,.26),
+    0 0 70px rgba(255,90,160,.22),
+    0 0 70px rgba(90,255,214,.22);
+
+  /* tiny “screen vibe” */
+  border-radius: 20px;
 }
+
 .fireBanner.fire4::before{
   content:"";
-  position:absolute; inset:-40%;
+  position:absolute; inset:-45%;
   background:
     conic-gradient(from 0deg,
-      rgba(255,214,102,.0),
-      rgba(255,214,102,.32),
-      rgba(255,90,160,.28),
-      rgba(90,255,214,.28),
-      rgba(120,130,255,.24),
-      rgba(255,214,102,.32),
-      rgba(255,214,102,.0)
+      rgba(255,214,102,0),
+      rgba(255,214,102,.34),
+      rgba(255,90,160,.30),
+      rgba(90,255,214,.30),
+      rgba(120,130,255,.26),
+      rgba(255,214,102,.34),
+      rgba(255,214,102,0)
     );
   filter: blur(12px);
-  opacity: .62;
-  animation: wildSpin 1.6s linear infinite;
+  opacity: .70;
+  animation: wildSpin 1.2s linear infinite;
   z-index: 0;
 }
+
 .fireBanner.fire4 .en,
 .fireBanner.fire4 .jp{
   animation: floatRead 1.6s ease-in-out infinite, glowPulse 1.1s ease-in-out infinite;
@@ -898,22 +925,34 @@ const SFX = (() => {
     }
   }
 
-  async function loadOne(name, url){
-    ensure();
-    const res = await fetch(url, { cache: "force-cache" });
-    const arr = await res.arrayBuffer();
-    const b = await ctx.decodeAudioData(arr);
-    buf.set(name, b);
-  }
+ /* =========================
+   REMINDER: PRELOAD ERROR VISIBILITY (OPTIONAL, DEBUG ONLY)
+   - Helps you catch 404s or decode errors for level4.mp3
+   ========================= */
+async function loadOne(name, url){
+  ensure();
+  const res = await fetch(url, { cache: "force-cache" });
+  if(!res.ok) throw new Error(`SFX fetch failed: ${name} -> ${url} (${res.status})`); // ✅ optional debug
+  const arr = await res.arrayBuffer();
+  const b = await ctx.decodeAudioData(arr);
+  buf.set(name, b);
+}
 
-  async function preload(){
-    ensure();
-    await Promise.all([
-      loadOne("ding", "ding.mp3"),
-      loadOne("fart", "fart.mp3"),
-      loadOne("fire", "fire.mp3"),
-    ]);
-  }
+
+  /* =========================
+   REMINDER: PRELOAD level4.mp3 (ADD THIS SOUND)
+   - Add one more loadOne line inside preload()
+   ========================= */
+async function preload(){
+  ensure();
+  await Promise.all([
+    loadOne("ding", "ding.mp3"),
+    loadOne("fart", "fart.mp3"),
+    loadOne("fire", "fire.mp3"),
+    loadOne("level4", "level4.mp3"), // ✅ ADD
+  ]);
+}
+
 
   function unlock(){
     ensure();
@@ -928,24 +967,33 @@ const SFX = (() => {
     try { src.start(0); } catch(e) {}
   }
 
-  function play(name, volume=1){
-    if (!ctx) return;
-    const b = buf.get(name);
-    if (!b) return;
+  /* =========================
+   REMINDER: PLAY SAFETY FALLBACK (OPTIONAL)
+   - If level4 fails to decode/load, it will be silent.
+   - This fallback tries "fire" so there’s always feedback.
+   ========================= */
+function play(name, volume=1){
+  if (!ctx) return;
+  let b = buf.get(name);
 
-    if (ctx.state === "suspended") ctx.resume().catch(()=>{});
+  // ✅ OPTIONAL fallback so it's never silent
+  if (!b && name === "level4") b = buf.get("fire");
+  if (!b) return;
 
-    const src = ctx.createBufferSource();
-    src.buffer = b;
+  if (ctx.state === "suspended") ctx.resume().catch(()=>{});
 
-    const g = ctx.createGain();
-    g.gain.value = Math.max(0, Math.min(1, volume));
+  const src = ctx.createBufferSource();
+  src.buffer = b;
 
-    src.connect(g);
-    g.connect(master);
+  const g = ctx.createGain();
+  g.gain.value = Math.max(0, Math.min(1, volume));
 
-    try { src.start(0); } catch(e) {}
-  }
+  src.connect(g);
+  g.connect(master);
+
+  try { src.start(0); } catch(e) {}
+}
+
 
   return { preload, unlock, play };
 })();
