@@ -254,6 +254,7 @@ body.fire4::after{
 /* =========================
    STANDARD g BACK BUTTON (FIXED)
    ========================= */
+/* ===== g BACK BUTTON (Safari baseline FIX) ===== */
 .backBtn{
   appearance:none;
   border:0;
@@ -262,7 +263,6 @@ body.fire4::after{
 
   padding:7px 10px;
   font-size:14px;
-  gap:8px;
 
   border-radius:999px;
   font-family:'Cinzel',serif;
@@ -273,11 +273,21 @@ body.fire4::after{
   border:1px solid rgba(255,255,255,.18);
 
   cursor:pointer;
-  display:inline-flex;     /* ✅ not full-width flex */
-  align-items:center;      /* ✅ */
-  justify-content:center;  /* ✅ */
-  line-height:1;           /* ✅ */
-  white-space:nowrap;      /* ✅ THE BIG FIX */
+
+  display:inline-flex;
+  align-items:center;        /* ✅ stop baseline weirdness */
+  justify-content:center;
+  gap:8px;
+
+  white-space:nowrap;        /* ✅ never wrap */
+  line-height:1;             /* ✅ remove hidden height */
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* force all children to behave */
+.backBtn > *{
+  line-height:1;
+  display:inline-block;
 }
 
 /* Japanese label */
@@ -285,22 +295,18 @@ body.fire4::after{
   font-family:'Noto Sans JP',sans-serif;
   font-weight:900;
   font-size:10px;
-  line-height:1;
-  display:inline-block;    /* ✅ ensure it can’t drop lines from block behavior */
-  margin-left:6px;         /* ✅ stable spacing */
   opacity:.95;
-  transform:translateY(.5px); /* optional optical nudge */
+
+  position:relative;         /* ✅ optical alignment */
+  top:0.5px;
 }
 
-/* Arrow only */
+/* Arrow */
 .backBtn .arrow{
   font-size:14px;
-  line-height:1;
-  display:inline-block;
-  transform:translateY(.5px); /* optional optical nudge */
+  position:relative;
+  top:0.5px;                 /* match jp nudge */
 }
-
-
 
 .hud{
   display:flex;
