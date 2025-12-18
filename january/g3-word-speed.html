@@ -997,6 +997,12 @@ body.fire4 .fireBanner{opacity:1}
    ✅ Fire3/4: keep JP/Hira text still while card moves
    ========================= */
 
+if (typeof DATA === "undefined") {
+  console.error("❌ DATA is not defined. Game cannot start.");
+}
+
+
+  
 /* ---------- WebAudio SFX (same-folder) ---------- */
 const SFX = (() => {
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -1620,25 +1626,38 @@ playAgain && playAgain.addEventListener("click", ()=>{
    - Meter starts after 0.5s
    ========================= */
 function beginFromOverlay(){
-  if(gameStarted) return;
+  // prevent double start
+  if (gameStarted) return;
+
+  // 🚨 HARD GUARD: if DATA is missing, do NOT proceed
+  if (typeof DATA === "undefined" || !Array.isArray(DATA) || DATA.length === 0) {
+    console.error("❌ DATA is missing or empty. Game cannot start.");
+    alert("Game data failed to load.");
+    return;
+  }
+
   gameStarted = true;
 
   // unlock audio on user gesture (Safari)
-  try{ SFX.unlock(); }catch(e){}
+  try { SFX.unlock(); } catch(e) {}
 
-  const overlay = document.querySelector("#startOverlay");
-  if(overlay){
+  // hide overlay immediately (NO delay on button)
+  const overlay = document.getElementById("startOverlay");
+  if (overlay) {
     overlay.classList.add("hide");
-    setTimeout(()=>{ overlay.style.display = "none"; }, 180);
+    setTimeout(() => {
+      overlay.style.display = "none";
+    }, 150);
   }
 
+  // reset state now
   resetGame();
 
-  // meter delay only
-  setTimeout(()=>{
-    render();              // <-- starts heat meter via startHeat()
+  // 🔥 ONLY the meter/game start is delayed
+  setTimeout(() => {
+    render();                 // render() → startHeat()
     stabilizePromptLoop();
-  }, 500);
+  }, 500); // ← exactly what you asked for
 }
 
 // Click (event delegation)
@@ -1660,10 +1679,6 @@ document.addEventListener("keydown", (e)=>{
 });
 
 
-
-
-window.addEventListener("pointerdown", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
-window.addEventListener("touchstart", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 </script>
 </body>
 </html>
