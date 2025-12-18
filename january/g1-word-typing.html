@@ -251,12 +251,16 @@ body.fire4::after{
   justify-content:space-between;
   gap:10px;
 }
+/* =========================
+   BACK BUTTON — match g2 Pick-the-Sentence
+   ========================= */
 .backBtn{
   appearance:none;
   border:0;
   background:rgba(255,255,255,.10);
   color:#fff;
 
+  /* smaller like g2 */
   padding:7px 10px;
   font-size:14px;
   gap:8px;
@@ -270,16 +274,19 @@ body.fire4::after{
   cursor:pointer;
 
   display:flex;
-  align-items:center;
-
+  align-items:baseline;   /* ✅ g2 look */
   -webkit-tap-highlight-color: transparent;
 }
+
+/* shrink Japanese label like g2 */
 .backBtn span.jp{
   font-family:'Noto Sans JP',sans-serif;
   font-weight:900;
   font-size:10px;
   opacity:.95;
 }
+
+/* shrink arrow like g2 */
 .backBtn span[aria-hidden="true"]{
   font-size:14px;
   line-height:1;
@@ -827,13 +834,15 @@ REMINDERS
     <div class="card" id="card">
       <div class="fireRing" aria-hidden="true"></div>
 
-      <div id="game">
-        <div class="header">
-          <h1>Word Typing<small>タイピング</small></h1>
-        </div>
+     <div class="prompt" id="prompt">
+  <div class="header">
+    <h1>Word Typing<small>タイピング</small></h1>
+  </div>
 
-        <div class="jp" id="jp"></div>
-        <div class="hira" id="hira"></div>
+  <div class="jp" id="jp"></div>
+  <div class="hira" id="hira"></div>
+</div>
+
 
         <input id="answer" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="type in English" />
         <button class="primary" id="submit">OK <span class="jpBtn">つぎ</span></button>
@@ -1298,6 +1307,101 @@ function next(){
   else load();
 }
 
+/* =========================
+   PART 2 / 3 — STILL TEXT STABILIZER (g2-style)
+   GOAL:
+   - Keep the text inside #prompt visually STILL
+   - Allow the card (#card) to wobble / scale freely
+   - Activate ONLY on fire level 3 and 4
+   REMINDER:
+   ✅ Copy this whole block exactly
+   ✅ Do NOT modify variable names
+   ✅ Safe to reuse across all review games
+   ========================= */
+
+/* ---------- prefers-reduced-motion guard ---------- */
+const prefersReduced =
+  window.matchMedia &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- matrix helpers ---------- */
+function parseMatrix2D(t){
+  if(!t || t === "none") return null;
+  const m = t.match(/matrix\(([^)]+)\)/);
+  if(!m) return null;
+  const parts = m[1].split(",").map(v=>parseFloat(v.trim()));
+  if(parts.length !== 6 || parts.some(Number.isNaN)) return null;
+  return parts;
+}
+
+function invertMatrix2D(m){
+  const [a,b,c,d,e,f] = m;
+  const det = a*d - b*c;
+  if(!det) return null;
+  const id = 1/det;
+  return [
+    d*id,
+   -b*id,
+   -c*id,
+    a*id,
+   -(d*e - c*f)*id,
+   -(a*f - b*e)*id
+  ];
+}
+
+/* ---------- stabilization loop ---------- */
+let stabilizeRAF = 0;
+
+function stabilizePromptLoop(){
+  cancelAnimationFrame(stabilizeRAF);
+
+  const prompt = document.querySelector("#prompt");
+  const card   = document.querySelector("#card");
+
+  if(!prompt || !card){
+    console.warn("[STABILIZER] Missing #prompt or #card");
+    return;
+  }
+
+  if(prefersReduced){
+    prompt.style.transform = "none";
+    return;
+  }
+
+  const tick = () => {
+    const fire3 = document.body.classList.contains("fire3");
+    const fire4 = document.body.classList.contains("fire4");
+
+    if(!fire3 && !fire4){
+      prompt.style.transform = "none";
+      stabilizeRAF = requestAnimationFrame(tick);
+      return;
+    }
+
+    const m = parseMatrix2D(getComputedStyle(card).transform);
+    if(!m){
+      prompt.style.transform = "none";
+      stabilizeRAF = requestAnimationFrame(tick);
+      return;
+    }
+
+    const inv = invertMatrix2D(m);
+    if(!inv){
+      prompt.style.transform = "none";
+      stabilizeRAF = requestAnimationFrame(tick);
+      return;
+    }
+
+    prompt.style.transform =
+      `matrix(${inv[0]},${inv[1]},${inv[2]},${inv[3]},${inv[4]},${inv[5]})`;
+
+    stabilizeRAF = requestAnimationFrame(tick);
+  };
+
+  stabilizeRAF = requestAnimationFrame(tick);
+}
+
+   
 /* finish */
 function finish(){
   $('#game').style.display='none';
@@ -1338,7 +1442,9 @@ ansEl.addEventListener('input', ()=>{ if(hintLevel >= 3) renderHint(); });
   try{ await SFX.preload(); }catch(e){}
   resetGame();
   load();
+  stabilizePromptLoop(); // ← NEW
 })();
+
 window.addEventListener("pointerdown", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 window.addEventListener("touchstart", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 </script>
