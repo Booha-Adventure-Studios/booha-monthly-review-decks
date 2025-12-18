@@ -279,7 +279,6 @@ body.fire4::before{
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
-
 .startCard{
   width:min(560px, 92vw);
   background:rgba(15, 23, 42, .78);
@@ -289,7 +288,6 @@ body.fire4::before{
   padding:22px 20px 18px;
   text-align:center;
 }
-
 .startTitle{
   font-family:'Cinzel',serif;
   font-weight:900;
@@ -297,7 +295,6 @@ body.fire4::before{
   font-size:22px;
   color:#fff;
 }
-
 .startSub{
   margin-top:6px;
   font-family:'Noto Sans JP',sans-serif;
@@ -305,19 +302,16 @@ body.fire4::before{
   font-size:13px;
   opacity:.95;
 }
-
 .startMsg{
   margin:14px auto 16px;
   max-width:44ch;
   line-height:1.35;
 }
-
 .startMsg .en{
   font-family:'Cinzel',serif;
   font-weight:800;
   font-size:15px;
 }
-
 .startMsg .jp{
   margin-top:8px;
   font-family:'Noto Sans JP',sans-serif;
@@ -325,7 +319,6 @@ body.fire4::before{
   font-size:13px;
   opacity:.95;
 }
-
 .startBtn{
   appearance:none;
   border:0;
@@ -340,21 +333,17 @@ body.fire4::before{
   color:#141414;
   box-shadow:0 14px 30px rgba(0,0,0,.35);
 }
-
 .startBtn .jp{
   margin-left:8px;
   font-family:'Noto Sans JP',sans-serif;
   font-weight:900;
   font-size:12px;
 }
-
 .startOverlay.hide{
   opacity:0;
   pointer-events:none;
   transition:opacity .2s ease;
 }
-
-  
 
 .topbar{
   display:flex;
@@ -362,7 +351,6 @@ body.fire4::before{
   justify-content:space-between;
   gap:10px;
 }
-
 .back{
   appearance:none;
   border:0;
@@ -907,236 +895,85 @@ body.fire4 .fireBanner{opacity:1}
   </div>
 </div>
 
-  
-  <div class="wrap">
-    <div class="topbar">
-      <button class="back" id="backBtn" aria-label="Back to menu">
-        <span aria-hidden="true">←</span> MENU <span class="jp">メニュー</span>
-      </button>
-      <div class="hud">
-        <div class="pill">Q <b id="qNum">1</b>/<span id="qTotal">15</span></div>
-        <div class="pill">Score <b id="score">0</b></div>
-        <div class="pill">Streak <b id="streak">0</b></div>
+<div class="wrap">
+  <div class="topbar">
+    <button class="back" id="backBtn" aria-label="Back to menu">
+      <span aria-hidden="true">←</span> MENU <span class="jp">メニュー</span>
+    </button>
+    <div class="hud">
+      <div class="pill">Q <b id="qNum">1</b>/<span id="qTotal">15</span></div>
+      <div class="pill">Score <b id="score">0</b></div>
+      <div class="pill">Streak <b id="streak">0</b></div>
+    </div>
+  </div>
+
+  <!-- HEAT BAR -->
+  <div class="heatWrap" aria-label="Timer">
+    <div class="heatTrack"><div class="heatFill" id="heatFill"></div></div>
+  </div>
+
+  <div class="stage">
+    <div class="card" id="card">
+      <div class="fireRing" aria-hidden="true"></div>
+      <div class="prompt" id="prompt">
+        <div class="jp" id="jpText">—</div>
+        <div class="hira" id="hiText">—</div>
       </div>
     </div>
 
-    <!-- HEAT BAR -->
-    <div class="heatWrap" aria-label="Timer">
-      <div class="heatTrack"><div class="heatFill" id="heatFill"></div></div>
-    </div>
+    <div class="grid" id="grid"></div>
 
-    <div class="stage">
-      <div class="card" id="card">
-        <div class="fireRing" aria-hidden="true"></div>
-        <div class="prompt" id="prompt">
-          <div class="jp" id="jpText">—</div>
-          <div class="hira" id="hiText">—</div>
-        </div>
-      </div>
-
-      <div class="grid" id="grid"></div>
-
-      <div class="results" id="results">
-        <h2>Finished!</h2>
-        <div class="sub">おつかれさま！</div>
-        <div class="score"><span id="finalScore">0</span>/<span id="finalTotal">0</span></div>
-        <div class="btnRow">
-          <button class="bigBtn" id="playAgain">PLAY AGAIN <span>もういちど</span></button>
-          <button class="bigBtn" id="back2">BACK TO MENU <span>メニュー</span></button>
-        </div>
+    <div class="results" id="results">
+      <h2>Finished!</h2>
+      <div class="sub">おつかれさま！</div>
+      <div class="score"><span id="finalScore">0</span>/<span id="finalTotal">0</span></div>
+      <div class="btnRow">
+        <button class="bigBtn" id="playAgain">PLAY AGAIN <span>もういちど</span></button>
+        <button class="bigBtn" id="back2">BACK TO MENU <span>メニュー</span></button>
       </div>
     </div>
-
-    <div class="footer">Bryan’s English School</div>
   </div>
 
-  <div class="fireBanner" id="fireBanner" role="status" aria-live="polite">
-    <div class="bannerFX" aria-hidden="true"></div>
-    <span class="fireDot" aria-hidden="true"></span>
-    <div class="en" id="fireEn">You’re on fire!</div>
-    <div class="jp" id="fireJp">ノってきた！</div>
-  </div>
+  <div class="footer">Bryan’s English School</div>
+</div>
 
-  <div class="fx" id="fx">
-    <svg class="heartSvg" id="heart" viewBox="0 0 64 64" aria-hidden="true">
-      <defs>
-        <radialGradient id="hg" cx="30%" cy="25%" r="80%">
-          <stop offset="0%" stop-color="rgba(255,255,255,.98)"/>
-          <stop offset="45%" stop-color="rgba(255,209,122,.98)"/>
-          <stop offset="100%" stop-color="rgba(255,126,185,.98)"/>
-        </radialGradient>
-      </defs>
-      <path fill="url(#hg)" d="M32 56s-20-12.6-26.8-25C-.3 18.6 8 8.6 19.5 12.2c5 1.6 8.2 6.2 12.5 11 4.3-4.8 7.5-9.4 12.5-11C56 8.6 64.3 18.6 58.8 31 52 43.4 32 56 32 56z"/>
-    </svg>
+<div class="fireBanner" id="fireBanner" role="status" aria-live="polite">
+  <div class="bannerFX" aria-hidden="true"></div>
+  <span class="fireDot" aria-hidden="true"></span>
+  <div class="en" id="fireEn">You’re on fire!</div>
+  <div class="jp" id="fireJp">ノってきた！</div>
+</div>
 
-    <div class="fart" id="fart">
-      <div class="blob"></div>
-      <div class="puff p1"></div>
-      <div class="puff p2"></div>
-      <div class="puff p3"></div>
-      <div class="txt">NO!</div>
-    </div>
+<div class="fx" id="fx">
+  <svg class="heartSvg" id="heart" viewBox="0 0 64 64" aria-hidden="true">
+    <defs>
+      <radialGradient id="hg" cx="30%" cy="25%" r="80%">
+        <stop offset="0%" stop-color="rgba(255,255,255,.98)"/>
+        <stop offset="45%" stop-color="rgba(255,209,122,.98)"/>
+        <stop offset="100%" stop-color="rgba(255,126,185,.98)"/>
+      </radialGradient>
+    </defs>
+    <path fill="url(#hg)" d="M32 56s-20-12.6-26.8-25C-.3 18.6 8 8.6 19.5 12.2c5 1.6 8.2 6.2 12.5 11 4.3-4.8 7.5-9.4 12.5-11C56 8.6 64.3 18.6 58.8 31 52 43.4 32 56 32 56z"/>
+  </svg>
+
+  <div class="fart" id="fart">
+    <div class="blob"></div>
+    <div class="puff p1"></div>
+    <div class="puff p2"></div>
+    <div class="puff p3"></div>
+    <div class="txt">NO!</div>
   </div>
+</div>
 
 <script>
 /* =========================
    Booha Review – Word Speed (g3)
-
-   REMINDERS (FILES / BEHAVIOR)
-   ✅ SAME FOLDER SFX:
-      - ding.mp3
-      - fart.mp3
-      - fire.mp3
-      - level4.mp3
-
-   ✅ FIRE BANNER MESSAGES = g2 (levels 1–4)
-   ✅ Fire SFX: fire.mp3 for 1–3, level4.mp3 for level 4
-   ✅ Heat bar timer (OPTION B): drains per level; timeout counts as WRONG
-   ✅ WRONG: fart + streak resets + stay on same word
-   ✅ PERFECT RUN: only if NO wrong + NO timeouts
-   ✅ Fire3/4: keep JP/Hira text still while card moves
+   FIXED: start menu
+   - Removed duplicate `let gameStarted` (this was breaking the whole script)
+   - Removed duplicate beginFromOverlay + duplicate event wiring
+   - Single, clean start gate: click START → hide overlay → reset → start after 0.5s
    ========================= */
 
-if (typeof DATA === "undefined") {
-  console.error("❌ DATA is not defined. Game cannot start.");
-}
-
-
-  
-/* ---------- WebAudio SFX (same-folder) ---------- */
-const SFX = (() => {
-  const AudioCtx = window.AudioContext || window.webkitAudioContext;
-  let ctx = null;
-  let master = null;
-  const buf = new Map();
-  let unlocked = false;
-
-  function ensure(){
-    if (!ctx) {
-      ctx = new AudioCtx();
-      master = ctx.createGain();
-      master.gain.value = 1;
-      master.connect(ctx.destination);
-    }
-  }
-
-  async function loadOne(name, url){
-    ensure();
-    const res = await fetch(url, { cache: "force-cache" });
-    // optional debug visibility:
-    // if(!res.ok) throw new Error(`SFX fetch failed: ${name} -> ${url} (${res.status})`);
-    const arr = await res.arrayBuffer();
-    const b = await ctx.decodeAudioData(arr);
-    buf.set(name, b);
-  }
-
-  async function preload(){
-    ensure();
-    const jobs = [
-      ["ding","ding.mp3"],
-      ["fart","fart.mp3"],
-      ["fire","fire.mp3"],
-      ["level4","level4.mp3"],
-    ].map(([name,url]) => loadOne(name,url).catch(()=>null));
-    await Promise.all(jobs);
-  }
-
-  function unlock(){
-    ensure();
-    if (unlocked) return;
-    unlocked = true;
-
-    if (ctx.state === "suspended") ctx.resume().catch(()=>{});
-    const b = ctx.createBuffer(1, 1, 22050);
-    const src = ctx.createBufferSource();
-    src.buffer = b;
-    src.connect(master);
-    try { src.start(0); } catch(e) {}
-  }
-
-
-  
-  function play(name, volume=1){
-    if (!ctx) return;
-    let b = buf.get(name);
-
-    // fallback so level4 is never silent
-    if (!b && name === "level4") b = buf.get("fire");
-    if (!b) return;
-
-    if (ctx.state === "suspended") ctx.resume().catch(()=>{});
-
-    const src = ctx.createBufferSource();
-    src.buffer = b;
-
-    const g = ctx.createGain();
-    g.gain.value = Math.max(0, Math.min(1, volume));
-
-    src.connect(g);
-    g.connect(master);
-
-    try { src.start(0); } catch(e) {}
-  }
-
-  return { preload, unlock, play };
-})();
-
-/* =========================
-   START OVERLAY GATE (FIXED)
-   - game does NOT start until overlay click
-   - unlock audio on click (Safari)
-   - small delay before meter starts
-   ========================= */
-
-let gameStarted = false;
-
-window.addEventListener("DOMContentLoaded", () => {
-  const startOverlay = document.getElementById("startOverlay");
-  const startBtn     = document.getElementById("startBtn");
-
-  // Optional: preload SFX early (silent). Does NOT start game.
-  SFX.preload();
-
-  function beginFromOverlay(){
-  if(gameStarted) return;
-  gameStarted = true;
-
-  // unlock audio on user gesture (Safari)
-  try{ SFX.unlock(); }catch(e){}
-
-  // hide overlay immediately (NO start-button delay)
-  if(startOverlay){
-    startOverlay.classList.add("hide");
-    setTimeout(()=>{ startOverlay.style.display = "none"; }, 220);
-  }
-
-  // prep game state now
-  resetGame();
-
-  // meter/game starts after 0.5 sec
-  setTimeout(()=>{
-    render();              // <-- this starts the meter via startHeat()
-    stabilizePromptLoop();
-  }, 500);
-}
-
-startBtn && startBtn.addEventListener("click", beginFromOverlay);
-startBtn && startBtn.addEventListener("keydown", (e)=>{
-  if(e.key === "Enter" || e.key === " "){
-    e.preventDefault();
-    beginFromOverlay();
-  }
-});
-
-
-  // Optional: clicking the dark overlay also starts (if you want)
-  // startOverlay.addEventListener("click", (e)=>{
-  //   if(e.target === startOverlay) beginFromOverlay();
-  // });
-});
-
-
-  
 /* =========================
    DATA (your exact list)
    ========================= */
@@ -1233,9 +1070,82 @@ const heatFill   = document.querySelector("#heatFill");
 const card       = document.querySelector("#card");
 const prompt     = document.querySelector("#prompt");
 
-/* ---------- Start Overlay Hooks ---------- */
 const startOverlay = document.querySelector("#startOverlay");
 const startBtn     = document.querySelector("#startBtn");
+
+/* ---------- WebAudio SFX (same-folder) ---------- */
+const SFX = (() => {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let ctx = null;
+  let master = null;
+  const buf = new Map();
+  let unlocked = false;
+
+  function ensure(){
+    if (!ctx) {
+      ctx = new AudioCtx();
+      master = ctx.createGain();
+      master.gain.value = 1;
+      master.connect(ctx.destination);
+    }
+  }
+
+  async function loadOne(name, url){
+    ensure();
+    const res = await fetch(url, { cache: "force-cache" });
+    const arr = await res.arrayBuffer();
+    const b = await ctx.decodeAudioData(arr);
+    buf.set(name, b);
+  }
+
+  async function preload(){
+    ensure();
+    const jobs = [
+      ["ding","ding.mp3"],
+      ["fart","fart.mp3"],
+      ["fire","fire.mp3"],
+      ["level4","level4.mp3"],
+    ].map(([name,url]) => loadOne(name,url).catch(()=>null));
+    await Promise.all(jobs);
+  }
+
+  function unlock(){
+    ensure();
+    if (unlocked) return;
+    unlocked = true;
+
+    if (ctx.state === "suspended") ctx.resume().catch(()=>{});
+    const b = ctx.createBuffer(1, 1, 22050);
+    const src = ctx.createBufferSource();
+    src.buffer = b;
+    src.connect(master);
+    try { src.start(0); } catch(e) {}
+  }
+
+  function play(name, volume=1){
+    if (!ctx) return;
+    let b = buf.get(name);
+
+    // fallback so level4 is never silent
+    if (!b && name === "level4") b = buf.get("fire");
+    if (!b) return;
+
+    if (ctx.state === "suspended") ctx.resume().catch(()=>{});
+
+    const src = ctx.createBufferSource();
+    src.buffer = b;
+
+    const g = ctx.createGain();
+    g.gain.value = Math.max(0, Math.min(1, volume));
+
+    src.connect(g);
+    g.connect(master);
+
+    try { src.start(0); } catch(e) {}
+  }
+
+  return { preload, unlock, play };
+})();
 
 /* ---------- State ---------- */
 let order = [];
@@ -1381,10 +1291,6 @@ function startHeat(){
   heatRAF = requestAnimationFrame(tick);
 }
 
-function resetHeat(){
-  startHeat();
-}
-
 /* =========================
    WORD SPEED CHOICE BUILD
    ========================= */
@@ -1419,7 +1325,6 @@ function resetGame(){
   stopHeat();
   setHeatProgress01(1);
 
-  // Optional: neutral prompt before start
   jpText.textContent = "—";
   hiText.textContent = "—";
   qNum.textContent = "0";
@@ -1471,7 +1376,6 @@ function advance(){
 function lockChoices(){
   const tiles = [...document.querySelectorAll(".choice")];
   tiles.forEach(t=>t.classList.add("locked"));
-  return tiles;
 }
 
 function onCorrect(tile){
@@ -1510,7 +1414,7 @@ function onWrong(tile){
 
   setTimeout(()=>{
     locked = false;
-    render();
+    render(); // stay on same word
   }, 520);
 }
 
@@ -1530,7 +1434,7 @@ function onTimeout(){
 
   setTimeout(()=>{
     locked = false;
-    render();
+    render(); // stay on same word
   }, 520);
 }
 
@@ -1611,26 +1515,19 @@ backBtn && backBtn.addEventListener("click", goMenu);
 back2 && back2.addEventListener("click", goMenu);
 
 playAgain && playAgain.addEventListener("click", ()=>{
+  // restart instantly (no overlay)
   resetGame();
-  // Show overlay again on replay (optional)
-  if(startOverlay){
-    startOverlay.style.display = "flex";
-    startOverlay.classList.remove("hide");
-  }
-  gameStarted = false;
+  render();
+  stabilizePromptLoop();
 });
 
 /* =========================
-   START OVERLAY GATE (FIXED + BULLETPROOF)
-   - Start click is instant
-   - Meter starts after 0.5s
+   START OVERLAY GATE (SINGLE SOURCE OF TRUTH)
    ========================= */
 function beginFromOverlay(){
-  // prevent double start
-  if (gameStarted) return;
+  if(gameStarted) return;
 
-  // 🚨 HARD GUARD: if DATA is missing, do NOT proceed
-  if (typeof DATA === "undefined" || !Array.isArray(DATA) || DATA.length === 0) {
+  if(!Array.isArray(DATA) || DATA.length === 0){
     console.error("❌ DATA is missing or empty. Game cannot start.");
     alert("Game data failed to load.");
     return;
@@ -1641,45 +1538,40 @@ function beginFromOverlay(){
   // unlock audio on user gesture (Safari)
   try { SFX.unlock(); } catch(e) {}
 
-  // hide overlay immediately (NO delay on button)
-  const overlay = document.getElementById("startOverlay");
-  if (overlay) {
-    overlay.classList.add("hide");
-    setTimeout(() => {
-      overlay.style.display = "none";
-    }, 150);
+  // hide overlay
+  if(startOverlay){
+    startOverlay.classList.add("hide");
+    setTimeout(()=>{ startOverlay.style.display = "none"; }, 180);
   }
 
-  // reset state now
+  // prep state now
   resetGame();
 
-  // 🔥 ONLY the meter/game start is delayed
-  setTimeout(() => {
-    render();                 // render() → startHeat()
+  // start meter/game after 0.5s (your request)
+  setTimeout(()=>{
+    render();              // render() → startHeat()
     stabilizePromptLoop();
-  }, 500); // ← exactly what you asked for
+  }, 500);
 }
 
-// Click (event delegation)
-document.addEventListener("click", (e)=>{
-  const btn = e.target.closest("#startBtn");
-  if(btn) beginFromOverlay();
+/* Wire start once */
+window.addEventListener("DOMContentLoaded", ()=>{
+  // preload early (doesn't start game)
+  SFX.preload();
+
+  // make sure UI shows totals even before start
+  qTotal.textContent = String(DATA.length);
+  finalTotal.textContent = String(DATA.length);
+
+  startBtn && startBtn.addEventListener("click", beginFromOverlay);
+  startBtn && startBtn.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      beginFromOverlay();
+    }
+  });
 });
-
-// Keyboard (Enter/Space) (event delegation)
-document.addEventListener("keydown", (e)=>{
-  if(e.key !== "Enter" && e.key !== " ") return;
-  const btn = document.activeElement && document.activeElement.closest
-    ? document.activeElement.closest("#startBtn")
-    : null;
-  if(btn){
-    e.preventDefault();
-    beginFromOverlay();
-  }
-});
-
-
 </script>
+
 </body>
 </html>
-
