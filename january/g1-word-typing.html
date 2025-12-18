@@ -273,32 +273,31 @@ body.fire4::after{
   border:1px solid rgba(255,255,255,.18);
 
   cursor:pointer;
-  display:flex;
-
-  align-items:center;      /* ✅ fixes pill height + centering */
-  justify-content:center;
-  line-height:1;           /* ✅ prevents hidden vertical expansion */
-
-  -webkit-tap-highlight-color:transparent;
+  display:inline-flex;     /* ✅ not full-width flex */
+  align-items:center;      /* ✅ */
+  justify-content:center;  /* ✅ */
+  line-height:1;           /* ✅ */
+  white-space:nowrap;      /* ✅ THE BIG FIX */
 }
 
-/* Japanese label (small + tight) */
+/* Japanese label */
 .backBtn .jp{
   font-family:'Noto Sans JP',sans-serif;
   font-weight:900;
   font-size:10px;
-  line-height:1;           /* ✅ */
-  display:block;           /* ✅ */
+  line-height:1;
+  display:inline-block;    /* ✅ ensure it can’t drop lines from block behavior */
+  margin-left:6px;         /* ✅ stable spacing */
   opacity:.95;
-  transform:translateY(.5px); /* ✅ optical baseline feel */
+  transform:translateY(.5px); /* optional optical nudge */
 }
 
 /* Arrow only */
 .backBtn .arrow{
   font-size:14px;
   line-height:1;
-  display:block;
-  transform:translateY(.5px); /* ✅ matches the jp nudge */
+  display:inline-block;
+  transform:translateY(.5px); /* optional optical nudge */
 }
 
 
@@ -830,11 +829,11 @@ REMINDERS
 
 <div class="wrap">
   <div class="topbar">
-    <button class="backBtn" id="backBtn" aria-label="Back to menu">
+    <button class="backBtn" id="backBtn">
   <span class="arrow" aria-hidden="true">←</span>
-  MENU
-  <span class="jp">メニュー</span>
+  MENU <span class="jp">メニュー</span>
 </button>
+
 
 
     <div class="hud" aria-label="Progress">
