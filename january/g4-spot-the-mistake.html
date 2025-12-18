@@ -5,15 +5,17 @@ REMINDERS (READ ME)
    - fart.mp3
    - fire.mp3
    - level4.mp3  (required for Fire Level 4)
-✅ Keep @keyframes wildSpin defined ONCE (used by card + banner)
+✅ Keep @keyframes wildSpin defined ONCE (used by banner FX)
 ✅ Fire levels must exist in BOTH CSS + JS:
    - CSS: body.fire1..body.fire4
    - JS: getFireLevelFromStreak() thresholds 3/6/10/15
 ✅ g4 rule:
-   - ONLY misspelled word OR extra word (duplication)
-   - NEVER missing words
+   - ONLY misspelled word OR extra word that does NOT belong
+   - ❌ NO duplicated words
+   - ❌ NO missing words
 ✅ Gameplay:
-   - Tap the misspelled word OR the extra (duplicated) word
+   - Tap the misspelled word OR the extra word that does not belong
+   - Correct answer stays; student taps NEXT to continue
    - Multi-attempt allowed; scoring rewards first-try
 ========================= -->
 
@@ -129,11 +131,11 @@ body::after{
   100% {transform: translate(-1.5%, -1%) rotate(-2deg) scale(1.02)}
 }
 
-/* ✅ IMPORTANT: define wildSpin ONCE (used by card + banner) */
+/* ✅ IMPORTANT: define wildSpin ONCE (used by banner) */
 @keyframes wildSpin{to{transform: rotate(360deg);}}
 
 /* ===========================
-   FIRE LEVELS (MATCH g2 + LEVEL 4)
+   FIRE LEVELS
    =========================== */
 body.fire1{
   --fireA: rgba(255,209,122,.48);
@@ -236,9 +238,52 @@ body.fire1, body.fire2, body.fire3, body.fire4{
 }
 
 body.fire4::after{
-  animation-duration: 1.75s;
-  filter: blur(14px) saturate(1.95) contrast(1.12);
-  opacity: .98;
+  animation-duration: 1.55s;
+  filter: blur(14px) saturate(2.15) contrast(1.18);
+  opacity: 1;
+}
+
+/* extra edge glow (LEVEL 4 PARTY) */
+.edgeGlow{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:0;
+  transition: opacity .25s ease;
+  background:
+    radial-gradient(1200px 900px at 10% 10%, rgba(255,90,160,.18), transparent 60%),
+    radial-gradient(1200px 900px at 90% 20%, rgba(90,255,214,.16), transparent 62%),
+    radial-gradient(1200px 900px at 50% 90%, rgba(255,214,102,.16), transparent 62%);
+}
+body.fire4 .edgeGlow{ opacity:1; filter: saturate(1.25); }
+body.fire4 .edgeGlow::before{
+  content:"";
+  position:absolute;
+  inset:10px;
+  border-radius:22px;
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,.12),
+    0 0 60px rgba(255,214,102,.30),
+    0 0 110px rgba(255,90,160,.22),
+    0 0 140px rgba(90,255,214,.20);
+}
+body.fire4 .edgeGlow::after{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background: conic-gradient(from 0deg,
+    rgba(255,214,102,0),
+    rgba(255,214,102,.20),
+    rgba(255,90,160,.18),
+    rgba(90,255,214,.18),
+    rgba(120,130,255,.16),
+    rgba(255,214,102,.20),
+    rgba(255,214,102,0)
+  );
+  filter: blur(20px) saturate(1.8);
+  opacity:.9;
+  animation: wildSpin 1.15s linear infinite;
 }
 
 /* ===== Layout like g2 (topbar + centered stage) ===== */
@@ -258,7 +303,7 @@ body.fire4::after{
   gap:10px;
 }
 
-/* ===== g BACK BUTTON (FINAL SIMPLE VERSION) ===== */
+/* ===== g BACK BUTTON ===== */
 .backBtn{
   appearance:none;
   border:0;
@@ -397,35 +442,6 @@ body.fire4 .fireRing{animation-duration:.55s;}
     0 0 46px rgba(255,209,102,.20),
     0 22px 70px rgba(0,0,0,.55);
 }
-.card.perfect::after{
-  content:"";
-  position:absolute;
-  inset:-10px;
-  border-radius:32px;
-  pointer-events:none;
-  background:conic-gradient(from 0deg,
-    rgba(255,255,255,0) 0%,
-    rgba(255,241,179,.75) 12%,
-    rgba(255,255,255,0) 24%,
-    rgba(255,209,102,.80) 38%,
-    rgba(255,255,255,0) 52%,
-    rgba(255,241,179,.70) 68%,
-    rgba(255,255,255,0) 82%,
-    rgba(255,209,102,.80) 94%,
-    rgba(255,255,255,0) 100%
-  );
-  opacity:.55;
-  filter:blur(0.6px);
-  animation:goldSpin 3.6s linear infinite;
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  padding:10px;
-}
-@keyframes goldSpin{to{transform:rotate(360deg)}}
 
 /* Header */
 .header{
@@ -471,38 +487,42 @@ h1 small{
     0 0 22px rgba(0,0,0,.55);
 }
 
+/* ✅ NO tiles/pills: just words */
 .word{
-  display:inline-block;
-  padding:6px 8px;
-  margin:4px 2px;
-  border-radius:14px;
+  display:inline;
+  padding:0;
+  margin:0;
+  border-radius:0;
   cursor:pointer;
   user-select:none;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.10);
-  box-shadow: 0 8px 18px rgba(0,0,0,.22);
-  transition: transform .12s ease, background .12s ease, box-shadow .12s ease, border-color .12s ease;
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  transition: filter .12s ease, text-shadow .12s ease, transform .12s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.word:hover{ background:rgba(255,255,255,.09); }
-.word:active{ transform: translateY(1px) scale(.99); }
+.word:hover{
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+.word:active{
+  transform: translateY(1px);
+}
 
 .word.good{
-  background: rgba(34,197,94,.16);
-  border-color: rgba(34,197,94,.34);
-  box-shadow:
-    0 0 0 6px rgba(34,197,94,.10),
-    0 0 40px rgba(34,197,94,.30),
-    0 10px 22px rgba(0,0,0,.28);
+  color:#fff;
+  text-shadow:
+    0 0 10px rgba(34,197,94,.55),
+    0 0 22px rgba(34,197,94,.35),
+    0 2px 0 rgba(0,0,0,.85);
 }
 .word.bad{
-  background: rgba(239,68,68,.16);
-  border-color: rgba(239,68,68,.34);
+  color:#fff;
   animation: wordShake .36s ease;
-  box-shadow:
-    0 0 0 6px rgba(239,68,68,.10),
-    0 0 40px rgba(239,68,68,.26),
-    0 10px 22px rgba(0,0,0,.28);
+  text-shadow:
+    0 0 10px rgba(239,68,68,.55),
+    0 0 22px rgba(239,68,68,.35),
+    0 2px 0 rgba(0,0,0,.85);
 }
 @keyframes wordShake{
   0%{transform:translateX(0)}
@@ -618,7 +638,7 @@ a.back span{
 }
 
 /* ===========================
-   FIRE BANNER (MATCH g2)
+   FIRE BANNER
    =========================== */
 .fireBanner{
   position: fixed;
@@ -737,7 +757,7 @@ a.back span{
 }
 
 /* ===========================
-   START OVERLAY (JP EXPLANATION)
+   START OVERLAY (MATCH GAMEPLAY)
    =========================== */
 .startOverlay{
   position:fixed;
@@ -844,6 +864,10 @@ button.primary span.jpBtn{
   color:#0b1020;
   text-shadow:none;
 }
+button.primary:disabled{
+  opacity:.55;
+  cursor:default;
+}
 button.primary:active{transform: translateY(1px)}
 
 @media (prefers-reduced-motion: reduce){
@@ -851,11 +875,14 @@ button.primary:active{transform: translateY(1px)}
   .fireRing,.card{animation:none !important; transition:none !important}
   .heart,.fart{animation:none !important}
   .fireBanner .bannerFX{animation:none !important}
+  .edgeGlow::after{animation:none !important}
 }
 </style>
 </head>
 
 <body>
+
+<div class="edgeGlow" aria-hidden="true"></div>
 
 <div class="wrap">
   <div class="topbar">
@@ -880,6 +907,10 @@ button.primary:active{transform: translateY(1px)}
         <div id="sentenceWrap">
           <div class="sentence" id="sentence" aria-label="Sentence"></div>
         </div>
+
+        <button class="primary" id="nextBtn" style="display:none;" disabled>
+          NEXT <span class="jpBtn">つぎ</span>
+        </button>
 
         <div class="feedback" id="feedback"></div>
         <footer>Bryan's English School</footer>
@@ -908,7 +939,7 @@ button.primary:active{transform: translateY(1px)}
     </div>
   </div>
 
-  <!-- Fire popup (MATCH g2) -->
+  <!-- Fire popup -->
   <div class="fireBanner" id="fireBanner" role="status" aria-live="polite">
     <div class="bannerFX" aria-hidden="true"></div>
     <span class="fireDot" aria-hidden="true"></span>
@@ -928,12 +959,14 @@ button.primary:active{transform: translateY(1px)}
       <div style="margin-top:10px;">
         英文の中に <b>まちがいが１つ</b> あります。<br>
         <b>スペルがまちがっている単語</b> または<br>
-        <b>いらない（余計な）単語</b> です。
+        <b>いらない（文に合わない）単語</b> です。<br>
+        （※ 同じ単語が２回出るパターンはありません）
       </div>
       <div style="margin-top:10px;">
-        👉 <b>まちがっている単語をクリック／タップ</b> してください。
+        👉 <b>まちがっている単語をクリック／タップ</b> してください。<br>
+        正解したら <b>NEXT（つぎ）</b> を押して進みます。
       </div>
-      <div class="enLine">Can you spot the mistake? Tap the misspelled word or extra word.</div>
+      <div class="enLine">Find the misspelled word or the extra word that does not belong. Tap it. Then tap NEXT.</div>
     </div>
     <button class="primary" id="startBtn">START <span class="jpBtn">スタート</span></button>
   </div>
@@ -941,17 +974,6 @@ button.primary:active{transform: translateY(1px)}
 
 <script>
 function $(q){ return document.querySelector(q); }
-
-/* =========================
-REMINDERS
-✅ Same-folder SFX:
-   ding.mp3, fart.mp3, fire.mp3, level4.mp3
-✅ Level 4 sound key = "level4"
-✅ Fire banner logic:
-   - Triggers ONLY on level-up (prevents spam)
-   - Stays visible while streak remains in fire zone
-   - Hides when streak drops to 0
-========================= */
 
 /* ---------- WebAudio SFX (same-folder) ---------- */
 const SFX = (() => {
@@ -1027,81 +1049,78 @@ const SFX = (() => {
 })();
 
 /* =========================
-   DATA (ENTIRE MONTH = 60 QUESTIONS)
-   RULE: only misspelled word OR extra word
-   Each item:
-   - correct: correct sentence
-   - wrong:   sentence with ONE misspelling or ONE duplicated word
-   - target:  the exact word to tap (misspelled token OR duplicated token)
+   DATA (60)
+   RULE: one misspelling OR one extra word that does not belong
+   (NO duplicated words)
    ========================= */
 const DATA = [
   // Goals (15)
-  { correct:"What is your goal this year?", wrong:"What is your gole this year?", target:"gole" },
-  { correct:"Why is it important to you?", wrong:"Why is it importent to you?", target:"importent" },
-  { correct:"How will you reach your goal?", wrong:"How will you reach reach your goal?", target:"reach" },
-  { correct:"Who helps you stay motivated?", wrong:"Who helps you stay motivaited?", target:"motivaited" },
-  { correct:"What habit do you want to change?", wrong:"What habit do you want to change change?", target:"change" },
-  { correct:"Do you like making resolutions?", wrong:"Do you like making resolutons?", target:"resolutons" },
-  { correct:"What do you want to try this year?", wrong:"What do you want to try this this year?", target:"this" },
-  { correct:"What’s something new you learned recently?", wrong:"What’s something new you learned receintly?", target:"receintly" },
-  { correct:"Is it easy to keep goals?", wrong:"Is it easy to keep goalls?", target:"goalls" },
-  { correct:"What happens when you don’t try?", wrong:"What happens when you don’t dont try?", target:"dont" },
-  { correct:"What makes you feel proud?", wrong:"What makes you feel pround?", target:"pround" },
-  { correct:"What’s your dream for the future?", wrong:"What’s your dream for the futuer?", target:"futuer" },
-  { correct:"How do you stay positive?", wrong:"How do you stay possitive?", target:"possitive" },
-  { correct:"Who inspires you?", wrong:"Who inspires inspires you?", target:"inspires" },
-  { correct:"How can English help your goals?", wrong:"How can English help your goales?", target:"goales" },
+  { correct:"What is your goal this year?", wrong:"What is your goel this year?", target:"goel" },
+  { correct:"Why is it important to you?", wrong:"Why is it imporant to you?", target:"imporant" },
+  { correct:"How will you reach your goal?", wrong:"How will you reech your goal?", target:"reech" },
+  { correct:"Who helps you stay motivated?", wrong:"Who helps you stay motiveted?", target:"motiveted" },
+  { correct:"What habit do you want to change?", wrong:"What habit do you want to chagne?", target:"chagne" },
+  { correct:"Do you like making resolutions?", wrong:"Do you like making resolusions?", target:"resolusions" },
+  { correct:"What do you want to try this year?", wrong:"What do you want to try this yeer?", target:"yeer" },
+  { correct:"What’s something new you learned recently?", wrong:"What’s something new you learned recenlty?", target:"recenlty" },
+  { correct:"Is it easy to keep goals?", wrong:"Is it easy to keep goels?", target:"goels" },
+  { correct:"What happens when you don’t try?", wrong:"What happens when you don’t triy?", target:"triy" },
+  { correct:"What makes you feel proud?", wrong:"What makes you feel prroud?", target:"prroud" },
+  { correct:"What’s your dream for the future?", wrong:"What’s your dream for the futrue?", target:"futrue" },
+  { correct:"How do you stay positive?", wrong:"How do you stay positve?", target:"positve" },
+  { correct:"Who inspires you?", wrong:"Who inspiers you?", target:"inspiers" },
+  { correct:"How can English help your goals?", wrong:"How can English help your goels?", target:"goels" },
 
   // Daily routine (15)
-  { correct:"What time do you wake up?", wrong:"What time do you wake up up?", target:"up" },
-  { correct:"What do you do after school?", wrong:"What do you do do after school?", target:"do" },
+  { correct:"What time do you wake up?", wrong:"What time do you wake upp?", target:"upp" },
+  { correct:"What do you do after school?", wrong:"What do you do after scool?", target:"scool" },
   { correct:"Do you help at home?", wrong:"Do you help at hoem?", target:"hoem" },
   { correct:"What do you do every morning?", wrong:"What do you do every moring?", target:"moring" },
   { correct:"What time do you eat dinner?", wrong:"What time do you eat diner?", target:"diner" },
-  { correct:"Do you use your phone before bed?", wrong:"Do you use your phone before before bed?", target:"before" },
-  { correct:"How do you get ready for school?", wrong:"How do you get ready for scool?", target:"scool" },
+  { correct:"Do you use your phone before bed?", wrong:"Do you use your phone befor bed?", target:"befor" },
+  { correct:"How do you get ready for school?", wrong:"How do you get ready for shcool?", target:"shcool" },
   { correct:"What is your favorite part of the day?", wrong:"What is your favorte part of the day?", target:"favorte" },
   { correct:"When do you do homework?", wrong:"When do you do homewrok?", target:"homewrok" },
-  { correct:"Do you study every day?", wrong:"Do you study every day day?", target:"day" },
-  { correct:"What time do you go to bed?", wrong:"What time do you go to to bed?", target:"to" },
+  { correct:"Do you study every day?", wrong:"Do you study every dey?", target:"dey" },
+  { correct:"What time do you go to bed?", wrong:"What time do you go to beed?", target:"beed" },
   { correct:"What do you do on weekends?", wrong:"What do you do on weekens?", target:"weekens" },
-  { correct:"What do you usually eat for breakfast?", wrong:"What do you ussually eat for breakfast?", target:"ussually" },
-  { correct:"Who do you spend time with after school?", wrong:"Who do you spend time with after after school?", target:"after" },
+  { correct:"What do you usually eat for breakfast?", wrong:"What do you usualy eat for breakfast?", target:"usualy" },
+  { correct:"Who do you spend time with after school?", wrong:"Who do you spend time with after shcool?", target:"shcool" },
   { correct:"What time do you finish dinner?", wrong:"What time do you finish dinenr?", target:"dinenr" },
 
   // Health (15)
-  { correct:"What do you do to stay healthy?", wrong:"What do you do to stay healhty?", target:"healhty" },
+  { correct:"What do you do to stay healthy?", wrong:"What do you do to stay healty?", target:"healty" },
   { correct:"How many hours do you sleep?", wrong:"How many hours do you slepe?", target:"slepe" },
   { correct:"Do you eat vegetables every day?", wrong:"Do you eat vegtables every day?", target:"vegtables" },
-  { correct:"What sports do you play?", wrong:"What sports do you play play?", target:"play" },
-  { correct:"How do you relax after school?", wrong:"How do you relax after shcool?", target:"shcool" },
-  { correct:"Do you like exercise?", wrong:"Do you like excercise?", target:"excercise" },
+  { correct:"What sports do you play?", wrong:"What sports do you plaay?", target:"plaay" },
+  { correct:"How do you relax after school?", wrong:"How do you relax after scool?", target:"scool" },
+  { correct:"Do you like exercise?", wrong:"Do you like excersise?", target:"excersise" },
   { correct:"What food gives you energy?", wrong:"What food gives you enegy?", target:"enegy" },
-  { correct:"Do you drink enough water?", wrong:"Do you drink enough enought water?", target:"enought" },
-  { correct:"What time do you go to sleep?", wrong:"What time do you go to sleep sleep?", target:"sleep" },
+  { correct:"Do you drink enough water?", wrong:"Do you drink enugh water?", target:"enugh" },
+  { correct:"What time do you go to sleep?", wrong:"What time do you go to slep?", target:"slep" },
   { correct:"What should people do when they’re sick?", wrong:"What should people do when they’re sike?", target:"sike" },
   { correct:"Do you often feel tired?", wrong:"Do you often feel tirred?", target:"tirred" },
-  { correct:"How do you stay happy?", wrong:"How do you stay happ y?", target:"happ" },
-  { correct:"Is health important to you?", wrong:"Is health important to to you?", target:"to" },
-  { correct:"What bad habit do you want to change?", wrong:"What bad habit do you want to chagne?", target:"chagne" },
-  { correct:"What’s your favorite healthy food?", wrong:"What’s your favorite healthy foood?", target:"foood" },
+  { correct:"How do you stay happy?", wrong:"How do you stay hapy?", target:"hapy" },
+  { correct:"Is health important to you?", wrong:"Is health important to yuo?", target:"yuo" },
+  { correct:"What bad habit do you want to change?", wrong:"What bad habit do you want to cahgne?", target:"cahgne" },
+  { correct:"What’s your favorite healthy food?", wrong:"What’s your favorite helthy food?", target:"helthy" },
 
   // School / self (15)
-  { correct:"What do you want to learn this year?", wrong:"What do you want to learn this yer?", target:"yer" },
-  { correct:"What are you good at?", wrong:"What are you good at at?", target:"at" },
-  { correct:"What do you find difficult?", wrong:"What do you find dificult?", target:"dificult" },
+  { correct:"What do you want to learn this year?", wrong:"What do you want to learn this yaer?", target:"yaer" },
+  { correct:"What are you good at?", wrong:"What are you goood at?", target:"goood" },
+  { correct:"What do you find difficult?", wrong:"What do you find dificullt?", target:"dificullt" },
   { correct:"How do you keep trying?", wrong:"How do you keep tryng?", target:"tryng" },
   { correct:"What helps you focus?", wrong:"What helps you focuss?", target:"focuss" },
-  { correct:"Do you believe in yourself?", wrong:"Do you believe in yourself yourself?", target:"yourself" },
+  { correct:"Do you believe in yourself?", wrong:"Do you believe in youreslf?", target:"youreslf" },
   { correct:"What do you do when you make mistakes?", wrong:"What do you do when you make mistakess?", target:"mistakess" },
-  { correct:"Who inspires you?", wrong:"Who inspir es you?", target:"inspir" },
+  { correct:"Who inspires you?", wrong:"Who inspirse you?", target:"inspirse" },
   { correct:"What makes you happy at school?", wrong:"What makes you happy at schoool?", target:"schoool" },
   { correct:"What is one thing you want to improve?", wrong:"What is one thing you want to imporve?", target:"imporve" },
   { correct:"Do you like challenges?", wrong:"Do you like challanges?", target:"challanges" },
-  { correct:"How do you relax?", wrong:"How do you relax relax?", target:"relax" },
+  { correct:"How do you relax?", wrong:"How do you relx?", target:"relx" },
   { correct:"What do you do when you feel nervous?", wrong:"What do you do when you feel nervus?", target:"nervus" },
-  { correct:"How do you motivate yourself?", wrong:"How do you motivate yourself yoursel f?", target:"yoursel" },
-  { correct:"What’s your biggest goal right now?", wrong:"What’s your biggest goal right now now?", target:"now" },
+  { correct:"How do you motivate yourself?", wrong:"How do you motivate youreslf?", target:"youreslf" },
+  { correct:"What’s your biggest goal right now?", wrong:"What’s your biggest goal rihgt now?", target:"rihgt" },
 ];
 
 function shuffle(arr){
@@ -1125,11 +1144,13 @@ let attemptsThisQ = 0;
 let anyWrongEver = false;
 let locked = false;
 let lastTapAt = 0;
+let lastFireLevel = 0;
 
 /* hooks */
 const sentenceEl = $('#sentence');
 const fbEl = $('#feedback');
 const cardEl = $('#card');
+const nextBtn = $('#nextBtn');
 
 const qNumEl = $('#qNum');
 const qTotalEl = $('#qTotal');
@@ -1158,7 +1179,7 @@ function updateHud(){
   hudStreakEl.textContent = String(streak);
 }
 
-/* ---------- Fire level thresholds (MATCH g2) ---------- */
+/* ---------- Fire level thresholds ---------- */
 function getFireLevelFromStreak(n){
   if(n >= 15) return 4;
   if(n >= 10) return 3;
@@ -1174,15 +1195,13 @@ function applyBodyFireFromStreak(){
   if(lv) document.body.classList.add(`fire${lv}`);
 }
 
-/* ---------- Fire Banner (MATCH messages + Level 4) ---------- */
+/* ---------- Fire Banner ---------- */
 const FIRE_MSG = {
   1: { en:"You are awesome!",                     jp:"すごい！" },
   2: { en:"You are even more awesome!",           jp:"もっとすごい！" },
   3: { en:"What? You are the most awesome!",      jp:"えっ！？一番すごい！" },
   4: { en:"You are the smartest person alive!!!", jp:"あなたは世界一かしこい！！！" }
 };
-
-let lastFireLevel = 0;
 
 function playLevelSound(lv){
   if(lv === 1 || lv === 2 || lv === 3){
@@ -1255,20 +1274,23 @@ function resetGame(){
   maybeTriggerFire();
 }
 
-function clearFeedback(){
-  fbEl.textContent = "";
-}
+function clearFeedback(){ fbEl.textContent = ""; }
 
 function renderSentence(){
   clearFeedback();
   attemptsThisQ = 0;
   locked = false;
 
+  if(nextBtn){
+    nextBtn.style.display = 'none';
+    nextBtn.disabled = true;
+  }
+
   const d = DATA[order[idx]];
   const words = d.wrong.split(/\s+/);
 
   sentenceEl.innerHTML = "";
-  words.forEach((w, i) => {
+  words.forEach((w) => {
     const sp = document.createElement('span');
     sp.className = 'word';
     sp.textContent = w;
@@ -1301,7 +1323,7 @@ function renderSentence(){
 function tapWord(span){
   if(locked) return;
 
-  // small anti-mash cooldown
+  // anti-mash
   const now = performance.now();
   if(now - lastTapAt < 220) return;
   lastTapAt = now;
@@ -1312,7 +1334,6 @@ function tapWord(span){
 
   attemptsThisQ++;
 
-  // correct tap
   if(tapped === target){
     locked = true;
     span.classList.add('good');
@@ -1332,25 +1353,23 @@ function tapWord(span){
 
     SFX.play('ding', 1);
 
-    // show corrected sentence after short beat
-    setTimeout(()=>{
-      sentenceEl.textContent = d.correct;
-    }, 240);
+    setTimeout(()=>{ sentenceEl.textContent = d.correct; }, 220);
 
     updateHud();
     applyBodyFireFromStreak();
     maybeTriggerFire();
 
-    setTimeout(next, 820);
+    if(nextBtn){
+      nextBtn.style.display = 'block';
+      nextBtn.disabled = false;
+    }
     return;
   }
 
-  // wrong tap
+  // wrong
   anyWrongEver = true;
   streak = 0;
 
-  // visual on tapped word only
-  span.classList.remove('good');
   span.classList.add('bad');
   fbEl.innerHTML = '<div class="fart">💨</div>';
   SFX.play('fart', 1);
@@ -1368,7 +1387,6 @@ function next(){
   else renderSentence();
 }
 
-/* finish */
 function finish(){
   $('#game').style.display='none';
   $('#result').style.display='block';
@@ -1402,7 +1420,7 @@ function goMenu(e){
   e.preventDefault();
   e.stopPropagation();
   if (history.length > 1) history.back();
-  else window.location.href = "../index.html"; // change if needed
+  else window.location.href = "../index.html";
 }
 
 const backBtn = document.getElementById("backBtn");
@@ -1411,89 +1429,8 @@ if(backBtn){
   backBtn.addEventListener("click", goMenu, { passive:false });
 }
 
-/* =========================
-   STILL TEXT STABILIZER (optional but consistent)
-   - Keeps #sentenceWrap visually still during fire3/4 card wobble
-   ========================= */
-const prefersReduced =
-  window.matchMedia &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-function parseMatrix2D(t){
-  if(!t || t === "none") return null;
-  const m = t.match(/matrix\(([^)]+)\)/);
-  if(!m) return null;
-  const parts = m[1].split(",").map(v=>parseFloat(v.trim()));
-  if(parts.length !== 6 || parts.some(Number.isNaN)) return null;
-  return parts;
-}
-
-function invertMatrix2D(m){
-  const [a,b,c,d,e,f] = m;
-  const det = a*d - b*c;
-  if(!det) return null;
-  const id = 1/det;
-  return [
-    d*id,
-   -b*id,
-   -c*id,
-    a*id,
-   -(d*e - c*f)*id,
-   -(a*f - b*e)*id
-  ];
-}
-
-let stabilizeRAF = 0;
-function stabilizeSentenceLoop(){
-  cancelAnimationFrame(stabilizeRAF);
-
-  const target = document.querySelector("#sentenceWrap");
-  const card   = document.querySelector("#card");
-  if(!target || !card) return;
-
-  if(prefersReduced){
-    target.style.transform = "none";
-    return;
-  }
-
-  const tick = () => {
-    const fire3 = document.body.classList.contains("fire3");
-    const fire4 = document.body.classList.contains("fire4");
-
-    if(!fire3 && !fire4){
-      target.style.transform = "none";
-      stabilizeRAF = requestAnimationFrame(tick);
-      return;
-    }
-
-    const m = parseMatrix2D(getComputedStyle(card).transform);
-    if(!m){
-      target.style.transform = "none";
-      stabilizeRAF = requestAnimationFrame(tick);
-      return;
-    }
-
-    const inv = invertMatrix2D(m);
-    if(!inv){
-      target.style.transform = "none";
-      stabilizeRAF = requestAnimationFrame(tick);
-      return;
-    }
-
-    target.style.transform =
-      `matrix(${inv[0]},${inv[1]},${inv[2]},${inv[3]},${inv[4]},${inv[5]})`;
-
-    stabilizeRAF = requestAnimationFrame(tick);
-  };
-
-  stabilizeRAF = requestAnimationFrame(tick);
-}
-
-/* =========================
-   Start overlay
-   ========================= */
+/* Start overlay */
 function beginFromOverlay(){
-  // unlock audio on user gesture (Safari)
   try{ SFX.unlock(); }catch(e){}
 
   if(startOverlay){
@@ -1503,7 +1440,6 @@ function beginFromOverlay(){
 
   resetGame();
   renderSentence();
-  stabilizeSentenceLoop();
 }
 
 if(startBtn){
@@ -1511,15 +1447,18 @@ if(startBtn){
   startBtn.addEventListener('click', (e)=>{ e.preventDefault(); beginFromOverlay(); }, { passive:false });
 }
 
-/* boot: preload audio; wait for overlay start */
+if(nextBtn){
+  nextBtn.addEventListener('pointerup', (e)=>{ e.preventDefault(); if(!nextBtn.disabled) next(); }, { passive:false });
+  nextBtn.addEventListener('click', (e)=>{ e.preventDefault(); if(!nextBtn.disabled) next(); }, { passive:false });
+}
+
+/* boot */
 (async function boot(){
   try{ await SFX.preload(); }catch(e){}
-  // do NOT start game yet (overlay controls start)
   qTotalEl.textContent = String(DATA.length);
 })();
-
 window.addEventListener("pointerdown", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
-window.addEventListener("touchstart", () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
+window.addEventListener("touchstart",  () => { try{ SFX.unlock(); }catch(e){} }, { once:true, passive:true });
 </script>
 
 </body>
