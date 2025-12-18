@@ -18,7 +18,7 @@ REMINDERS (READ ME)
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Booha Review Decks – Word Typing</title>
 <meta name="theme-color" content="#0b1020" />
-<link rel="icon" type="image/png" href="booha-ghost.png">
+<link rel="icon" type="image/png" href="BoohaYellow.png">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet" />
 
 <style>
@@ -252,7 +252,8 @@ body.fire4::after{
   gap:10px;
 }
 /* =========================
-   BACK BUTTON — match g2 Pick-the-Sentence
+   STANDARD g BACK BUTTON
+   (g1 / g2 / g3 / future g)
    ========================= */
 .backBtn{
   appearance:none;
@@ -260,7 +261,6 @@ body.fire4::after{
   background:rgba(255,255,255,.10);
   color:#fff;
 
-  /* smaller like g2 */
   padding:7px 10px;
   font-size:14px;
   gap:8px;
@@ -269,28 +269,31 @@ body.fire4::after{
   font-family:'Cinzel',serif;
   font-weight:900;
   letter-spacing:.4px;
+
   box-shadow: 0 10px 24px rgba(0,0,0,.35);
   border:1px solid rgba(255,255,255,.18);
-  cursor:pointer;
 
+  cursor:pointer;
   display:flex;
-  align-items:baseline;   /* ✅ g2 look */
+  align-items:baseline; /* ✅ THIS is the g look */
+
   -webkit-tap-highlight-color: transparent;
 }
 
-/* shrink Japanese label like g2 */
-.backBtn span.jp{
+/* Japanese label (small + tight) */
+.backBtn .jp{
   font-family:'Noto Sans JP',sans-serif;
   font-weight:900;
   font-size:10px;
   opacity:.95;
 }
 
-/* shrink arrow like g2 */
-.backBtn span[aria-hidden="true"]{
+/* Arrow only */
+.backBtn .arrow{
   font-size:14px;
   line-height:1;
 }
+
 
 .hud{
   display:flex;
@@ -820,8 +823,11 @@ REMINDERS
 <div class="wrap">
   <div class="topbar">
     <button class="backBtn" id="backBtn" aria-label="Back to menu">
-      <span aria-hidden="true">←</span> MENU <span class="jp">メニュー</span>
-    </button>
+  <span class="arrow" aria-hidden="true">←</span>
+  MENU
+  <span class="jp">メニュー</span>
+</button>
+
 
     <div class="hud" aria-label="Progress">
       <div class="pill">Q <b id="qNum">1</b>/<span id="qTotal">0</span></div>
