@@ -295,6 +295,93 @@ footer{
 </head>
 
 <body>
+
+<!-- 🔐 BOOHA TOKEN GATE (PASTE INTO EVERY WEEKLY *GAME DECK* INDEX) -->
+<script>
+  (async function () {
+    const API_BASE = 'https://www.bryanharper.tokyo';
+    const GATE_URL = 'https://www.bryanharper.tokyo/booha-gate';
+
+    const MSG = {
+      kicked: {
+        en: "Someone just logged in using your name and PIN.",
+        jp: "別の端末であなたの名前とPINでログインされました。"
+      },
+      expired: {
+        en: "Your session has expired. Please log in again.",
+        jp: "セッションの有効期限が切れました。もう一度ブーハーゲートからログインしてください。"
+      },
+      invalid: {
+        en: "Your session is invalid. Please log in again.",
+        jp: "セッションの確認に問題が発生しました。もう一度ブーハーゲートからログインしてください。"
+      },
+      missing: {
+        en: "No session found. Please log in through the Booha Gate.",
+        jp: "セッションが見つかりません。ブーハーゲートからログインしてください。"
+      }
+    };
+
+    function kickOut(kind) {
+      const m = MSG[kind] || MSG.invalid;
+      alert(m.en + "\n\n" + m.jp);
+      window.location.href = GATE_URL;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    let token = params.get('token');
+
+    // fallback: token passed from Adventure / other deck
+    if (!token) {
+      try { token = sessionStorage.getItem('boohaToken'); } catch {}
+    }
+
+    if (!token) {
+      kickOut('missing');
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        API_BASE + '/_functions/verifyToken?token=' + encodeURIComponent(token),
+        { headers: { 'Accept': 'application/json' } }
+      );
+
+      const data = await res.json();
+
+      if (!data.valid) {
+        if (data.reason === "KICKED" || data.isActive === false) {
+          kickOut('kicked');
+        } else if (data.reason === "EXPIRED" || data.expired) {
+          kickOut('expired');
+        } else {
+          kickOut('invalid');
+        }
+        return;
+      }
+
+      // ✅ token is valid — keep it for child pages
+      try { sessionStorage.setItem('boohaToken', token); } catch {}
+
+      // ✅ append token to all internal links (games)
+      document.querySelectorAll('a[href]').forEach(a => {
+        const href = a.getAttribute('href');
+        if (!href) return;
+        if (href.startsWith('http')) return;
+        if (href.includes('token=')) return;
+
+        const sep = href.includes('?') ? '&' : '?';
+        a.setAttribute('href', href + sep + 'token=' + encodeURIComponent(token));
+      });
+
+    } catch (err) {
+      console.error('[Game Deck Index] token verification error:', err);
+      kickOut('invalid');
+    }
+  })();
+</script>
+<!-- 🔐 END BOOHA TOKEN GATE -->
+
+  
 <section id="welcome">
   <h1>Booha Review Decks</h1>
   <h2>ブーハー・レビュー・デッキ</h2>
