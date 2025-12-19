@@ -1455,6 +1455,38 @@ if(backBtn){
 }
 
 
+/* =========================
+   INPUT + OK BUTTON HOOKS
+   ========================= */
+function onSubmit(){
+  try{ SFX.unlock(); }catch(e){}
+  if(submitBtn.disabled) return;
+  check();
+}
+
+if(submitBtn){
+  submitBtn.addEventListener("click", (e)=>{
+    e.preventDefault();
+    onSubmit();
+  });
+}
+
+if(ansEl){
+  ansEl.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter"){
+      e.preventDefault();
+      onSubmit();
+    }
+  });
+
+  // optional: keep hints updating when level 3+
+  ansEl.addEventListener("input", ()=>{
+    if(hintLevel >= 3) renderHint();
+  });
+}
+
+   
+
 /* boot: preload audio, unlock on first gesture */
 (async function boot(){
   try{ await SFX.preload(); }catch(e){}
