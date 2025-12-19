@@ -600,6 +600,128 @@ a.back span{
    ========================================================= */
 /* (paste your existing .fireBanner block here unchanged) */
 
+/* =========================================================
+   FIRE BANNER (FIX) — must exist or banner becomes a normal div
+   ========================================================= */
+.fireBanner{
+  position: fixed;
+  left: 50%;
+  top: calc(max(12px, env(safe-area-inset-top)) + 6px);
+  transform: translateX(-50%);
+  z-index: 9999;
+
+  display:grid;
+  grid-template-columns:16px 1fr;
+  grid-template-rows:auto auto;
+  column-gap:10px;
+  row-gap:2px;
+
+  padding:12px 14px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(15,23,42,.58);
+  box-shadow: 0 16px 50px rgba(0,0,0,.55);
+
+  overflow:hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  pointer-events:none;
+  opacity:0;
+  transition: opacity .18s ease;
+}
+.fireBanner.show{opacity:1}
+
+.fireBanner .bannerFX{
+  position:absolute;
+  inset:-40%;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(55% 45% at 20% 20%, rgba(255,214,102,.18), transparent 60%),
+    radial-gradient(55% 45% at 80% 20%, rgba(255,90,160,.16), transparent 60%),
+    radial-gradient(70% 60% at 50% 90%, rgba(90,255,214,.14), transparent 62%);
+  filter: blur(10px) saturate(1.4);
+  opacity:.85;
+  mix-blend-mode: screen;
+  animation: bannerDrift 2.8s ease-in-out infinite;
+}
+@keyframes bannerDrift{
+  0%{transform: translate(-1%, -1%) rotate(-1deg) scale(1.02)}
+  50%{transform: translate( 1%,  1%) rotate( 1deg) scale(1.06)}
+  100%{transform: translate(-1%, -1%) rotate(-1deg) scale(1.02)}
+}
+
+.fireDot{
+  width:14px;height:14px;border-radius:999px;
+  background: radial-gradient(circle at 30% 30%, #fff6d8, #ffd17a 45%, #ff6b3d 100%);
+  box-shadow: 0 0 26px rgba(255,209,122,.80);
+  grid-column:1;
+  grid-row:1 / span 2;
+  align-self:center;
+  position:relative;
+  z-index:2;
+}
+
+.fireBanner .en{
+  grid-column:2; grid-row:1;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.4px;
+  font-size: clamp(18px, 3.1vw, 28px);
+  line-height:1.05;
+  position:relative;
+  z-index:2;
+  text-shadow: 0 2px 0 rgba(0,0,0,.25);
+}
+.fireBanner .jp{
+  grid-column:2; grid-row:2;
+  margin-top:6px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:900;
+  font-size: clamp(14px, 2.7vw, 20px);
+  line-height:1.05;
+  opacity:.98;
+  position:relative;
+  z-index:2;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.90),
+    0 0 10px rgba(0,0,0,.75),
+    0 0 18px rgba(0,0,0,.55);
+}
+
+/* level looks */
+.fireBanner.fire1{ background: radial-gradient(120% 140% at 20% 20%, rgba(255,214,102,.92), rgba(255,120,90,.45) 55%, rgba(20,30,60,.12) 100%); border-color: rgba(255,214,102,.58); }
+.fireBanner.fire2{ background: radial-gradient(120% 140% at 20% 20%, rgba(255,90,160,.92), rgba(255,214,102,.50) 55%, rgba(20,30,60,.12) 100%); border-color: rgba(255,90,160,.58); }
+.fireBanner.fire3{ background: radial-gradient(120% 140% at 20% 20%, rgba(90,255,214,.92), rgba(120,130,255,.52) 55%, rgba(20,30,60,.12) 100%); border-color: rgba(90,255,214,.58); }
+.fireBanner.fire4{
+  border-color: rgba(255,255,255,.38);
+  background: radial-gradient(120% 160% at 15% 20%,
+    rgba(255,255,255,.92),
+    rgba(255,214,102,.62) 22%,
+    rgba(255,90,160,.58) 48%,
+    rgba(90,255,214,.58) 70%,
+    rgba(120,130,255,.48) 100%
+  );
+}
+.fireBanner.fire4 .bannerFX{
+  background:
+    conic-gradient(from 0deg,
+      rgba(255,214,102,0),
+      rgba(255,214,102,.30),
+      rgba(255,90,160,.26),
+      rgba(90,255,214,.26),
+      rgba(120,130,255,.22),
+      rgba(255,214,102,.30),
+      rgba(255,214,102,0)
+    );
+  filter: blur(12px) saturate(1.8);
+  opacity:.95;
+  animation: wildSpin 1.2s linear infinite;
+}
+
+
+   
 
 /* =========================================================
    [K] MOBILE + REDUCE MOTION
