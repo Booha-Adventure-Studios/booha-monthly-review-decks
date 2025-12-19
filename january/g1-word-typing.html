@@ -195,27 +195,41 @@ body.fire3{
   --unlockWobble: 0.9deg;
 }
 
-body.fire4{
-  --fireA: rgba(255,255,255,.28);
-  --fireB: rgba(255,214,102,1.00);
-  --ringA: rgba(255,255,255,.75);
-  --ringB: rgba(255,90,160,1.00);
-  --pulse1: rgba(255,255,255,.85);
-  --pulse2: rgba(90,255,214,.92);
-
-  --bgP: rgba(255,90,160,.72);
-  --bgB: rgba(90,255,214,.62);
-  --bgG: rgba(255,214,102,.72);
-
-  --stormA: rgba(255,90,160,.78);
-  --stormB: rgba(90,255,214,.70);
-  --stormC: rgba(255,214,102,.70);
-  --fireSpark: 1.75;
-
-  --unlockGlow: rgba(255,255,255,.22);
-  --unlockScale: 1.04;
-  --unlockWobble: 1.1deg;
+/* ===========================
+   FIRE 4: WTF visuals WITHOUT moving text
+   - Stop card transform animation (no wobble)
+   - Keep chaos via overlays instead
+   =========================== */
+body.fire4 .card{
+  animation: none !important;                 /* ✅ stops transform wobble */
+  transform: scale(var(--unlockScale)) !important;
 }
+
+/* Make the card itself look insane via a moving overlay */
+body.fire4 .card::before{
+  background:
+    conic-gradient(from 0deg at 50% 50%,
+      rgba(255,255,255,.10),
+      rgba(255,90,160,.22),
+      rgba(90,255,214,.22),
+      rgba(120,130,255,.18),
+      rgba(255,214,102,.22),
+      rgba(255,255,255,.10)
+    ),
+    radial-gradient(520px 220px at 30% 0%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(560px 260px at 80% 0%, rgba(255,209,122,.14), transparent 62%),
+    radial-gradient(900px 380px at 50% 120%, rgba(255,120,70, calc(.06 + var(--fireSpark)*.10)), transparent 62%);
+  opacity: .95;
+  animation: wildSpin 1.05s linear infinite;  /* ✅ looks insane */
+  filter: blur(0.6px) saturate(1.6);
+}
+
+/* Fire ring goes faster = more “WTF” without moving text */
+body.fire4 .fireRing{
+  animation-duration: .42s !important;
+  filter: drop-shadow(0 0 30px var(--pulse1)) drop-shadow(0 0 60px var(--pulse2));
+}
+
 
 /* ensure fire background overlays kick in */
 body.fire1, body.fire2, body.fire3, body.fire4{
@@ -455,7 +469,7 @@ h1 small{
 .jp{
   margin-top:22px;
   font-family:'Noto Sans JP',system-ui;
-  font-size:clamp(28px,5.2vw,40px);
+  font-size:clamp(32px, 7.4vw, 48px); /* ✅ bigger */
   font-weight:900;
   letter-spacing:.02em;
   position:relative;
@@ -468,7 +482,7 @@ h1 small{
 .hira{
   margin-top:6px;
   font-family:'Noto Sans JP',system-ui;
-  font-size:clamp(14px,2.6vw,18px);
+  font-size:clamp(16px, 3.6vw, 22px); /* ✅ slightly bigger too */
   color:#cbd5e1;
   position:relative;
   z-index:1;
@@ -476,6 +490,7 @@ h1 small{
     0 2px 0 rgba(0,0,0,.85),
     0 6px 16px rgba(0,0,0,.55);
 }
+
 
 /* Input + button */
 input{
@@ -1352,12 +1367,14 @@ function stabilizePromptLoop(){
   const prompt = document.querySelector("#prompt");
   const card   = document.querySelector("#card");
 
-  if(!prompt || !card){
-    console.warn("[STABILIZER] Missing #prompt or #card");
-    return;
-  }
+  if(!prompt || !card) return;
 
-  if(prefersReduced){
+  const COARSE = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+  const ANDROID = /Android/i.test(navigator.userAgent);
+
+  // ✅ Android + touch devices: don’t run the matrix loop.
+  // We’ll keep text still by NOT wobbling the card in fire4 (CSS) and keeping fire3 mild.
+  if (prefersReduced || COARSE || ANDROID){
     prompt.style.transform = "none";
     return;
   }
@@ -1389,13 +1406,12 @@ function stabilizePromptLoop(){
     prompt.style.transform =
       `matrix(${inv[0]},${inv[1]},${inv[2]},${inv[3]},${inv[4]},${inv[5]})`;
 
-    // keep looping
     stabilizeRAF = requestAnimationFrame(tick);
   };
 
-  // start once
   stabilizeRAF = requestAnimationFrame(tick);
 }
+
 
    
 /* finish */
