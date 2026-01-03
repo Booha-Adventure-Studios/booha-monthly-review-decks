@@ -533,19 +533,25 @@ h1 small{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  padding:10px 14px;
+
+  /* 🔼 MAKE THEM BIGGER */
+  padding:14px 18px;                 /* ← was 10px 14px */
+  font-size:clamp(18px, 4vw, 24px);  /* ← ADD THIS */
+
   border-radius:999px;
   border:1px solid rgba(255,255,255,.18);
   background:rgba(255,255,255,.08);
+
   cursor:pointer;
   user-select:none;
   font-family:system-ui,'Noto Sans JP',sans-serif;
-  font-weight:650;
+  font-weight:600;
   letter-spacing:0;
-  text-shadow: 0 2px 0 rgba(0,0,0,.65);
-  transition: transform .08s ease, filter .12s ease;
-  -webkit-tap-highlight-color: transparent;
+
+  text-shadow:0 2px 0 rgba(0,0,0,.65);
+  transition:transform .08s ease, filter .12s ease;
 }
+
 .token:active{ transform: translateY(1px) scale(.99); }
 
 .controlsRow{
