@@ -24,7 +24,7 @@ REMINDERS (READ ME)
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Booha Review Decks – Spot the Mistake</title>
+<title>Booha Review Decks – Sentence Order</title>
 <meta name="theme-color" content="#0b1020" />
 <link rel="icon" type="image/png" href="BoohaYellow.png">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet" />
@@ -975,10 +975,11 @@ button.primary:active{transform: translateY(1px)}
     <div class="card" id="card">
       <div class="fireRing" aria-hidden="true"></div>
 
-      <div id="game">
-        <div class="header" id="prompt">
-          <h1>Spot the Mistake<small>まちがいさがし</small></h1>
-        </div>
+     <div id="game">
+  <div class="header" id="prompt">
+    <h1>Sentence Order<small>語順（ごじゅん）</small></h1>
+  </div>
+
 
         <div id="sentenceWrap">
   <div class="sentenceTitle" id="sentenceTitle">Put the sentence in order.<br><span>英文を正しい順番にしてね。</span></div>
@@ -1033,27 +1034,43 @@ button.primary:active{transform: translateY(1px)}
   </div>
 </div>
 
-<!-- Start overlay -->
+<!-- Start overlay (Sentence Order) -->
 <div class="startOverlay" id="startOverlay" role="dialog" aria-modal="true" aria-label="How to play">
   <div class="startPanel">
     <div class="startTitle">
-      <h2>Spot the Mistake<small>まちがいさがし</small></h2>
+      <h2>Sentence Order<small>語順（ごじゅん）</small></h2>
     </div>
+
     <div class="startText">
-      <div><b>まちがいを見つけられる？</b></div>
+      <div><b>英文を正しい順番にしよう！</b></div>
+
       <div style="margin-top:10px;">
-        英文の中に <b>まちがいが１つ</b> あります。<br>
-        <b>スペルがまちがっている単語</b> または<br>
-        <b>いらない（文に合わない）単語</b> です。<br>
-        （※ 同じ単語が２回出るパターンはありません）
+        バラバラの単語をタップして、<br>
+        <b>正しい英文の順番</b>に並べます。
       </div>
+
       <div style="margin-top:10px;">
-        👉 <b>まちがっている単語をクリック／タップ</b> してください。<br>
-        正解したら <b>NEXT（つぎ）</b> を押して進みます。
+        👉 <b>単語をタップ</b> → 上の行に移動<br>
+        👉 下から消えます
       </div>
-      <div class="enLine">Find the misspelled word or the extra word that does not belong. Tap it. Then tap NEXT.</div>
+
+      <div style="margin-top:10px;">
+        👉 <b>いちばん最後の単語をタップ</b> → もどせます
+      </div>
+
+      <div style="margin-top:10px;">
+        できたら <b>CHECK（チェック）</b> を押してください。
+      </div>
+
+      <div class="enLine">
+        Tap the words to put the sentence in the correct order.  
+        Tap the last word to undo. Then tap CHECK.
+      </div>
     </div>
-    <button class="primary" id="startBtn">START <span class="jpBtn">スタート</span></button>
+
+    <button class="primary" id="startBtn">
+      START <span class="jpBtn">スタート</span>
+    </button>
   </div>
 </div>
 
