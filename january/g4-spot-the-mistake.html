@@ -476,16 +476,17 @@ h1 small{
   z-index:1;
 }
 .sentence{
-  font-family:'Cinzel',serif;
+  font-family:system-ui,'Noto Sans JP',sans-serif;
   font-size:clamp(22px, 4.8vw, 40px);
-  font-weight:900;
-  letter-spacing:.02em;
+  font-weight:500;
+  letter-spacing:0;
   line-height:1.25;
   text-shadow:
     0 2px 0 rgba(0,0,0,.95),
     0 6px 18px rgba(0,0,0,.75),
     0 0 22px rgba(0,0,0,.55);
 }
+
 
 /* ✅ NO tiles/pills: just words */
 .word{
@@ -1053,73 +1054,75 @@ const SFX = (() => {
    RULE: one misspelling OR one extra word that makes the sentence wrong
    ========================= */
 const DATA = [
+
   // Goals (15)
-  { correct:"What is your goal this year?", wrong:"What is your goel this year?", target:"goel" },
-  { correct:"Why is it important to you?", wrong:"Why is it imporant to you?", target:"imporant" },
-  { correct:"How will you reach your goal?", wrong:"How will you to reach your goal?", target:"to" },
-  { correct:"Who helps you stay motivated?", wrong:"Who helps you stay motiveted?", target:"motiveted" },
-  { correct:"What habit do you want to change?", wrong:"What a habit do you want to change?", target:"a" },
-  { correct:"Do you like making resolutions?", wrong:"Do you like making resolusions?", target:"resolusions" },
-  { correct:"What do you want to try this year?", wrong:"What do you want to try this yeer?", target:"yeer" },
-  { correct:"What’s something new you learned recently?", wrong:"What’s something new you learned recenlty?", target:"recenlty" },
-  { correct:"Is it easy to keep goals?", wrong:"Is it easy to keep the goals?", target:"the" },
-  { correct:"What happens when you don’t try?", wrong:"What happens when you don’t triy?", target:"triy" },
-  { correct:"What makes you feel proud?", wrong:"What does makes you feel proud?", target:"does" },
-  { correct:"What’s your dream for the future?", wrong:"What’s your dream for the futrue?", target:"futrue" },
-  { correct:"How do you stay positive?", wrong:"How do you stay positve?", target:"positve" },
-  { correct:"Who inspires you?", wrong:"Who inspirse you?", target:"inspirse" },
-  { correct:"How can English help your goals?", wrong:"How can English to help your goals?", target:"to" },
+  { correct:"What is your goal this year?", wrong:"What is your goal in this year?", target:"in" },
+  { correct:"Why is it important to you?", wrong:"Why it is important to you?", target:"it" },
+  { correct:"How will you reach your goal?", wrong:"How will you reach to your goal?", target:"to" },
+  { correct:"Who helps you stay motivated?", wrong:"Who help you stay motivated?", target:"help" },
+  { correct:"What habit do you want to change?", wrong:"What habit do you want to changing?", target:"changing" },
+  { correct:"Do you like making resolutions?", wrong:"Do you like make resolutions?", target:"make" },
+  { correct:"What do you want to try this year?", wrong:"What do you want to try on this year?", target:"on" },
+  { correct:"What’s something new you learned recently?", wrong:"What’s something new you have learned recently?", target:"have" },
+  { correct:"Is it easy to keep goals?", wrong:"Is it easy to keep your goals?", target:"keep" },
+  { correct:"What happens when you don’t try?", wrong:"What happens when you don’t trying?", target:"trying" },
+  { correct:"What makes you feel proud?", wrong:"What makes you to feel proud?", target:"to" },
+  { correct:"What’s your dream for the future?", wrong:"What’s your dream in the future?", target:"in" },
+  { correct:"How do you stay positive?", wrong:"How do you staying positive?", target:"staying" },
+  { correct:"Who inspires you?", wrong:"Who inspires is you?", target:"is" },
+  { correct:"How can English help your goals?", wrong:"How can English help for your goals?", target:"for" },
 
   // Daily routine (15)
-  { correct:"What time do you wake up?", wrong:"What time do you wake upp?", target:"upp" },
-  { correct:"What do you do after school?", wrong:"What do you do after scool?", target:"scool" },
+  { correct:"What time do you wake up?", wrong:"What time do you wake up at?", target:"at" },
+  { correct:"What do you do after school?", wrong:"What do you do after the school?", target:"the" },
   { correct:"Do you help at home?", wrong:"Do you do help at home?", target:"do" },
-  { correct:"What do you do every morning?", wrong:"What do you do every moring?", target:"moring" },
-  { correct:"What time do you eat dinner?", wrong:"What time do you eat diner?", target:"diner" },
+  { correct:"What do you do every morning?", wrong:"What do you do every mornings?", target:"mornings" },
+  { correct:"What time do you eat dinner?", wrong:"What time do you eat the dinner?", target:"the" },
   { correct:"Do you use your phone before bed?", wrong:"Do you use your phone before to bed?", target:"to" },
-  { correct:"How do you get ready for school?", wrong:"How do you get ready for shcool?", target:"shcool" },
-  { correct:"What is your favorite part of the day?", wrong:"What is your favorte part of the day?", target:"favorte" },
+  { correct:"How do you get ready for school?", wrong:"How do you get ready to school?", target:"to" },
+  { correct:"What is your favorite part of the day?", wrong:"What is your most favorite part of the day?", target:"most" },
   { correct:"When do you do homework?", wrong:"When do you do the homework?", target:"the" },
-  { correct:"Do you study every day?", wrong:"Do you study every dey?", target:"dey" },
-  { correct:"What time do you go to bed?", wrong:"What time do you go to beed?", target:"beed" },
-  { correct:"What do you do on weekends?", wrong:"What do you do on weekens?", target:"weekens" },
-  { correct:"What do you usually eat for breakfast?", wrong:"What do you usually eat for a breakfast?", target:"a" },
-  { correct:"Who do you spend time with after school?", wrong:"Who do you spend time with after the school?", target:"the" },
-  { correct:"What time do you finish dinner?", wrong:"What time do you finish dinenr?", target:"dinenr" },
+  { correct:"Do you study every day?", wrong:"Do you study everyday?", target:"everyday" },
+  { correct:"What time do you go to bed?", wrong:"What time are you go to bed?", target:"are" },
+  { correct:"What do you do on weekends?", wrong:"What do you do in weekends?", target:"in" },
+  { correct:"What do you usually eat for breakfast?", wrong:"What do you usually eat at breakfast?", target:"at" },
+  { correct:"Who do you spend time with after school?", wrong:"Who do you spend time after school with?", target:"after" },
+  { correct:"What time do you finish dinner?", wrong:"What time do you finish to eat dinner?", target:"to" },
 
   // Health (15)
   { correct:"What do you do to stay healthy?", wrong:"What do you do to stay a healthy?", target:"a" },
-  { correct:"How many hours do you sleep?", wrong:"How many hours do you slepe?", target:"slepe" },
-  { correct:"Do you eat vegetables every day?", wrong:"Do you eat vegtables every day?", target:"vegtables" },
-  { correct:"What sports do you play?", wrong:"What sports do you plaay?", target:"plaay" },
+  { correct:"How many hours do you sleep?", wrong:"How many hours are you sleep?", target:"are" },
+  { correct:"Do you eat vegetables every day?", wrong:"Do you eat vegetables every days?", target:"days" },
+  { correct:"What sports do you play?", wrong:"What sports do you play it?", target:"it" },
   { correct:"How do you relax after school?", wrong:"How do you relax after the school?", target:"the" },
-  { correct:"Do you like exercise?", wrong:"Do you like excersise?", target:"excersise" },
-  { correct:"What food gives you energy?", wrong:"What food is gives you energy?", target:"is" },
+  { correct:"Do you like exercise?", wrong:"Do you like to exercise?", target:"to" },
+  { correct:"What food gives you energy?", wrong:"What food give you energy?", target:"give" },
   { correct:"Do you drink enough water?", wrong:"Do you do drink enough water?", target:"do" },
-  { correct:"What time do you go to sleep?", wrong:"What time do you go to slep?", target:"slep" },
-  { correct:"What should people do when they’re sick?", wrong:"What should people do when they’re sike?", target:"sike" },
-  { correct:"Do you often feel tired?", wrong:"Do you often feel tirred?", target:"tirred" },
-  { correct:"How do you stay happy?", wrong:"How do you stay hapy?", target:"hapy" },
-  { correct:"Is health important to you?", wrong:"Is health important to yuo?", target:"yuo" },
+  { correct:"What time do you go to sleep?", wrong:"What time are you go to sleep?", target:"are" },
+  { correct:"What should people do when they’re sick?", wrong:"What should people do when they sick?", target:"they" },
+  { correct:"Do you often feel tired?", wrong:"Do you often feels tired?", target:"feels" },
+  { correct:"How do you stay happy?", wrong:"How do you stay to happy?", target:"to" },
+  { correct:"Is health important to you?", wrong:"Is the health important to you?", target:"the" },
   { correct:"What bad habit do you want to change?", wrong:"What bad habit do you want to to change?", target:"to" },
-  { correct:"What’s your favorite healthy food?", wrong:"What’s your favorite helthy food?", target:"helthy" },
+  { correct:"What’s your favorite healthy food?", wrong:"What’s your favorite healthy foods?", target:"foods" },
 
   // School / self (15)
-  { correct:"What do you want to learn this year?", wrong:"What do you want to learn this yaer?", target:"yaer" },
+  { correct:"What do you want to learn this year?", wrong:"What do you want to learn in this year?", target:"in" },
   { correct:"What are you good at?", wrong:"What do are you good at?", target:"do" },
-  { correct:"What do you find difficult?", wrong:"What do you find dificullt?", target:"dificullt" },
-  { correct:"How do you keep trying?", wrong:"How do you keep tryng?", target:"tryng" },
-  { correct:"What helps you focus?", wrong:"What helps you focuss?", target:"focuss" },
-  { correct:"Do you believe in yourself?", wrong:"Do you believe in youreslf?", target:"youreslf" },
-  { correct:"What do you do when you make mistakes?", wrong:"What do you do when you make mistakess?", target:"mistakess" },
-  { correct:"Who inspires you?", wrong:"Who does inspires you?", target:"does" },
-  { correct:"What makes you happy at school?", wrong:"What makes you happy at schoool?", target:"schoool" },
-  { correct:"What is one thing you want to improve?", wrong:"What is one thing you want to imporve?", target:"imporve" },
-  { correct:"Do you like challenges?", wrong:"Do you like challanges?", target:"challanges" },
-  { correct:"How do you relax?", wrong:"How do you relax to?", target:"to" },
-  { correct:"What do you do when you feel nervous?", wrong:"What do you do when you feel nervus?", target:"nervus" },
-  { correct:"How do you motivate yourself?", wrong:"How do you do motivate yourself?", target:"do" },
-  { correct:"What’s your biggest goal right now?", wrong:"What are your biggest goal right now?", target:"are" }
+  { correct:"What do you find difficult?", wrong:"What do you find difficulty?", target:"difficulty" },
+  { correct:"How do you keep trying?", wrong:"How do you keep to try?", target:"to" },
+  { correct:"What helps you focus?", wrong:"What help you focus?", target:"help" },
+  { correct:"Do you believe in yourself?", wrong:"Do you believe yourself?", target:"in" },
+  { correct:"What do you do when you make mistakes?", wrong:"What do you do when you make mistake?", target:"mistake" },
+  { correct:"Who inspires you?", wrong:"Who does inspire you?", target:"does" },
+  { correct:"What makes you happy at school?", wrong:"What make you happy at school?", target:"make" },
+  { correct:"What is one thing you want to improve?", wrong:"What is one thing you want improve?", target:"improve" },
+  { correct:"Do you like challenges?", wrong:"Do you like a challenges?", target:"a" },
+  { correct:"How do you relax?", wrong:"How do you relax yourself?", target:"yourself" },
+  { correct:"What do you do when you feel nervous?", wrong:"What do you do when you feel nervously?", target:"nervously" },
+  { correct:"How do you motivate yourself?", wrong:"How do you motivate you?", target:"you" },
+  { correct:"What’s your biggest goal right now?", wrong:"What is your most biggest goal right now?", target:"most" }
+
 ];
 
 function shuffle(arr){
