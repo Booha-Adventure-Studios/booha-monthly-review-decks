@@ -1,0 +1,859 @@
+<!-- =========================
+SENTENCE ORDER — CHUNK 1
+Pool → Line (tap to move)
+Undo = tap last word on line
+========================= -->
+
+<div id="game">
+  <div class="header">
+    <h1>Sentence Order <small>語順（ごじゅん）</small></h1>
+  </div>
+
+  <div id="sentenceWrap">
+    <div id="buildLine" class="buildLine" aria-label="Sentence line"></div>
+    <div id="wordPool" class="wordPool" aria-label="Word pool"></div>
+
+    <div class="controls">
+      <button id="checkBtn" class="btn" disabled>CHECK</button>
+      <button id="clearBtn" class="btn ghost">CLEAR</button>
+    </div>
+
+    <div id="msg" class="msg"></div>
+  </div>
+</div>
+
+<style>
+  /* Sentence line */
+  .buildLine{
+    min-height:64px;
+    padding:14px 14px;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(0,0,0,.22);
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:14px;
+  }
+
+  /* Pool */
+  .wordPool{
+    padding:14px 14px;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(0,0,0,.12);
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .token{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:10px 14px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.08);
+    cursor:pointer;
+    user-select:none;
+    font-family:'Inter','Noto Sans JP',system-ui,sans-serif;
+    font-weight:600;
+    letter-spacing:0;
+    text-shadow: 0 2px 0 rgba(0,0,0,.65);
+    transition: transform .08s ease, filter .12s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .token:active{ transform: translateY(1px) scale(.99); }
+
+  .controls{
+    margin-top:14px;
+    display:flex;
+    gap:10px;
+    justify-content:center;
+  }
+  .btn{
+    padding:12px 16px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.22);
+    background:rgba(255,255,255,.10);
+    color:#fff;
+    font-family:'Inter','Noto Sans JP',system-ui,sans-serif;
+    font-weight:800;
+    letter-spacing:.04em;
+    cursor:pointer;
+  }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; }
+  .btn.ghost{ background:rgba(0,0,0,.15); }
+
+  .msg{
+    margin-top:10px;
+    text-align:center;
+    opacity:.85;
+    font-family:'Inter','Noto Sans JP',system-ui,sans-serif;
+    font-weight:600;
+  }
+</style>
+
+<script>
+  // TEMP sample (we’ll replace with your 60 later)
+  const DATA = [
+    { sentence: "What do you do every morning?" }
+  ];
+
+  const poolEl = document.getElementById("wordPool");
+  const lineEl = document.getElementById("buildLine");
+  const checkBtn = document.getElementById("checkBtn");
+  const clearBtn = document.getElementById("clearBtn");
+  const msgEl = document.getElementById("msg");
+
+  let current = null;
+  let pool = [];
+  let built = [];
+
+  function normalize(s){
+    return s.toLowerCase().replace(/\s+/g," ").trim();
+  }
+
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+  }
+
+  function render(){
+    poolEl.innerHTML = "";
+    lineEl.innerHTML = "";
+
+    // sentence line tokens
+    built.forEach((w, idx)=>{
+      const t = document.createElement("span");
+      t.className = "token";
+      t.textContent = w;
+      // Undo rule: only last word can be removed
+      t.style.opacity = (idx === built.length-1) ? "1" : ".55";
+      t.style.pointerEvents = (idx === built.length-1) ? "auto" : "none";
+      t.addEventListener("click", ()=>{
+        // remove last and return to pool
+        const back = built.pop();
+        pool.push(back);
+        render();
+      });
+      lineEl.appendChild(t);
+    });
+
+    // pool tokens
+    pool.forEach((w, idx)=>{
+      const t = document.createElement("span");
+      t.className = "token";
+      t.textContent = w;
+      t.addEventListener("click", ()=>{
+        // move from pool → line
+        const picked = pool.splice(idx,1)[0];
+        built.push(picked);
+        render();
+      });
+      poolEl.appendChild(t);
+    });
+
+    checkBtn.disabled = built.length < 2; // small guard
+  }
+
+  function loadQuestion(i=0){
+    current = DATA[i];
+    const words = current.sentence
+      .replace(/[?!.]/g,"") // punctuation handled later
+      .split(" ")
+      .filter(Boolean);
+
+    pool = shuffle([...words]);
+    built = [];
+    msgEl.textContent = "";
+    render();
+  }
+
+  checkBtn.addEventListener("click", ()=>{
+    const attempt = normalize(built.join(" "));
+    const answer  = normalize(current.sentence.replace(/[?!.]/g,""));
+    msgEl.textContent = (attempt === answer) ? "✅ Correct" : "❌ Try again";
+  });
+
+  clearBtn.addEventListener("click", ()=>{
+    pool = shuffle(pool.concat(built));
+    built = [];
+    msgEl.textContent = "";
+    render();
+  });
+
+  loadQuestion(0);
+</script>
+
+
+<!-- =========================
+SENTENCE ORDER — CHUNK 2
+60 Q loop + streak + audio (ding/fart)
+(Add this JS by REPLACING your current <script>…</script> from Chunk 1)
+========================= -->
+
+<script>
+  // -----------------------
+  // DATA (replace this with your real 60 later)
+  // Each item: { sentence:"..." }
+  // -----------------------
+  const DATA = [
+    { sentence:"What do you do every morning?" },
+    { sentence:"What time do you wake up?" },
+    { sentence:"Do you study every day?" },
+    // ... up to 60
+  ];
+
+  // -----------------------
+  // Elements
+  // -----------------------
+  const poolEl  = document.getElementById("wordPool");
+  const lineEl  = document.getElementById("buildLine");
+  const checkBtn= document.getElementById("checkBtn");
+  const clearBtn= document.getElementById("clearBtn");
+  const msgEl   = document.getElementById("msg");
+
+  // (Optional) tiny HUD inserted above sentenceWrap
+  const hud = document.createElement("div");
+  hud.style.cssText = "margin:10px 0 14px;text-align:center;opacity:.9;font-family:'Inter','Noto Sans JP',system-ui,sans-serif;font-weight:700;";
+  hud.innerHTML = `<span id="qHud">Q 1 / ${DATA.length}</span> · <span id="streakHud">Streak: 0</span> · <span id="bestHud">Best: 0</span>`;
+  document.getElementById("sentenceWrap").insertBefore(hud, document.getElementById("buildLine"));
+  const qHud = document.getElementById("qHud");
+  const streakHud = document.getElementById("streakHud");
+  const bestHud = document.getElementById("bestHud");
+
+  // -----------------------
+  // Audio (Safari-safe: new Audio per play)
+  // -----------------------
+  const SFX = {
+    ding: "assets/audio/ding.mp3",
+    fart: "assets/audio/fart.mp3"
+  };
+  function playSfx(src, vol=1){
+    try{
+      const a = new Audio(src);
+      a.volume = vol;
+      a.play().catch(()=>{});
+    }catch(e){}
+  }
+
+  // -----------------------
+  // State
+  // -----------------------
+  let order = [];         // shuffled indices
+  let qi = 0;             // current question pointer in order[]
+  let current = null;
+
+  let pool = [];
+  let built = [];
+
+  let streak = 0;
+  let bestStreak = 0;
+
+  // -----------------------
+  // Utils
+  // -----------------------
+  function normalize(s){
+    return s.toLowerCase().replace(/\s+/g," ").trim();
+  }
+  function stripPunct(s){
+    return s.replace(/[?!.]/g,"");
+  }
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+  }
+  function updateHud(){
+    qHud.textContent = `Q ${Math.min(qi+1, DATA.length)} / ${DATA.length}`;
+    streakHud.textContent = `Streak: ${streak}`;
+    bestHud.textContent = `Best: ${bestStreak}`;
+  }
+
+  // -----------------------
+  // Render (pool → line)
+  // -----------------------
+  function render(){
+    poolEl.innerHTML = "";
+    lineEl.innerHTML = "";
+
+    // sentence line (only last word is undo-able)
+    built.forEach((w, idx)=>{
+      const t = document.createElement("span");
+      t.className = "token";
+      t.textContent = w;
+
+      const isLast = (idx === built.length-1);
+      t.style.opacity = isLast ? "1" : ".55";
+      t.style.pointerEvents = isLast ? "auto" : "none";
+
+      t.addEventListener("click", ()=>{
+        const back = built.pop();
+        pool.push(back);
+        render();
+      });
+      lineEl.appendChild(t);
+    });
+
+    // word pool
+    pool.forEach((w, idx)=>{
+      const t = document.createElement("span");
+      t.className = "token";
+      t.textContent = w;
+      t.addEventListener("click", ()=>{
+        const picked = pool.splice(idx,1)[0];
+        built.push(picked);
+        render();
+      });
+      poolEl.appendChild(t);
+    });
+
+    checkBtn.disabled = built.length < 2;
+    updateHud();
+  }
+
+  // -----------------------
+  // Question control
+  // -----------------------
+  function newRun(){
+    order = shuffle([...Array(DATA.length)].map((_,i)=>i));
+    qi = 0;
+    streak = 0;
+    bestStreak = 0;
+    loadQuestion();
+  }
+
+  function loadQuestion(){
+    current = DATA[order[qi]];
+    const words = stripPunct(current.sentence).split(" ").filter(Boolean);
+    pool = shuffle([...words]);
+    built = [];
+    msgEl.textContent = "";
+    render();
+  }
+
+  function nextQuestion(){
+    qi++;
+    if(qi >= order.length){
+      // finished all 60
+      msgEl.textContent = `🎉 Finished! Best streak: ${bestStreak}`;
+      checkBtn.disabled = true;
+      poolEl.innerHTML = "";
+      lineEl.innerHTML = "";
+      updateHud();
+      return;
+    }
+    loadQuestion();
+  }
+
+  // -----------------------
+  // Buttons
+  // -----------------------
+  clearBtn.addEventListener("click", ()=>{
+    pool = shuffle(pool.concat(built));
+    built = [];
+    msgEl.textContent = "";
+    render();
+  });
+
+  checkBtn.addEventListener("click", ()=>{
+    const attempt = normalize(built.join(" "));
+    const answer  = normalize(stripPunct(current.sentence));
+
+    if(attempt === answer){
+      playSfx(SFX.ding, 0.9);
+
+      streak++;
+      if(streak > bestStreak) bestStreak = streak;
+
+      msgEl.textContent = "✅ Correct!";
+      updateHud();
+
+      // quick advance
+      setTimeout(()=> nextQuestion(), 420);
+    }else{
+      playSfx(SFX.fart, 0.95);
+
+      streak = 0;
+      msgEl.textContent = "❌ Wrong! Streak reset.";
+      updateHud();
+
+      // keep same question; clear their attempt (fast retry)
+      setTimeout(()=>{
+        pool = shuffle(pool.concat(built));
+        built = [];
+        render();
+      }, 520);
+    }
+  });
+
+  // Start
+  newRun();
+</script>
+
+
+<!-- =========================
+SENTENCE ORDER — CHUNK 3
+WOW stages (3/6/9/15) + screen effects + fire/level4 audio
+(Add the CSS block, then REPLACE your Chunk 2 <script> with this one)
+========================= -->
+
+<style>
+  /* ===== WOW OVERLAY ===== */
+  .wowOverlay{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    pointer-events:none;
+    opacity:0;
+    transition: opacity .18s ease;
+    mix-blend-mode: screen;
+  }
+  .wowOverlay.on{ opacity:1; }
+
+  /* stage base: animated glow wash */
+  .wowOverlay::before{
+    content:"";
+    position:absolute;
+    inset:-40px;
+    background: radial-gradient(circle at 30% 30%, rgba(255,220,120,.75), transparent 55%),
+                radial-gradient(circle at 70% 40%, rgba(255,120,220,.55), transparent 55%),
+                radial-gradient(circle at 40% 75%, rgba(120,220,255,.55), transparent 55%);
+    filter: blur(18px) saturate(1.4);
+    animation: wowDrift 1.4s ease-in-out infinite alternate;
+  }
+  @keyframes wowDrift{
+    from{ transform: translate3d(-10px,-10px,0) scale(1.03); }
+    to  { transform: translate3d(10px,10px,0)  scale(1.07); }
+  }
+
+  /* screen pulse */
+  body.wow1 #game,
+  body.wow2 #game,
+  body.wow3 #game,
+  body.wow4 #game{
+    animation: wowPulse .55s ease-in-out infinite alternate;
+  }
+  @keyframes wowPulse{
+    from{ filter: brightness(1.05) saturate(1.1); transform: translateZ(0); }
+    to  { filter: brightness(1.18) saturate(1.3); transform: translateZ(0); }
+  }
+
+  /* stronger stages */
+  body.wow2 .wowOverlay::before{ filter: blur(14px) saturate(1.8); }
+  body.wow3 .wowOverlay::before{ filter: blur(10px) saturate(2.2); }
+
+  /* Stage 4: spicy party mode */
+  body.wow4 #game{
+    animation: partyPulse .22s linear infinite;
+  }
+  @keyframes partyPulse{
+    0%{ filter:hue-rotate(0deg)  brightness(1.18) saturate(2.4); transform: translate3d(0,0,0) scale(1.00); }
+    25%{filter:hue-rotate(60deg) brightness(1.28) saturate(2.8); transform: translate3d(0,0,0) scale(1.01); }
+    50%{filter:hue-rotate(140deg)brightness(1.20) saturate(3.0); transform: translate3d(0,0,0) scale(1.02); }
+    75%{filter:hue-rotate(240deg)brightness(1.30) saturate(3.2); transform: translate3d(0,0,0) scale(1.01); }
+    100%{filter:hue-rotate(360deg)brightness(1.18) saturate(2.4); transform: translate3d(0,0,0) scale(1.00); }
+  }
+
+  /* Party confetti-ish sparkles */
+  .partyBits{
+    position:fixed;
+    inset:0;
+    z-index:10000;
+    pointer-events:none;
+    opacity:0;
+    transition: opacity .12s ease;
+  }
+  .partyBits.on{ opacity:1; }
+  .partyBits::before{
+    content:"";
+    position:absolute;
+    inset:-60px;
+    background:
+      radial-gradient(circle, rgba(255,255,255,.9) 0 2px, transparent 3px) 0 0/ 90px 90px,
+      radial-gradient(circle, rgba(255,255,255,.7) 0 1.5px, transparent 3px) 20px 30px/ 70px 70px,
+      radial-gradient(circle, rgba(255,255,255,.6) 0 1.2px, transparent 3px) 40px 10px/ 55px 55px;
+    filter: blur(.2px);
+    animation: bitsFall .85s linear infinite;
+  }
+  @keyframes bitsFall{
+    from{ transform: translateY(-18px); }
+    to  { transform: translateY(18px); }
+  }
+
+  /* Wrong answer shake */
+  body.wrongShake #game{
+    animation: wrongShake .28s ease;
+  }
+  @keyframes wrongShake{
+    0%{transform:translateX(0)}
+    25%{transform:translateX(-10px)}
+    50%{transform:translateX(10px)}
+    75%{transform:translateX(-7px)}
+    100%{transform:translateX(0)}
+  }
+</style>
+
+<script>
+ // -----------------------
+// DATA (60)
+// Each item: { sentence:"..." }
+// -----------------------
+const DATA = [
+  { sentence:"I will study every day." },
+  { sentence:"I’m going to try something new." },
+  { sentence:"I will do my best this year." },
+  { sentence:"I will make a new friend." },
+  { sentence:"I will not be late anymore." },
+  { sentence:"I will help my classmates." },
+  { sentence:"I will clean my desk today." },
+  { sentence:"I will read more books." },
+  { sentence:"I will start a good habit." },
+  { sentence:"I will speak more English." },
+  { sentence:"I will write in my diary every week." },
+  { sentence:"I will wake up earlier." },
+  { sentence:"I will listen carefully in class." },
+  { sentence:"I will smile more." },
+  { sentence:"I will enjoy learning." },
+
+  { sentence:"I wake up at seven." },
+  { sentence:"I eat breakfast every day." },
+  { sentence:"I go to school at eight." },
+  { sentence:"I take a shower in the morning." },
+  { sentence:"I brush my teeth after meals." },
+  { sentence:"I study English after dinner." },
+  { sentence:"I do my homework before bed." },
+  { sentence:"I help my family in the evening." },
+  { sentence:"I clean my room every Sunday." },
+  { sentence:"I sleep at ten o’clock." },
+  { sentence:"I sometimes read at night." },
+  { sentence:"I never watch TV before school." },
+  { sentence:"I usually eat lunch with friends." },
+  { sentence:"I walk to school every day." },
+  { sentence:"I relax after class." },
+
+  { sentence:"You should eat breakfast." },
+  { sentence:"You should drink more water." },
+  { sentence:"You should sleep eight hours." },
+  { sentence:"You should not eat too much candy." },
+  { sentence:"You must wash your hands." },
+  { sentence:"You must wear a mask on the train." },
+  { sentence:"You must listen to your teacher." },
+  { sentence:"You have to do your homework." },
+  { sentence:"You have to bring your notebook." },
+  { sentence:"You have to study for the test." },
+  { sentence:"You shouldn’t skip lunch." },
+  { sentence:"You should stretch before sports." },
+  { sentence:"You should walk to school if it’s close." },
+  { sentence:"You should rest when you’re tired." },
+  { sentence:"You must be kind to others." },
+
+  { sentence:"I want to learn English." },
+  { sentence:"I want to try harder." },
+  { sentence:"I want to read more books." },
+  { sentence:"I want to make new friends." },
+  { sentence:"I can do my best." },
+  { sentence:"I can speak a little English." },
+  { sentence:"I can understand songs in English." },
+  { sentence:"I can help my classmates." },
+  { sentence:"I’m good at drawing." },
+  { sentence:"I’m good at listening." },
+  { sentence:"I’m not good at math." },
+  { sentence:"I’m good at remembering names." },
+  { sentence:"I’m good at cheering people up." },
+  { sentence:"I can learn from mistakes." },
+  { sentence:"I can stay positive." }
+];
+
+  // -----------------------
+  // Elements
+  // -----------------------
+  const poolEl  = document.getElementById("wordPool");
+  const lineEl  = document.getElementById("buildLine");
+  const checkBtn= document.getElementById("checkBtn");
+  const clearBtn= document.getElementById("clearBtn");
+  const msgEl   = document.getElementById("msg");
+
+  // HUD (same as Chunk 2)
+  const hud = document.createElement("div");
+  hud.style.cssText = "margin:10px 0 14px;text-align:center;opacity:.9;font-family:'Inter','Noto Sans JP',system-ui,sans-serif;font-weight:800;letter-spacing:.02em;";
+  hud.innerHTML = `<span id="qHud">Q 1 / ${DATA.length}</span> · <span id="streakHud">Streak: 0</span> · <span id="bestHud">Best: 0</span>`;
+  document.getElementById("sentenceWrap").insertBefore(hud, document.getElementById("buildLine"));
+  const qHud = document.getElementById("qHud");
+  const streakHud = document.getElementById("streakHud");
+  const bestHud = document.getElementById("bestHud");
+
+  // WOW overlay nodes
+  const wowOverlay = document.createElement("div");
+  wowOverlay.className = "wowOverlay";
+  document.body.appendChild(wowOverlay);
+
+  const partyBits = document.createElement("div");
+  partyBits.className = "partyBits";
+  document.body.appendChild(partyBits);
+
+  // -----------------------
+  // Audio (Safari-safe: new Audio per play)
+  // -----------------------
+  const SFX = {
+    ding:   "assets/audio/ding.mp3",
+    fart:   "assets/audio/fart.mp3",
+    fire:   "assets/audio/fire.mp3",
+    level4: "assets/audio/level4.mp3"
+  };
+  function playSfx(src, vol=1){
+    try{
+      const a = new Audio(src);
+      a.volume = vol;
+      a.play().catch(()=>{});
+    }catch(e){}
+  }
+
+  // -----------------------
+  // State
+  // -----------------------
+  let order = [];
+  let qi = 0;
+  let current = null;
+
+  let pool = [];
+  let built = [];
+
+  let streak = 0;
+  let bestStreak = 0;
+
+  let stage = 0; // 0..4
+  let stageLock = false; // prevents taps during stage flashes
+
+  // -----------------------
+  // Utils
+  // -----------------------
+  function normalize(s){
+    return s.toLowerCase().replace(/\s+/g," ").trim();
+  }
+  function stripPunct(s){
+    return s.replace(/[?!.]/g,"");
+  }
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+  }
+  function updateHud(){
+    qHud.textContent = `Q ${Math.min(qi+1, DATA.length)} / ${DATA.length}`;
+    streakHud.textContent = `Streak: ${streak}`;
+    bestHud.textContent = `Best: ${bestStreak}`;
+  }
+
+  // -----------------------
+  // WOW stage control
+  // -----------------------
+  function computeStage(s){
+    if(s >= 15) return 4;
+    if(s >= 9)  return 3;
+    if(s >= 6)  return 2;
+    if(s >= 3)  return 1;
+    return 0;
+  }
+
+  function clearStageClasses(){
+    document.body.classList.remove("wow1","wow2","wow3","wow4");
+    wowOverlay.classList.remove("on");
+    partyBits.classList.remove("on");
+    stage = 0;
+  }
+
+  function setStage(newStage){
+    if(newStage === stage) return;
+    clearStageClasses();
+    stage = newStage;
+
+    if(stage === 0) return;
+
+    document.body.classList.add(`wow${stage}`);
+    wowOverlay.classList.add("on");
+    if(stage === 4) partyBits.classList.add("on");
+  }
+
+  function triggerMilestone(newStage){
+    // spicy, short lock so it feels like a "level up"
+    stageLock = true;
+
+    setStage(newStage);
+
+    if(newStage === 4){
+      playSfx(SFX.level4, 0.95);
+      msgEl.textContent = "💥 CRAZY PARTY STREAK!!!";
+      // longer party flash
+      setTimeout(()=>{
+        stageLock = false;
+      }, 1400);
+    }else{
+      playSfx(SFX.fire, 0.9);
+      msgEl.textContent =
+        newStage === 1 ? "🔥 WOW! 3 in a row!" :
+        newStage === 2 ? "🔥🔥 WOW!! 6 in a row!" :
+                         "🔥🔥🔥 WOW!!! 9 in a row!";
+      setTimeout(()=>{ stageLock = false; }, 700);
+    }
+  }
+
+  // -----------------------
+  // Render (pool → line)
+  // -----------------------
+  function render(){
+    poolEl.innerHTML = "";
+    lineEl.innerHTML = "";
+
+    built.forEach((w, idx)=>{
+      const t = document.createElement("span");
+      t.className = "token";
+      t.textContent = w;
+
+      const isLast = (idx === built.length-1);
+      t.style.opacity = isLast ? "1" : ".55";
+      t.style.pointerEvents = (isLast && !stageLock) ? "auto" : "none";
+
+      t.addEventListener("click", ()=>{
+        if(stageLock) return;
+        const back = built.pop();
+        pool.push(back);
+        render();
+      });
+      lineEl.appendChild(t);
+    });
+
+    pool.forEach((w, idx)=>{
+      const t = document.createElement("span");
+      t.className = "token";
+      t.textContent = w;
+      t.addEventListener("click", ()=>{
+        if(stageLock) return;
+        const picked = pool.splice(idx,1)[0];
+        built.push(picked);
+        render();
+      });
+      poolEl.appendChild(t);
+    });
+
+    checkBtn.disabled = stageLock || built.length < 2;
+    clearBtn.disabled = stageLock;
+    updateHud();
+  }
+
+  // -----------------------
+  // Run control
+  // -----------------------
+  function newRun(){
+    order = shuffle([...Array(DATA.length)].map((_,i)=>i));
+    qi = 0;
+    streak = 0;
+    bestStreak = 0;
+    clearStageClasses();
+    loadQuestion();
+  }
+
+  function loadQuestion(){
+    current = DATA[order[qi]];
+    const words = stripPunct(current.sentence).split(" ").filter(Boolean);
+    pool = shuffle([...words]);
+    built = [];
+    msgEl.textContent = "";
+    render();
+  }
+
+  function nextQuestion(){
+    qi++;
+    if(qi >= order.length){
+      msgEl.textContent = `🎉 Finished! Best streak: ${bestStreak}`;
+      checkBtn.disabled = true;
+      clearBtn.disabled = true;
+      poolEl.innerHTML = "";
+      lineEl.innerHTML = "";
+      updateHud();
+      return;
+    }
+    loadQuestion();
+  }
+
+  // -----------------------
+  // Buttons
+  // -----------------------
+  clearBtn.addEventListener("click", ()=>{
+    if(stageLock) return;
+    pool = shuffle(pool.concat(built));
+    built = [];
+    msgEl.textContent = "";
+    render();
+  });
+
+  checkBtn.addEventListener("click", ()=>{
+    if(stageLock) return;
+
+    const attempt = normalize(built.join(" "));
+    const answer  = normalize(stripPunct(current.sentence));
+
+    if(attempt === answer){
+      playSfx(SFX.ding, 0.9);
+
+      streak++;
+      if(streak > bestStreak) bestStreak = streak;
+
+      // stage update (3/6/9/15)
+      const newStage = computeStage(streak);
+      const oldStage = stage;
+      setStage(newStage);
+
+      // milestone hits: play fire/level4 + flash + message
+      if(newStage > oldStage && (streak === 3 || streak === 6 || streak === 9 || streak === 15)){
+        triggerMilestone(newStage);
+      }else{
+        msgEl.textContent = "✅ Correct!";
+      }
+
+      updateHud();
+
+      // advance
+      setTimeout(()=> nextQuestion(), 420);
+    }else{
+      playSfx(SFX.fart, 0.95);
+
+      // reset streak + stages
+      streak = 0;
+      clearStageClasses();
+
+      // quick wrong feedback
+      document.body.classList.add("wrongShake");
+      setTimeout(()=>document.body.classList.remove("wrongShake"), 280);
+
+      msgEl.textContent = "❌ Wrong! Streak reset.";
+      updateHud();
+
+      // fast retry: clear attempt
+      setTimeout(()=>{
+        pool = shuffle(pool.concat(built));
+        built = [];
+        render();
+      }, 520);
+    }
+  });
+
+  // Start
+  newRun();
+</script>
+
+</body>
+</html>
