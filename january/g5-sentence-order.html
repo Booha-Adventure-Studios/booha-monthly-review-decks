@@ -394,8 +394,9 @@ body.fire4 .card{
     0 0 120px rgba(255,209,122, calc(.06 + var(--fireSpark)*.10));
 }
 
-body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
-body.fire4 .card{ animation: cardThrillWild 0.70s ease-in-out infinite; }
+body.fire3 .fireRing{ animation: cardThrill 0.85s ease-in-out infinite; }
+body.fire4 .fireRing{ animation: cardThrillWild 0.70s ease-in-out infinite; }
+
 
 @keyframes cardThrill{
   0%,100%{ transform: scale(var(--unlockScale)) rotate(calc(var(--unlockWobble) * -1)); }
@@ -406,6 +407,24 @@ body.fire4 .card{ animation: cardThrillWild 0.70s ease-in-out infinite; }
   50%{ transform: scale(calc(var(--unlockScale) + .02)) rotate(var(--unlockWobble)); }
 }
 
+.card{
+  position: relative;
+}
+
+.cardFX{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+}
+
+.cardUI{
+  position: relative;
+  z-index: 2;
+}
+   
+   
 /* fire ring on card */
 .fireRing{
   position:absolute;
@@ -977,9 +996,12 @@ button.primary:active{transform: translateY(1px)}
     </div>
   </div>
 
-  <div class="stage">
-    <div class="card" id="card">
-      <div class="fireRing" aria-hidden="true"></div>
+ <div class="stage">
+  <div class="card" id="card">
+    <div class="fireRing" aria-hidden="true"></div>
+
+    <div class="cardUI">
+      <!-- put ALL your tiles + slot area + sentence UI in here -->
 
      <div id="game">
   <div class="header" id="prompt">
