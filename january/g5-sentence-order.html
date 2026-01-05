@@ -384,20 +384,18 @@ body.fire4 .edgeGlow::after{
     radial-gradient(900px 380px at 50% 120%, rgba(255,120,70, calc(.06 + var(--fireSpark)*.10)), transparent 62%);
   opacity:.9;
 }
+/* Fire mode: animate ONLY the card skin layer */
+body.fire3 .cardFX{ animation: cardThrill 0.85s ease-in-out infinite; }
+body.fire4 .cardFX{ animation: cardThrillWild 0.70s ease-in-out infinite; }
 
-body.fire2 .card,
-body.fire3 .card,
-body.fire4 .card{
-  box-shadow:
-    0 20px 60px rgba(0,0,0,.50),
-    0 0 50px var(--unlockGlow),
-    0 0 120px rgba(255,209,122, calc(.06 + var(--fireSpark)*.10));
+/* Fire ring should NOT wobble (prevents Safari tilt/freeze look) */
+body.fire3 .fireRing,
+body.fire4 .fireRing{
+  animation: none !important;
+  transform: none !important;
 }
 
-body.fire3 .fireRing{ animation: cardThrill 0.85s ease-in-out infinite; }
-body.fire4 .fireRing{ animation: cardThrillWild 0.70s ease-in-out infinite; }
-
-
+/* keyframes unchanged */
 @keyframes cardThrill{
   0%,100%{ transform: scale(var(--unlockScale)) rotate(calc(var(--unlockWobble) * -1)); }
   50%{ transform: scale(calc(var(--unlockScale) + .015)) rotate(var(--unlockWobble)); }
@@ -407,9 +405,8 @@ body.fire4 .fireRing{ animation: cardThrillWild 0.70s ease-in-out infinite; }
   50%{ transform: scale(calc(var(--unlockScale) + .02)) rotate(var(--unlockWobble)); }
 }
 
-.card{
-  position: relative;
-}
+/* layers */
+.card{ position: relative; }
 
 .cardFX{
   position: absolute;
@@ -417,12 +414,30 @@ body.fire4 .fireRing{ animation: cardThrillWild 0.70s ease-in-out infinite; }
   z-index: 1;
   pointer-events: none;
   transform-origin: 50% 50%;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+
+  /* IMPORTANT:
+     Make this match your card "skin".
+     If your .card currently has the background, copy it here. */
+  border-radius: inherit;
+  background: inherit;
+}
+
+.fireRing{
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .cardUI{
   position: relative;
-  z-index: 2;
+  z-index: 3;
 }
+
+
    
    
 /* fire ring on card */
@@ -627,9 +642,8 @@ h1 small{
 }
 @keyframes wordShake{
   0%{transform:translateX(0)}
-  25%{transform:translateX(-7px)}
-  50%{transform:translateX(7px)}
-  75%{transform:translateX(-5px)}
+  30%{transform:translateX(-4px)}
+  60%{transform:translateX(4px)}
   100%{transform:translateX(0)}
 }
 
