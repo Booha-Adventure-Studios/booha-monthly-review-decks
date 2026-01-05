@@ -1006,9 +1006,6 @@ button.primary:disabled{
 }
 button.primary:active{transform: translateY(1px)}
 
-
-
-
    
 @media (prefers-reduced-motion: reduce){
   body::before, body::after{animation:none !important}
@@ -1150,11 +1147,7 @@ button.primary:active{transform: translateY(1px)}
 </div>
 
 <script>
-   
-   
-   
-   
-   $(q){ return document.querySelector(q); }
+function $(q){ return document.querySelector(q); }
 
 /* ---------- WebAudio SFX (same-folder) ---------- */
 const SFX = (() => {
