@@ -1530,38 +1530,13 @@ function pick(tile, picked){
   applyBodyFireFromStreak();
   maybeTriggerFire();
 
-  // ✅ Show correct answer popup (English)
+  // Show correct answer popup (English)
   showCorrectPopup(item.reveal);
 
   pendingAdvance = true;
   nextWrap.classList.add("show");
 
   // allow NEXT; keep choices locked
-  locked = false;
-}
-
-
-  // WRONG
-  tile.classList.add("wrong");
-  popFart();
-
-  streak = 0;
-  streakEl.textContent = "0";
-  applyBodyFireFromStreak();
-  maybeTriggerFire(); // hides banner
-
-  // Reveal correct tile with GREEN GLOW (no pill)
-  const correctText = item.choices[item.correct];
-  const correctTile = tiles.find(t=>{
-    const el = t.querySelector(".en");
-    return el && el.textContent === correctText;
-  });
-  if(correctTile) correctTile.classList.add("correctGlow");
-
-  pendingAdvance = true;
-  nextWrap.classList.add("show");
-
-  // allow NEXT button interaction; choices stay locked by pointer-events via .locked
   locked = false;
 }
 
