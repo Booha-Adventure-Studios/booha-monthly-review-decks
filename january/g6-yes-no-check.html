@@ -467,9 +467,15 @@ body.fire4 .card::after{
    (REPLACE ENTIRE BLOCK)
    =========================== */
 .choice{
-  position:relative;
-  border-radius:var(--btnR);
-  padding:16px 16px 18px;
+  position: relative;
+  border-radius: var(--btnR);
+  padding: 16px 16px 18px;
+
+  display: flex;
+  align-items: center;      /* vertical center */
+  justify-content: center;  /* horizontal center */
+  text-align: center;
+}
 
   /* warm parchment surface */
   background:
@@ -552,6 +558,22 @@ body.fire4 .card::after{
     0 12px 28px rgba(0,0,0,.35);
 }
 
+.choice.yes{
+  background: rgba(80, 200, 120, 0.14);
+  border-color: rgba(80, 200, 120, 0.35);
+}
+
+.choice.no{
+  background: rgba(220, 80, 80, 0.14);
+  border-color: rgba(220, 80, 80, 0.35);
+}
+.choice{
+  border: 2px solid rgba(255,255,255,0.18); /* default */
+}
+
+.choice.yes .en{ color: rgba(30, 120, 70, 0.95); }
+.choice.no  .en{ color: rgba(140, 30, 30, 0.95); }
+  
 
 /* FIRE RING */
 .fireRing{
@@ -1455,19 +1477,19 @@ function render(){
   jpText.textContent = item.prompt;
   hiText.textContent = "";
 
-  // Build YES/NO tiles
-  const yes = document.createElement("div");
-  yes.className = "choice";
-  yes.innerHTML = `<div class="en">YES</div>`;
-  yes.addEventListener("click", ()=>pick(yes, "YES"));
+// Build YES/NO tiles
+const yes = document.createElement("div");
+yes.className = "choice yes";
+yes.innerHTML = `<div class="en">YES</div>`;
+yes.addEventListener("click", ()=>pick(yes, "YES"));
 
-  const no = document.createElement("div");
-  no.className = "choice";
-  no.innerHTML = `<div class="en">NO</div>`;
-  no.addEventListener("click", ()=>pick(no, "NO"));
+const no = document.createElement("div");
+no.className = "choice no";
+no.innerHTML = `<div class="en">NO</div>`;
+no.addEventListener("click", ()=>pick(no, "NO"));
 
-  grid.appendChild(yes);
-  grid.appendChild(no);
+grid.appendChild(yes);
+grid.appendChild(no);
 
   scoreEl.textContent = String(score);
   streakEl.textContent = String(streak);
