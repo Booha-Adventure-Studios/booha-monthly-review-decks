@@ -13,19 +13,7 @@
   --bg:#000;
   --ink:#fff;
 
-  /* Monthly deck palette (distinct from Adventure) */
-  --c1:#ffd166; /* gold */
-  --c2:#6ee7ff; /* ice */
-  --c3:#a6f7b2; /* mint */
-  --c4:#c77dff; /* purple */
-  --c5:#ff7eb9; /* pink */
-  --c6:#ffb366; /* orange */
-
   --tileBorder:#000;
-
-  /* Base glow (fallback) */
-  --tileGlow: 0 0 10px rgba(255,255,255,.12), 0 0 34px rgba(255,209,102,.20);
-  --tileGlowHot: 0 0 18px rgba(255,255,255,.18), 0 0 60px rgba(255,209,102,.42);
 
   --sweepDur: 2.1s;
   --pulseDur: 1.6s;
@@ -101,7 +89,6 @@ body::after{
   animation:fadeIn .9s ease;
 }
 
-/* ✅ English slightly smaller */
 h1{
   font-size:clamp(30px,4.8vw,58px);
   font-weight:900;
@@ -135,9 +122,17 @@ h3{
 }
 
 a.deck{
-  --glow: rgba(255,255,255,.18); /* overridden per-tile */
+  --glow: rgba(255,255,255,.18);
+
+  /* per-tile animation knobs (overridden below) */
   --sweepDurLocal: var(--sweepDur);
   --pulseDurLocal: var(--pulseDur);
+  --sweepOffset: 0s;
+  --pulseOffset: 0s;
+  --sweepDir: 1;
+  --sweepDist: 70%;
+  --pulseScale: 1.02;
+  --pulseCurve: ease-in-out;
 
   position:relative;
   display:flex;
@@ -154,7 +149,6 @@ a.deck{
   cursor:pointer;
   border:9px solid var(--tileBorder);
 
-  /* ✅ separate glow per tile using --glow */
   box-shadow:
     0 0 10px rgba(255,255,255,.10),
     0 0 26px color-mix(in srgb, var(--glow) 35%, transparent),
@@ -166,7 +160,6 @@ a.deck{
   text-align:center;
 }
 
-/* ✅ Titles always centered, never moving */
 a.deck b{
   position:relative;
   z-index:3;
@@ -180,21 +173,17 @@ a.deck b{
   transform:none !important;
 }
 
-/* English a bit smaller on tiles */
 a.deck b .en{
   display:block;
   font-size:0.95em;
   letter-spacing:.03em;
   white-space:nowrap;
 }
-
-/* Extra safety for long titles */
 a.deck b .en.long{
   font-size:0.86em;
   letter-spacing:.02em;
 }
 
-/* Japanese line under English */
 a.deck span.jp{
   position:relative;
   z-index:3;
@@ -207,7 +196,6 @@ a.deck span.jp{
   white-space:nowrap;
 }
 
-/* Japanese subtitle */
 a.deck span.sub{
   position:relative;
   z-index:3;
@@ -220,7 +208,7 @@ a.deck span.sub{
   white-space:nowrap;
 }
 
-/* Flashier: sweep + twinkle (per-tile timing via vars) */
+/* Sweep */
 a.deck::before{
   content:"";
   position:absolute;
@@ -231,15 +219,17 @@ a.deck::before{
     rgba(255,255,255,.92) 52%,
     rgba(255,255,255,0) 64%
   );
-  transform:translateX(-70%) rotate(12deg);
+  transform:translateX(calc(-1 * var(--sweepDir) * var(--sweepDist))) rotate(12deg);
   opacity:.52;
   mix-blend-mode:soft-light;
-  animation:sweep var(--sweepDurLocal) ease-in-out infinite;
+  animation:sweep2 var(--sweepDurLocal) ease-in-out infinite;
+  animation-delay: var(--sweepOffset);
   pointer-events:none;
   z-index:1;
   filter: blur(.2px) drop-shadow(0 0 10px color-mix(in srgb, var(--glow) 40%, transparent));
 }
 
+/* Pulse */
 a.deck::after{
   content:"";
   position:absolute;
@@ -250,7 +240,8 @@ a.deck::after{
     radial-gradient(circle at 46% 52%, rgba(255,255,255,.18), rgba(255,255,255,0) 62%);
   opacity:.45;
   mix-blend-mode:soft-light;
-  animation:pulse var(--pulseDurLocal) ease-in-out infinite;
+  animation:pulse2 var(--pulseDurLocal) var(--pulseCurve) infinite;
+  animation-delay: var(--pulseOffset);
   pointer-events:none;
   z-index:1;
   filter: contrast(1.12);
@@ -287,7 +278,6 @@ a.deck .neon{
   padding:7px;
 }
 
-/* Hover / active */
 a.deck:hover{
   transform: scale(1.04);
   filter: brightness(1.12) saturate(1.08);
@@ -303,58 +293,79 @@ a.deck.active{
 
 a.deck.is-hidden{ visibility:hidden; }
 
-/* Tile colors + per-tile glow + per-tile animation timing */
+/* Tile colors + unique animation personality */
 a.deck:nth-child(1){
   background: linear-gradient(145deg, #ffcf4a, #b88912);
   --glow: rgba(255,209,102,.95);
-  --sweepDurLocal: 2.35s;
-  --pulseDurLocal: 1.80s;
+  --sweepDurLocal: 2.55s;
+  --pulseDurLocal: 1.85s;
+  --sweepOffset: -0.20s;
+  --pulseOffset: -0.65s;
+  --sweepDir: 1;
+  --sweepDist: 76%;
+  --pulseScale: 1.030;
+  --pulseCurve: ease-in-out;
 }
 a.deck:nth-child(2){
   background: linear-gradient(145deg, #45dfff, #0b4b5f);
   --glow: rgba(110,231,255,.95);
-  --sweepDurLocal: 1.95s;
-  --pulseDurLocal: 1.45s;
+  --sweepDurLocal: 1.88s;
+  --pulseDurLocal: 1.42s;
+  --sweepOffset: -1.10s;
+  --pulseOffset: -0.25s;
+  --sweepDir: -1;         /* reverse direction */
+  --sweepDist: 64%;
+  --pulseScale: 1.018;
+  --pulseCurve: cubic-bezier(.40,0,.30,1);
 }
 a.deck:nth-child(3){
   background: linear-gradient(145deg, #73f29a, #0c4b2a);
   --glow: rgba(166,247,178,.95);
-  --sweepDurLocal: 2.55s;
-  --pulseDurLocal: 1.65s;
+  --sweepDurLocal: 2.92s;
+  --pulseDurLocal: 1.62s;
+  --sweepOffset: -2.05s;
+  --pulseOffset: -1.05s;
+  --sweepDir: 1;
+  --sweepDist: 82%;
+  --pulseScale: 1.040;
+  --pulseCurve: cubic-bezier(.25,.60,.20,1);
 }
 a.deck:nth-child(4){
   background: linear-gradient(145deg, #b46bff, #2a0f5a);
   --glow: rgba(199,125,255,.95);
-  --sweepDurLocal: 2.10s;
-  --pulseDurLocal: 1.95s;
+  --sweepDurLocal: 2.15s;
+  --pulseDurLocal: 2.05s;
+  --sweepOffset: -0.55s;
+  --pulseOffset: -1.75s;
+  --sweepDir: -1;
+  --sweepDist: 70%;
+  --pulseScale: 1.028;
+  --pulseCurve: ease-out;
 }
 a.deck:nth-child(5){
   background: linear-gradient(145deg, #ff5fa9, #5a0f2b);
   --glow: rgba(255,126,185,.95);
-  --sweepDurLocal: 2.80s;
-  --pulseDurLocal: 1.55s;
+  --sweepDurLocal: 3.15s;
+  --pulseDurLocal: 1.52s;
+  --sweepOffset: -1.60s;
+  --pulseOffset: -0.85s;
+  --sweepDir: 1;
+  --sweepDist: 60%;
+  --pulseScale: 1.055;    /* bigger pulse */
+  --pulseCurve: cubic-bezier(.15,.80,.25,1);
 }
 a.deck:nth-child(6){
   background: linear-gradient(145deg, #ff9b3d, #5a2608);
   --glow: rgba(255,179,102,.95);
-  --sweepDurLocal: 2.20s;
+  --sweepDurLocal: 2.05s;
   --pulseDurLocal: 1.72s;
+  --sweepOffset: -2.40s;
+  --pulseOffset: -0.10s;
+  --sweepDir: -1;
+  --sweepDist: 88%;
+  --pulseScale: 1.020;
+  --pulseCurve: ease-in;
 }
-
-/* De-sync start positions (so they never match) */
-a.deck:nth-child(1)::before{ animation-delay:-0.15s; }
-a.deck:nth-child(2)::before{ animation-delay:-0.85s; }
-a.deck:nth-child(3)::before{ animation-delay:-1.55s; }
-a.deck:nth-child(4)::before{ animation-delay:-0.45s; }
-a.deck:nth-child(5)::before{ animation-delay:-1.15s; }
-a.deck:nth-child(6)::before{ animation-delay:-1.85s; }
-
-a.deck:nth-child(1)::after{ animation-delay:-0.25s; }
-a.deck:nth-child(2)::after{ animation-delay:-1.05s; }
-a.deck:nth-child(3)::after{ animation-delay:-1.65s; }
-a.deck:nth-child(4)::after{ animation-delay:-0.55s; }
-a.deck:nth-child(5)::after{ animation-delay:-1.25s; }
-a.deck:nth-child(6)::after{ animation-delay:-1.95s; }
 
 /* Sparkles */
 .sparkle{
@@ -377,7 +388,7 @@ a.deck:nth-child(6)::after{ animation-delay:-1.95s; }
 }
 #fadeScreen.show{ transform:translateY(0%); }
 
-/* ✅ Footer centered (and not inside the grid) */
+/* Footer */
 footer{
   position:absolute;
   left:50%;
@@ -400,15 +411,20 @@ footer{
   0%,100%{ opacity:.28; }
   50%{ opacity:.42; }
 }
-@keyframes sweep{
-  0%{ transform:translateX(-65%) rotate(12deg); opacity:.20; }
-  45%{ opacity:.70; }
-  100%{ transform:translateX(65%) rotate(12deg); opacity:.20; }
+
+/* NEW: sweep uses per-tile distance + direction */
+@keyframes sweep2{
+  0%   { transform: translateX(calc(-1 * var(--sweepDir) * var(--sweepDist))) rotate(12deg); opacity:.18; }
+  45%  { opacity:.72; }
+  100% { transform: translateX(calc( 1 * var(--sweepDir) * var(--sweepDist))) rotate(12deg); opacity:.18; }
 }
-@keyframes pulse{
-  0%,100%{ opacity:.24; transform:scale(1); }
-  50%{ opacity:.58; transform:scale(1.02); }
+
+/* NEW: pulse uses per-tile scale amplitude */
+@keyframes pulse2{
+  0%,100%{ opacity:.22; transform:scale(1); }
+  50%    { opacity:.60; transform:scale(var(--pulseScale)); }
 }
+
 @keyframes ring{
   0%{transform:rotate(0deg)}
   100%{transform:rotate(360deg)}
@@ -487,7 +503,6 @@ footer{
 
 <div id="fadeScreen"></div>
 
-<!-- ✅ reviewdeck.mp3 is in the SAME folder as this index.html -->
 <audio id="reviewIntro" src="reviewdeck.mp3" preload="auto" playsinline></audio>
 
 <script>
@@ -495,15 +510,9 @@ const intro = document.getElementById('reviewIntro');
 const deckContainer = document.querySelector('.deck-links');
 let isTransitioning = false;
 
-/* =========================
-   Sparkles color change:
-   Sparkles now inherit the clicked tile’s --glow color.
-   (Behavior stays 100% identical.)
-========================= */
-
 function getTileGlowColor(el){
   const g = getComputedStyle(el).getPropertyValue('--glow').trim();
-  return g || 'rgba(255,209,102,.95)'; // fallback gold
+  return g || 'rgba(255,209,102,.95)';
 }
 
 function sparkleBurst(rect, count = 46, glow = 'rgba(255,209,102,.95)'){
@@ -527,15 +536,13 @@ function sparkleBurst(rect, count = 46, glow = 'rgba(255,209,102,.95)'){
     s.style.setProperty('--dx', dx + 'px');
     s.style.setProperty('--dy', dy + 'px');
 
-    // sparkle color = clicked tile glow
     s.style.background =
       `radial-gradient(circle at 35% 35%,
-        #fff,
-        ${glow} 58%,
-        rgba(0,0,0,0) 72%
+        #fff 0 35%,
+        ${glow} 60%,
+        rgba(0,0,0,0) 76%
       )`;
-
-    s.style.boxShadow = `0 0 12px ${glow}, 0 0 34px ${glow}`;
+    s.style.boxShadow = `0 0 10px #fff, 0 0 26px ${glow}, 0 0 60px ${glow}`;
 
     document.body.appendChild(s);
     setTimeout(() => s.remove(), 2000);
@@ -547,7 +554,7 @@ function safePlay(aud, vol = 1){
   try{
     aud.pause();
     aud.volume = vol;
-    if (aud.readyState >= 1) aud.currentTime = 0; // iOS-safe
+    if (aud.readyState >= 1) aud.currentTime = 0;
     aud.play().catch(()=>{});
   }catch(e){}
 }
@@ -595,10 +602,9 @@ if (deckContainer) {
     document.body.appendChild(clone);
     deck.classList.add('is-hidden');
 
-    // sparkle from the clone (always visible + correct position)
     const r2 = clone.getBoundingClientRect();
-    const glow = getTileGlowColor(deck);      // ✅ NEW: inherit tile glow color
-    sparkleBurst(r2, 52, glow);               // ✅ NEW: pass glow
+    const glow = getTileGlowColor(deck);
+    sparkleBurst(r2, 52, glow);
 
     const cx = window.innerWidth  / 2 - (r.left + r.width  / 2);
     const cy = window.innerHeight / 2 - (r.top  + r.height / 2);
@@ -607,7 +613,6 @@ if (deckContainer) {
     const maxHeightScale = (window.innerHeight * 0.9) / r.height;
     const safeScale = Math.min(3, maxWidthScale, maxHeightScale);
 
-    // timing
     const MOVE_MS = 6100;
     const OPEN_MS = 6350;
 
