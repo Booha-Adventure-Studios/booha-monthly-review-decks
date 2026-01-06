@@ -439,9 +439,21 @@ const intro = document.getElementById('reviewIntro');
 const deckContainer = document.querySelector('.deck-links');
 let isTransitioning = false;
 
-function getTileGlowColor(el){
-  const g = getComputedStyle(el).getPropertyValue('--glow').trim();
-  return g || 'rgba(255,209,102,.95)';
+function safePlay(aud, vol = 1){
+  if(!aud) return;
+  try{
+    aud.pause();
+    aud.volume = vol;
+    if (aud.readyState >= 1) aud.currentTime = 0; // iOS-safe
+    aud.play().catch(()=>{});
+  }catch(e){}
+}
+
+let audioPrimed = false;
+function primeAndPlayIntro(){
+  if(audioPrimed) return;
+  audioPrimed = true;
+  safePlay(intro, 1);
 }
 
 function sparkleBurst(rect, count = 46, glow = 'rgba(255,209,102,.95)'){
@@ -478,28 +490,12 @@ function sparkleBurst(rect, count = 46, glow = 'rgba(255,209,102,.95)'){
   }
 }
 
-function safePlay(aud, vol = 1){
-  if(!aud) return;
-  try{
-    aud.pause();
-    aud.volume = vol;
-    if (aud.readyState >= 1) aud.currentTime = 0;
-    aud.play().catch(()=>{});
-  }catch(e){}
-}
-
-let audioPrimed = false;
-function primeAndPlayIntro(){
-  if(audioPrimed) return;
-  audioPrimed = true;
-  safePlay(intro, 1);
-}
-
 if (deckContainer) {
   deckContainer.addEventListener('click', (e) => {
     const deck = e.target.closest('.deck');
     if (!deck) return;
 
+    // ✅ STOP the link from navigating immediately
     e.preventDefault();
     e.stopPropagation();
 
@@ -514,13 +510,12 @@ if (deckContainer) {
     deck.classList.add('active');
 
     const r = deck.getBoundingClientRect();
-   const clone = deck.cloneNode(true);
-   clone.classList.add('active');
+    const clone = deck.cloneNode(true);
+    clone.classList.add('active');
 
-   /* ✅ LOCK the glow color onto the clone */
-   const glow = getComputedStyle(deck).getPropertyValue('--glow');
-   clone.style.setProperty('--glow', glow);
-
+    // ✅ LOCK the tile's glow color onto the clone (fixes "all turn pink")
+    const glow = getComputedStyle(deck).getPropertyValue('--glow').trim();
+    if (glow) clone.style.setProperty('--glow', glow);
 
     clone.style.position = 'fixed';
     clone.style.left = r.left + 'px';
@@ -536,9 +531,9 @@ if (deckContainer) {
     document.body.appendChild(clone);
     deck.classList.add('is-hidden');
 
+    // sparkle from the clone (always visible + correct position)
     const r2 = clone.getBoundingClientRect();
-    const glow = getTileGlowColor(deck);
-    sparkleBurst(r2, 52, glow);
+    sparkleBurst(r2, 52, glow || 'rgba(255,209,102,.95)');
 
     const cx = window.innerWidth  / 2 - (r.left + r.width  / 2);
     const cy = window.innerHeight / 2 - (r.top  + r.height / 2);
@@ -547,6 +542,7 @@ if (deckContainer) {
     const maxHeightScale = (window.innerHeight * 0.9) / r.height;
     const safeScale = Math.min(3, maxWidthScale, maxHeightScale);
 
+    // timing
     const MOVE_MS = 6100;
     const OPEN_MS = 6350;
 
@@ -571,5 +567,3 @@ if (deckContainer) {
   });
 }
 </script>
-</body>
-</html>
