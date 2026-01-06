@@ -556,177 +556,76 @@ footer{
 <script>
 const intro = document.getElementById('reviewIntro');
 const deckContainer = document.querySelector('.deck-links');
-const decks = Array.from(document.querySelectorAll('a.deck'));
 let isTransitioning = false;
 
-function safePlay(aud, vol = 1){
+function safeResetAudio(aud){
   if(!aud) return;
   try{
     aud.pause();
-    aud.volume = vol;
-    if (aud.readyState >= 1) aud.currentTime = 0; // iOS-safe
-    aud.play().catch(()=>{});
+    // reset without throwing on iOS
+    if (aud.readyState >= 1) aud.currentTime = 0;
   }catch(e){}
 }
 
-let audioPrimed = false;
-function primeAndPlayIntro(){
-  if(audioPrimed) return;
-  audioPrimed = true;
-  safePlay(intro, 1);
-}
+async function playIntroAndWaitForStart(aud, vol=1){
+  if(!aud) return false;
 
-/* ✅ Randomize phases so tiles never animate the same */
-(function randomizeTiles(){
-  decks.forEach((d, i) => {
-    const r1 = Math.random();
-    const r2 = Math.random();
-    const r3 = Math.random();
+  safeResetAudio(aud);
 
-    // stagger sweep/pulse start
-    d.style.setProperty('--phase1', `${-(0.2 + r1 * 2.8)}s`);
-    d.style.setProperty('--phase2', `${-(0.2 + r2 * 3.2)}s`);
+  try{ aud.volume = vol; }catch(e){}
 
-    // aura motion: different duration, delay, and slight rotation
-    const auraDur = 2.9 + r1 * 2.6;       // 2.9s → 5.5s
-    const auraDel = -(r2 * 3.0);          // negative delay for de-sync
-    const auraRot = (4 + r3 * 14).toFixed(2) + 'deg'; // 4deg → 18deg
-    d.style.setProperty('--auraDur', auraDur.toFixed(2) + 's');
-    d.style.setProperty('--auraDelay', auraDel.toFixed(2) + 's');
-    d.style.setProperty('--auraRot', auraRot);
-
-    // micro-variation to sweep/pulse speed too
-    const sweep = 1.85 + Math.random() * 1.25;
-    const pulse = 1.25 + Math.random() * 1.10;
-    d.style.setProperty('--sweepDurLocal', sweep.toFixed(2) + 's');
-    d.style.setProperty('--pulseDurLocal', pulse.toFixed(2) + 's');
+  // Wait for "playing" OR a short timeout (so we don't hang forever)
+  let started = false;
+  const waitStart = new Promise((resolve) => {
+    const t = setTimeout(() => resolve(false), 900); // "start window"
+    const onPlaying = () => {
+      started = true;
+      clearTimeout(t);
+      resolve(true);
+    };
+    aud.addEventListener('playing', onPlaying, { once:true });
+    // Some browsers may fire "play" without "playing" quickly; backstop:
+    aud.addEventListener('play', () => {
+      if (started) return;
+      // give it a tiny moment to reach "playing"
+      setTimeout(() => { if (!started) resolve(true); }, 120);
+    }, { once:true });
   });
-})();
 
-/* ===========================
-   LINGER sparkles (not firework)
-   =========================== */
+  try{
+    const p = aud.play();
+    if (p && typeof p.then === "function") await p.catch(()=>{});
+  }catch(e){}
 
-const COOL = [
-  ["rgba(110,231,255,.98)","rgba(110,231,255,.45)"], // ice
-  ["rgba(166,247,178,.98)","rgba(166,247,178,.45)"], // mint
-  ["rgba(199,125,255,.98)","rgba(199,125,255,.45)"], // purple
-  ["rgba(255,126,185,.95)","rgba(255,126,185,.42)"], // pink
-  ["rgba(255,209,102,.96)","rgba(255,209,102,.40)"]  // gold
-];
-
-function addHalo(cx, cy, glowCss){
-  const h = document.createElement('div');
-  h.className = 'activationHalo';
-  h.style.setProperty('--hx', (cx - 20) + 'px');
-  h.style.setProperty('--hy', (cy - 20) + 'px');
-
-  // soft, warm ring
-  h.style.background = `
-    radial-gradient(circle at 50% 50%,
-      rgba(255,255,255,.88) 0%,
-      ${glowCss} 34%,
-      rgba(255,255,255,0) 68%
-    )
-  `;
-  document.body.appendChild(h);
-  setTimeout(()=>h.remove(), 820);
+  return await waitStart;
 }
 
-function lingerSparkles(rect, glowCss, countDust = 18, countGlints = 7){
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top  + rect.height / 2;
+function waitForAudioEndOrTimeout(aud, maxMs){
+  return new Promise((resolve) => {
+    if(!aud) return resolve("no-audio");
 
-  addHalo(cx, cy, glowCss);
+    const done = (why) => {
+      try{ aud.removeEventListener('ended', onEnd); }catch(e){}
+      resolve(why);
+    };
+    const onEnd = () => done("ended");
 
-  // dust: appears around the tile, drifts slowly and fades
-  for(let i=0;i<countDust;i++){
-    const s = document.createElement('div');
-    s.className = 'sparkle';
-
-    const sz = 10 + Math.random()*18;          // bigger + softer
-    const dur = 1200 + Math.random()*900;      // linger
-    const edgePad = 10;
-
-    // spawn on/near tile perimeter
-    const side = (Math.random()*4)|0;
-    let x, y;
-    if(side === 0){ // top
-      x = rect.left + edgePad + Math.random()*(rect.width - edgePad*2);
-      y = rect.top - 8 + Math.random()*18;
-    }else if(side === 1){ // right
-      x = rect.right - 8 + Math.random()*18;
-      y = rect.top + edgePad + Math.random()*(rect.height - edgePad*2);
-    }else if(side === 2){ // bottom
-      x = rect.left + edgePad + Math.random()*(rect.width - edgePad*2);
-      y = rect.bottom - 8 + Math.random()*18;
-    }else{ // left
-      x = rect.left - 8 + Math.random()*18;
-      y = rect.top + edgePad + Math.random()*(rect.height - edgePad*2);
-    }
-
-    const drift = 18 + Math.random()*42;
-    const ang = Math.random()*Math.PI*2;
-    const dx = Math.cos(ang)*drift;
-    const dy = Math.sin(ang)*drift;
-
-    const [c1,c2] = COOL[(Math.random()*COOL.length)|0];
-
-    s.style.setProperty('--sz', sz+'px');
-    s.style.setProperty('--dur', dur+'ms');
-    s.style.setProperty('--x', (x - sz/2)+'px');
-    s.style.setProperty('--y', (y - sz/2)+'px');
-    s.style.setProperty('--dx', dx.toFixed(2)+'px');
-    s.style.setProperty('--dy', dy.toFixed(2)+'px');
-
-    s.style.background = `radial-gradient(circle at 35% 35%, #fff, ${c1} 55%, rgba(0,0,0,0) 72%)`;
-    s.style.boxShadow  = `0 0 18px ${c1}, 0 0 50px ${c2}`;
-
-    document.body.appendChild(s);
-    setTimeout(()=>s.remove(), dur + 80);
-  }
-
-  // glints: a few elongated “twinkles”
-  for(let i=0;i<countGlints;i++){
-    const g = document.createElement('div');
-    g.className = 'sparkle glint';
-
-    const sz = 10 + Math.random()*16;
-    const dur = 1100 + Math.random()*700;
-
-    const t = Math.random()*Math.PI*2;
-    const rad = Math.min(rect.width, rect.height) * (0.34 + Math.random()*0.28);
-    const x = cx + Math.cos(t)*rad;
-    const y = cy + Math.sin(t)*rad;
-
-    const dx = (Math.cos(t)*(-14 - Math.random()*28));
-    const dy = (Math.sin(t)*(-10 - Math.random()*22));
-    const rot = (Math.random()*140 - 70).toFixed(2) + 'deg';
-
-    const [c1,c2] = COOL[(Math.random()*COOL.length)|0];
-
-    g.style.setProperty('--sz', sz+'px');
-    g.style.setProperty('--dur', dur+'ms');
-    g.style.setProperty('--x', (x - sz/2)+'px');
-    g.style.setProperty('--y', (y - sz/2)+'px');
-    g.style.setProperty('--dx', dx.toFixed(2)+'px');
-    g.style.setProperty('--dy', dy.toFixed(2)+'px');
-    g.style.setProperty('--rot', rot);
-
-    g.style.background = `radial-gradient(circle at 35% 50%, #fff, ${c1} 55%, rgba(0,0,0,0) 78%)`;
-    g.style.boxShadow  = `0 0 18px ${c1}, 0 0 56px ${c2}`;
-
-    document.body.appendChild(g);
-    setTimeout(()=>g.remove(), dur + 90);
-  }
+    aud.addEventListener('ended', onEnd, { once:true });
+    setTimeout(() => done("timeout"), maxMs);
+  });
 }
 
-/* ===========================
-   Click → smooth FLIP-ish clone move + gentle sparkles
-   =========================== */
+/* -------------------------
+   LINGER sparkles (your existing function can stay)
+   If you already have lingerSparkles(), keep yours.
+   Here is a safe fallback: uses your current sparkleBurst if lingerSparkles is missing.
+-------------------------- */
+function fallbackSparkles(rect){
+  if (typeof sparkleBurst === "function") sparkleBurst(rect, 52);
+}
 
 if (deckContainer) {
-  deckContainer.addEventListener('click', (e) => {
+  deckContainer.addEventListener('click', async (e) => {
     const deck = e.target.closest('.deck');
     if (!deck) return;
 
@@ -735,10 +634,11 @@ if (deckContainer) {
     if (isTransitioning) return;
     isTransitioning = true;
 
-    primeAndPlayIntro();
-
     const target = deck.getAttribute('href');
     const fadeScreen = document.getElementById('fadeScreen');
+
+    // Start audio FIRST and wait until it actually starts (prevents instant navigate-before-audio)
+    await playIntroAndWaitForStart(intro, 1);
 
     deck.classList.add('active');
 
@@ -746,15 +646,14 @@ if (deckContainer) {
     const clone = deck.cloneNode(true);
     clone.classList.add('active');
 
-    // ✅ Lock the clone to the tile's *computed* look (prevents color shift)
+    // Lock clone visuals
     const cs = getComputedStyle(deck);
     clone.style.background = cs.background;
     clone.style.boxShadow  = cs.boxShadow;
     clone.style.border     = cs.border;
 
-    // ✅ Copy per-tile vars too
-    const glowVar = (cs.getPropertyValue('--glow') || 'rgba(255,255,255,.35)').trim();
-    clone.style.setProperty('--glow', glowVar);
+    // Copy vars so glow stays unique
+    clone.style.setProperty('--glow', cs.getPropertyValue('--glow'));
     clone.style.setProperty('--sweepAng', cs.getPropertyValue('--sweepAng'));
     clone.style.setProperty('--sweepOp', cs.getPropertyValue('--sweepOp'));
     clone.style.setProperty('--pulseScale', cs.getPropertyValue('--pulseScale'));
@@ -762,10 +661,13 @@ if (deckContainer) {
     clone.style.setProperty('--sweepDurLocal', cs.getPropertyValue('--sweepDurLocal'));
     clone.style.setProperty('--pulseDurLocal', cs.getPropertyValue('--pulseDurLocal'));
 
-    // ✅ turn off heavy overlay animations during the big move
+    // Performance: turn off heavy overlay animations during move
     clone.classList.add('moving');
 
-    // Layout lock
+    // FIX: prevent any inherited transitions from causing a "jump"
+    clone.style.transition = 'none';
+
+    // Position clone exactly
     clone.style.position = 'fixed';
     clone.style.left = r.left + 'px';
     clone.style.top  = r.top  + 'px';
@@ -775,7 +677,6 @@ if (deckContainer) {
     clone.style.zIndex = '9999';
     clone.style.pointerEvents = 'none';
 
-    // ✅ GPU-friendly transform (no jump)
     clone.style.transform = 'translate3d(0,0,0) scale(1)';
     clone.style.transformOrigin = 'center center';
     clone.style.backfaceVisibility = 'hidden';
@@ -784,10 +685,18 @@ if (deckContainer) {
     document.body.appendChild(clone);
     deck.classList.add('is-hidden');
 
-    // sparkles: immediate + a second tiny wave for “linger”
+    // CRITICAL: force layout commit so the animation starts from the correct position (removes "jump")
+    clone.getBoundingClientRect();
+
+    // Sparkles (linger preferred)
     const r2 = clone.getBoundingClientRect();
-    lingerSparkles(r2, glowVar, 16, 6);
-    setTimeout(()=>lingerSparkles(r2, glowVar, 10, 3), 180);
+    if (typeof lingerSparkles === "function") {
+      const glowVar = (cs.getPropertyValue('--glow') || 'rgba(255,255,255,.35)').trim();
+      lingerSparkles(r2, glowVar, 16, 6);
+      setTimeout(()=>lingerSparkles(r2, glowVar, 10, 3), 180);
+    } else {
+      fallbackSparkles(r2);
+    }
 
     const cx = window.innerWidth  / 2 - (r.left + r.width  / 2);
     const cy = window.innerHeight / 2 - (r.top  + r.height / 2);
@@ -796,19 +705,18 @@ if (deckContainer) {
     const maxHeightScale = (window.innerHeight * 0.90) / r.height;
     const safeScale = Math.min(3, maxWidthScale, maxHeightScale);
 
-    // ✅ Much smoother + faster (no “broken jump forward”)
-    const MOVE_MS = 920;
-    const OPEN_MS = 1080;
+    // Smooth move (fast), but navigation waits for audio end (or timeout)
+    const MOVE_MS = 900;
 
-    // Fade near the end (not 5 seconds later)
+    // Fade near the end of the move
     if (fadeScreen) {
       setTimeout(() => {
         fadeScreen.classList.remove('show');
         requestAnimationFrame(() => fadeScreen.classList.add('show'));
-      }, 620);
+      }, 600);
     }
 
-    // Ensure the browser commits initial styles before animating
+    // Start the move on the next frame (smooth)
     requestAnimationFrame(() => {
       clone.animate(
         [
@@ -819,11 +727,17 @@ if (deckContainer) {
       );
     });
 
-    setTimeout(() => {
-      window.location.href = target;
-    }, OPEN_MS);
+    // ✅ Navigation timing:
+    // - always wait for the move to complete
+    // - also wait for audio to END (if it ends quickly) or timeout (if long / blocked)
+    const moveDone = new Promise(res => setTimeout(res, MOVE_MS + 60));
+    const audioDone = waitForAudioEndOrTimeout(intro, 6500); // max hold
+    await Promise.all([moveDone, audioDone]);
+
+    window.location.href = target;
   });
 }
 </script>
+
 </body>
 </html>
