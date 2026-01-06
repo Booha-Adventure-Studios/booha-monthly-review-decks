@@ -22,6 +22,11 @@
   --c6:#ffb366; /* orange */
 
   --tileBorder:#000;
+
+  /* Base glow (fallback) */
+  --tileGlow: 0 0 10px rgba(255,255,255,.12), 0 0 34px rgba(255,209,102,.20);
+  --tileGlowHot: 0 0 18px rgba(255,255,255,.18), 0 0 60px rgba(255,209,102,.42);
+
   --sweepDur: 2.1s;
   --pulseDur: 1.6s;
 }
@@ -96,6 +101,7 @@ body::after{
   animation:fadeIn .9s ease;
 }
 
+/* ✅ English slightly smaller */
 h1{
   font-size:clamp(30px,4.8vw,58px);
   font-weight:900;
@@ -129,16 +135,9 @@ h3{
 }
 
 a.deck{
-  --glow: rgba(255,255,255,.18);
+  --glow: rgba(255,255,255,.18); /* overridden per-tile */
   --sweepDurLocal: var(--sweepDur);
   --pulseDurLocal: var(--pulseDur);
-
-  /* per-tile randoms (set in JS) */
-  --phase1: -0.6s;
-  --phase2: -1.0s;
-  --auraDur: 3.6s;
-  --auraDelay: -1.2s;
-  --auraRot: 9deg;
 
   position:relative;
   display:flex;
@@ -155,6 +154,7 @@ a.deck{
   cursor:pointer;
   border:9px solid var(--tileBorder);
 
+  /* ✅ separate glow per tile using --glow */
   box-shadow:
     0 0 10px rgba(255,255,255,.10),
     0 0 26px color-mix(in srgb, var(--glow) 35%, transparent),
@@ -166,9 +166,10 @@ a.deck{
   text-align:center;
 }
 
+/* ✅ Titles always centered, never moving */
 a.deck b{
   position:relative;
-  z-index:5;
+  z-index:3;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -179,6 +180,7 @@ a.deck b{
   transform:none !important;
 }
 
+/* English a bit smaller on tiles */
 a.deck b .en{
   display:block;
   font-size:0.95em;
@@ -186,14 +188,16 @@ a.deck b .en{
   white-space:nowrap;
 }
 
+/* Extra safety for long titles */
 a.deck b .en.long{
   font-size:0.86em;
   letter-spacing:.02em;
 }
 
+/* Japanese line under English */
 a.deck span.jp{
   position:relative;
-  z-index:5;
+  z-index:3;
   margin-top:8px;
   font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;
   font-size:clamp(12px,1.9vw,16px);
@@ -203,9 +207,10 @@ a.deck span.jp{
   white-space:nowrap;
 }
 
+/* Japanese subtitle */
 a.deck span.sub{
   position:relative;
-  z-index:5;
+  z-index:3;
   margin-top:10px;
   font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;
   font-size:clamp(11px,1.7vw,14px);
@@ -215,41 +220,7 @@ a.deck span.sub{
   white-space:nowrap;
 }
 
-/* ✅ NO rigid spinning square.
-   Use the existing .neon element as a soft, organic aura. */
-a.deck .neon{
-  position:absolute;
-  inset:-14px;
-  border-radius:34px;
-  pointer-events:none;
-  z-index:2;
-
-  background:
-    radial-gradient(180px 140px at 18% 24%, color-mix(in srgb, var(--glow) 78%, white) 0%, rgba(255,255,255,0) 62%),
-    radial-gradient(140px 170px at 78% 70%, color-mix(in srgb, var(--glow) 68%, white) 0%, rgba(255,255,255,0) 64%),
-    radial-gradient(220px 160px at 40% 78%, color-mix(in srgb, var(--glow) 50%, white) 0%, rgba(255,255,255,0) 70%),
-    conic-gradient(from 180deg at 50% 50%,
-      rgba(255,255,255,0) 0%,
-      color-mix(in srgb, var(--glow) 44%, white) 18%,
-      rgba(255,255,255,0) 36%,
-      color-mix(in srgb, var(--glow) 38%, white) 54%,
-      rgba(255,255,255,0) 72%,
-      color-mix(in srgb, var(--glow) 32%, white) 88%,
-      rgba(255,255,255,0) 100%
-    );
-
-  opacity:.55;
-  filter: blur(0.8px) saturate(1.1) drop-shadow(0 0 18px color-mix(in srgb, var(--glow) 42%, transparent));
-  mix-blend-mode: soft-light;
-
-  transform: rotate(var(--auraRot)) scale(1.01);
-  animation:
-    auraDrift var(--auraDur) ease-in-out infinite,
-    auraBreath calc(var(--auraDur) * 0.92) ease-in-out infinite;
-  animation-delay: var(--auraDelay);
-}
-
-/* Sweep + pulse */
+/* Flashier: sweep + twinkle (per-tile timing via vars) */
 a.deck::before{
   content:"";
   position:absolute;
@@ -260,14 +231,13 @@ a.deck::before{
     rgba(255,255,255,.92) 52%,
     rgba(255,255,255,0) 64%
   );
-  transform: translateX(-70%) rotate(var(--sweepAng, 12deg));
-  opacity: var(--sweepOp, .52);
-  mix-blend-mode: soft-light;
-  animation: sweep var(--sweepDurLocal, 2.2s) ease-in-out infinite;
-  animation-delay: var(--phase1);
+  transform:translateX(-70%) rotate(12deg);
+  opacity:.52;
+  mix-blend-mode:soft-light;
+  animation:sweep var(--sweepDurLocal) ease-in-out infinite;
   pointer-events:none;
   z-index:1;
-  filter: blur(.2px) drop-shadow(0 0 10px color-mix(in srgb, var(--glow, rgba(255,255,255,.2)) 40%, transparent));
+  filter: blur(.2px) drop-shadow(0 0 10px color-mix(in srgb, var(--glow) 40%, transparent));
 }
 
 a.deck::after{
@@ -278,15 +248,46 @@ a.deck::after{
     radial-gradient(circle at 20% 24%, rgba(255,255,255,.36), rgba(255,255,255,0) 55%),
     radial-gradient(circle at 76% 66%, rgba(255,255,255,.24), rgba(255,255,255,0) 58%),
     radial-gradient(circle at 46% 52%, rgba(255,255,255,.18), rgba(255,255,255,0) 62%);
-  opacity: var(--pulseOp, .45);
-  mix-blend-mode: soft-light;
-  animation: pulse var(--pulseDurLocal, 1.6s) ease-in-out infinite;
-  animation-delay: var(--phase2);
+  opacity:.45;
+  mix-blend-mode:soft-light;
+  animation:pulse var(--pulseDurLocal) ease-in-out infinite;
   pointer-events:none;
   z-index:1;
   filter: contrast(1.12);
 }
 
+/* Neon ring */
+a.deck .neon{
+  position:absolute;
+  inset:-3px;
+  border-radius:24px;
+  pointer-events:none;
+  z-index:2;
+  background:
+    conic-gradient(from 0deg,
+      rgba(255,255,255,0) 0%,
+      color-mix(in srgb, var(--glow) 92%, white) 12%,
+      rgba(255,255,255,0) 24%,
+      color-mix(in srgb, var(--glow) 92%, white) 38%,
+      rgba(255,255,255,0) 52%,
+      color-mix(in srgb, var(--glow) 92%, white) 68%,
+      rgba(255,255,255,0) 82%,
+      color-mix(in srgb, var(--glow) 92%, white) 94%,
+      rgba(255,255,255,0) 100%
+    );
+  opacity:.60;
+  animation:ring 3.0s linear infinite;
+  filter: blur(.55px) drop-shadow(0 0 16px color-mix(in srgb, var(--glow) 38%, transparent));
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  padding:7px;
+}
+
+/* Hover / active */
 a.deck:hover{
   transform: scale(1.04);
   filter: brightness(1.12) saturate(1.08);
@@ -302,68 +303,68 @@ a.deck.active{
 
 a.deck.is-hidden{ visibility:hidden; }
 
-/* Tile colors */
+/* Tile colors + per-tile glow + per-tile animation timing */
 a.deck:nth-child(1){
   background: linear-gradient(145deg, #ffcf4a, #b88912);
   --glow: rgba(255,209,102,.95);
-  --sweepAng: 9deg;  --sweepOp:.50; --pulseScale:1.018; --pulseOp:.40;
+  --sweepDurLocal: 2.35s;
+  --pulseDurLocal: 1.80s;
 }
 a.deck:nth-child(2){
   background: linear-gradient(145deg, #45dfff, #0b4b5f);
   --glow: rgba(110,231,255,.95);
-  --sweepAng: 14deg; --sweepOp:.56; --pulseScale:1.030; --pulseOp:.46;
+  --sweepDurLocal: 1.95s;
+  --pulseDurLocal: 1.45s;
 }
 a.deck:nth-child(3){
   background: linear-gradient(145deg, #73f29a, #0c4b2a);
   --glow: rgba(166,247,178,.95);
-  --sweepAng: 7deg;  --sweepOp:.48; --pulseScale:1.022; --pulseOp:.42;
+  --sweepDurLocal: 2.55s;
+  --pulseDurLocal: 1.65s;
 }
 a.deck:nth-child(4){
   background: linear-gradient(145deg, #b46bff, #2a0f5a);
   --glow: rgba(199,125,255,.95);
-  --sweepAng: 16deg; --sweepOp:.54; --pulseScale:1.035; --pulseOp:.48;
+  --sweepDurLocal: 2.10s;
+  --pulseDurLocal: 1.95s;
 }
 a.deck:nth-child(5){
   background: linear-gradient(145deg, #ff5fa9, #5a0f2b);
   --glow: rgba(255,126,185,.95);
-  --sweepAng: 11deg; --sweepOp:.52; --pulseScale:1.025; --pulseOp:.45;
+  --sweepDurLocal: 2.80s;
+  --pulseDurLocal: 1.55s;
 }
 a.deck:nth-child(6){
   background: linear-gradient(145deg, #ff9b3d, #5a2608);
   --glow: rgba(255,179,102,.95);
-  --sweepAng: 5deg;  --sweepOp:.49; --pulseScale:1.020; --pulseOp:.41;
+  --sweepDurLocal: 2.20s;
+  --pulseDurLocal: 1.72s;
 }
 
-/* During big move, kill overlays */
-a.deck.moving::before,
-a.deck.moving::after,
-a.deck.moving .neon{
-  animation: none !important;
-  filter: none !important;
-  mix-blend-mode: normal !important;
-  opacity: 0 !important;
-}
+/* De-sync start positions (so they never match) */
+a.deck:nth-child(1)::before{ animation-delay:-0.15s; }
+a.deck:nth-child(2)::before{ animation-delay:-0.85s; }
+a.deck:nth-child(3)::before{ animation-delay:-1.55s; }
+a.deck:nth-child(4)::before{ animation-delay:-0.45s; }
+a.deck:nth-child(5)::before{ animation-delay:-1.15s; }
+a.deck:nth-child(6)::before{ animation-delay:-1.85s; }
 
-/* WAAPI sparkles (no CSS animation dependency) */
+a.deck:nth-child(1)::after{ animation-delay:-0.25s; }
+a.deck:nth-child(2)::after{ animation-delay:-1.05s; }
+a.deck:nth-child(3)::after{ animation-delay:-1.65s; }
+a.deck:nth-child(4)::after{ animation-delay:-0.55s; }
+a.deck:nth-child(5)::after{ animation-delay:-1.25s; }
+a.deck:nth-child(6)::after{ animation-delay:-1.95s; }
+
+/* Sparkles (cool colors, visible above clone + fade) */
 .sparkle{
   position:fixed;
-  width: var(--sz, 16px);
-  height: var(--sz, 16px);
-  border-radius: 50%;
+  width:9px;height:9px;border-radius:50%;
   pointer-events:none;
-  z-index:10050;
   opacity:0;
+  animation:sparkleFly 1.9s ease-out forwards;
+  z-index:10050;
   mix-blend-mode:screen;
-  background: radial-gradient(circle at 35% 35%, #fff, rgba(255,255,255,.55) 55%, rgba(0,0,0,0) 75%);
-  filter: drop-shadow(0 0 18px rgba(255,255,255,.22));
-  animation: sparkleLinger 1.8s cubic-bezier(.16,.92,.2,1) forwards;
-}
-
-@keyframes sparkleLinger{
-  0%   { transform:translate3d(0,0,0) scale(.7); opacity:0; }
-  18%  { opacity:1; }
-  70%  { opacity:.95; }
-  100% { transform:translate3d(var(--dx), var(--dy), 0) scale(.2); opacity:0; }
 }
 
 #fadeScreen{
@@ -371,11 +372,12 @@ a.deck.moving .neon{
   background:#000;
   transform:translateY(100%);
   pointer-events:none;
-  transition:transform 0.12s ease-in-out;
+  transition:transform 0.085s ease-in-out;
   z-index:9000;
 }
 #fadeScreen.show{ transform:translateY(0%); }
 
+/* ✅ Footer centered (and not inside the grid) */
 footer{
   position:absolute;
   left:50%;
@@ -389,7 +391,6 @@ footer{
   pointer-events:none;
 }
 
-/* Keyframes */
 @keyframes bgDrift{
   0%   { transform: translate3d(-2%, -1%, 0) rotate(0deg) scale(1.05); }
   50%  { transform: translate3d( 2%,  1%, 0) rotate(18deg) scale(1.12); }
@@ -400,26 +401,25 @@ footer{
   50%{ opacity:.42; }
 }
 @keyframes sweep{
-  0%   { transform: translateX(-68%) rotate(var(--sweepAng, 12deg)); opacity: .18; }
-  45%  { opacity: .78; }
-  100% { transform: translateX(68%)  rotate(var(--sweepAng, 12deg)); opacity: .18; }
+  0%{ transform:translateX(-65%) rotate(12deg); opacity:.20; }
+  45%{ opacity:.70; }
+  100%{ transform:translateX(65%) rotate(12deg); opacity:.20; }
 }
 @keyframes pulse{
-  0%,100%{ opacity: .22; transform: scale(1); }
-  50%    { opacity: .62; transform: scale(var(--pulseScale, 1.02)); }
+  0%,100%{ opacity:.24; transform:scale(1); }
+  50%{ opacity:.58; transform:scale(1.02); }
+}
+@keyframes ring{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
 }
 @keyframes fadeIn{
   from{opacity:0; transform:translateY(6px);}
   to{opacity:1; transform:translateY(0);}
 }
-@keyframes auraDrift{
-  0%   { transform: rotate(var(--auraRot)) translate3d(-4px, 2px, 0) scale(1.01); }
-  50%  { transform: rotate(calc(var(--auraRot) * -1)) translate3d(5px, -3px, 0) scale(1.02); }
-  100% { transform: rotate(var(--auraRot)) translate3d(-4px, 2px, 0) scale(1.01); }
-}
-@keyframes auraBreath{
-  0%,100% { opacity: .44; }
-  50%     { opacity: .70; }
+@keyframes sparkleFly{
+  0%{ transform:translate(0,0) scale(1); opacity:1; }
+  100%{ transform:translate(var(--dx),var(--dy)) scale(0.35); opacity:0; }
 }
 
 @media (max-width: 768px){
@@ -487,177 +487,111 @@ footer{
 
 <div id="fadeScreen"></div>
 
+<!-- ✅ reviewdeck.mp3 is in the SAME folder as this index.html -->
 <audio id="reviewIntro" src="reviewdeck.mp3" preload="auto" playsinline></audio>
 
 <script>
-const intro = document.getElementById('introSound');
-const openSound = document.getElementById('openSound');
+const intro = document.getElementById('reviewIntro');
 const deckContainer = document.querySelector('.deck-links');
 let isTransitioning = false;
 
 const COOL = [
-  ["rgba(110,231,255,.98)","rgba(110,231,255,.45)"],
-  ["rgba(166,247,178,.98)","rgba(166,247,178,.45)"],
-  ["rgba(199,125,255,.98)","rgba(199,125,255,.45)"],
-  ["rgba(255,126,185,.95)","rgba(255,126,185,.42)"],
-  ["rgba(255,209,102,.96)","rgba(255,209,102,.40)"]
+  { a: "rgba(110,231,255,.95)", b: "rgba(110,231,255,.55)" }, // ice
+  { a: "rgba(166,247,178,.95)", b: "rgba(166,247,178,.55)" }, // mint
+  { a: "rgba(199,125,255,.95)", b: "rgba(199,125,255,.55)" }, // purple
+  { a: "rgba(255,126,185,.92)", b: "rgba(255,126,185,.52)" }  // pink (still cool-ish)
 ];
 
-function sparkleLingerBurst(rect, count = 26){
+function sparkleBurst(rect, count = 46){
   const cx = rect.left + rect.width / 2;
-  const cy = rect.top  + rect.height / 2;
+  const cy = rect.top + rect.height / 2;
 
-  for(let i=0;i<count;i++){
-    const ang = Math.random()*Math.PI*2;
+  for(let i = 0; i < count; i++){
+    const a = Math.random() * Math.PI * 2;
+    const radius = (Math.min(rect.width, rect.height) * (0.25 + Math.random()*0.25));
+    const x = cx + Math.cos(a) * radius;
+    const y = cy + Math.sin(a) * radius;
 
-    // spawn around edges (activation feel)
-    const edge = 0.52 + Math.random()*0.58;
-    const x = cx + Math.cos(ang) * (rect.width  * 0.30) * edge;
-    const y = cy + Math.sin(ang) * (rect.height * 0.30) * edge;
+    const speed = 86 + Math.random() * 70;
+    const dx = (Math.cos(a) * speed).toFixed(2);
+    const dy = (Math.sin(a) * speed).toFixed(2);
 
-    // gentle drift, not fireworks
-    const drift = 24 + Math.random()*62;
-    const dx = Math.cos(ang) * drift;
-    const dy = Math.sin(ang) * drift;
-
-    const [c1,c2] = COOL[(Math.random()*COOL.length)|0];
+    const c = COOL[(Math.random() * COOL.length) | 0];
 
     const s = document.createElement('div');
     s.className = 'sparkle';
+    s.style.left = (x - 4.5) + 'px';
+    s.style.top  = (y - 4.5) + 'px';
+    s.style.setProperty('--dx', dx + 'px');
+    s.style.setProperty('--dy', dy + 'px');
 
-    const sz = 14 + Math.random()*18;
-    s.style.setProperty('--sz', sz+'px');
-    s.style.left = (x - sz/2) + 'px';
-    s.style.top  = (y - sz/2) + 'px';
-    s.style.setProperty('--dx', dx.toFixed(2)+'px');
-    s.style.setProperty('--dy', dy.toFixed(2)+'px');
-    s.style.background = `radial-gradient(circle at 35% 35%, #fff, ${c1} 56%, rgba(0,0,0,0) 78%)`;
-    s.style.boxShadow  = `0 0 18px ${c1}, 0 0 56px ${c2}`;
+    // cool colored sparkle
+    s.style.background = `radial-gradient(circle at 35% 35%, #fff, ${c.a} 58%, rgba(0,0,0,0) 72%)`;
+    s.style.boxShadow  = `0 0 12px ${c.a}, 0 0 32px ${c.b}`;
 
     document.body.appendChild(s);
-    setTimeout(()=>s.remove(), 2000);
+    setTimeout(() => s.remove(), 2000);
   }
-
-  // tiny second wave (linger)
-  setTimeout(()=>{
-    for(let i=0;i<10;i++){
-      const ang = Math.random()*Math.PI*2;
-      const x = cx + (Math.random()*rect.width  - rect.width/2)  * 0.45;
-      const y = cy + (Math.random()*rect.height - rect.height/2) * 0.45;
-      const drift = 18 + Math.random()*40;
-      const dx = Math.cos(ang) * drift;
-      const dy = Math.sin(ang) * drift;
-
-      const [c1,c2] = COOL[(Math.random()*COOL.length)|0];
-      const s = document.createElement('div');
-      s.className = 'sparkle';
-      const sz = 12 + Math.random()*16;
-      s.style.setProperty('--sz', sz+'px');
-      s.style.left = (x - sz/2) + 'px';
-      s.style.top  = (y - sz/2) + 'px';
-      s.style.setProperty('--dx', dx.toFixed(2)+'px');
-      s.style.setProperty('--dy', dy.toFixed(2)+'px');
-      s.style.background = `radial-gradient(circle at 35% 35%, #fff, ${c1} 56%, rgba(0,0,0,0) 78%)`;
-      s.style.boxShadow  = `0 0 18px ${c1}, 0 0 56px ${c2}`;
-      document.body.appendChild(s);
-      setTimeout(()=>s.remove(), 1900);
-    }
-  }, 180);
 }
 
 function safePlay(aud, vol = 1){
-  if(!aud) return false;
+  if(!aud) return;
   try{
     aud.pause();
-    if(aud.readyState >= 1) aud.currentTime = 0;
     aud.volume = vol;
-    const p = aud.play();
-    if (p && p.catch) p.catch(()=>{});
-    return true;
-  }catch(e){
-    return false;
-  }
+    if (aud.readyState >= 1) aud.currentTime = 0; // iOS-safe
+    aud.play().catch(()=>{});
+  }catch(e){}
 }
 
-function waitAudioEndOrTimeout(aud, maxMs){
-  return new Promise((resolve)=>{
-    if(!aud) return resolve("no-audio");
-    const done = (why)=> resolve(why);
-    aud.addEventListener('ended', ()=>done("ended"), { once:true });
-    setTimeout(()=>done("timeout"), maxMs);
-  });
+let audioPrimed = false;
+function primeAndPlayIntro(){
+  if(audioPrimed) return;
+  audioPrimed = true;
+  safePlay(intro, 1);
 }
 
 if (deckContainer) {
-  deckContainer.addEventListener('click', async (e) => {
+  deckContainer.addEventListener('click', (e) => {
     const deck = e.target.closest('.deck');
     if (!deck) return;
 
     e.preventDefault();
+    e.stopPropagation();
+
     if (isTransitioning) return;
     isTransitioning = true;
+
+    primeAndPlayIntro();
 
     const target = deck.getAttribute('href');
     const fadeScreen = document.getElementById('fadeScreen');
 
-    // stop intro (optional)
-    if (intro) { try { intro.pause(); } catch(_){} }
-
-    // play opening sound immediately
-    safePlay(openSound, 1);
-
     deck.classList.add('active');
 
-    // ---- CLONE ANIMATION ----
-    const r0 = deck.getBoundingClientRect();
-    const r = {
-      left: Math.round(r0.left),
-      top: Math.round(r0.top),
-      width: Math.round(r0.width),
-      height: Math.round(r0.height)
-    };
-
+    const r = deck.getBoundingClientRect();
     const clone = deck.cloneNode(true);
-
-    // Preserve computed look (nth-child styles don't apply in body)
-    const cs = getComputedStyle(deck);
-    clone.style.background = cs.background;
-    clone.style.boxShadow  = cs.boxShadow;
-    clone.style.border     = cs.border;
-
-    // Also preserve your glow var
-    clone.style.setProperty('--glow', cs.getPropertyValue('--glow'));
-
     clone.classList.add('active');
-
-    // HARD stop transitions/animations causing lurch
-    clone.style.transition = 'none';
-    clone.style.animation  = 'none';
 
     clone.style.position = 'fixed';
     clone.style.left = r.left + 'px';
     clone.style.top  = r.top  + 'px';
-    clone.style.width = r.width + 'px';
+    clone.style.width  = r.width  + 'px';
     clone.style.height = r.height + 'px';
     clone.style.margin = '0';
+    clone.style.transform = 'translate(0px,0px) scale(1)';
     clone.style.zIndex = '9999';
     clone.style.pointerEvents = 'none';
     clone.style.willChange = 'transform';
-    clone.style.transformOrigin = 'center center';
-    clone.style.backfaceVisibility = 'hidden';
-    clone.style.transform = 'translate3d(0,0,0) scale(1)';
 
     document.body.appendChild(clone);
     deck.classList.add('is-hidden');
 
-    // FLUSH layout (critical)
-    clone.getBoundingClientRect();
-
-    // sparkles from clone (always visible)
+    // sparkle from the clone (always visible + correct position)
     const r2 = clone.getBoundingClientRect();
-    sparkleLingerBurst(r2, 26);
+    sparkleBurst(r2, 52);
 
-    const cx = window.innerWidth / 2 - (r.left + r.width / 2);
+    const cx = window.innerWidth  / 2 - (r.left + r.width  / 2);
     const cy = window.innerHeight / 2 - (r.top  + r.height / 2);
 
     const maxWidthScale  = (window.innerWidth  * 0.9) / r.width;
@@ -665,36 +599,29 @@ if (deckContainer) {
     const safeScale = Math.min(3, maxWidthScale, maxHeightScale);
 
     // timing
-    const MOVE_MS = 900;
+    const MOVE_MS = 6100;
+    const OPEN_MS = 6350;
 
-    // fade near end of move
     if (fadeScreen) {
       setTimeout(() => {
         fadeScreen.classList.remove('show');
         requestAnimationFrame(() => fadeScreen.classList.add('show'));
-      }, 620);
+      }, 5200);
     }
-
-    // DOUBLE rAF (kills first-frame pop)
-    await new Promise(res => requestAnimationFrame(()=>requestAnimationFrame(res)));
 
     clone.animate(
       [
-        { transform: 'translate3d(0,0,0) scale(1)' },
-        { transform: `translate3d(${cx}px,${cy}px,0) scale(${safeScale})` }
+        { transform: 'translate(0px,0px) scale(1)' },
+        { transform: `translate(${cx}px,${cy}px) scale(${safeScale})` }
       ],
-      { duration: MOVE_MS, easing: 'cubic-bezier(.18,.95,.25,1)', fill: 'forwards' }
+      { duration: MOVE_MS, easing: 'ease-in-out', fill: 'forwards' }
     );
 
-    // ✅ Navigate when sound ends (or timeout), AND after move finishes
-    const moveDone  = new Promise(res => setTimeout(res, MOVE_MS + 80));
-    const audioDone = waitAudioEndOrTimeout(openSound, 7000);
-    await Promise.all([moveDone, audioDone]);
-
-    window.location.href = target;
+    setTimeout(() => {
+      window.location.href = target;
+    }, OPEN_MS);
   });
 }
 </script>
-
 </body>
 </html>
