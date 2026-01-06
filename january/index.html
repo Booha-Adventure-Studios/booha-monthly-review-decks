@@ -15,8 +15,8 @@
 
   --tileBorder:#000;
 
-  --sweepDur: 2.1s;
-  --pulseDur: 1.6s;
+  /* base pulse defaults (overridden per tile) */
+  --pulseDur: 2.2s;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -122,17 +122,9 @@ h3{
 }
 
 a.deck{
-  --glow: rgba(255,255,255,.18);
-
-  /* per-tile animation knobs (overridden below) */
-  --sweepDurLocal: var(--sweepDur);
+  --glow: rgba(255,255,255,.18); /* overridden per-tile */
   --pulseDurLocal: var(--pulseDur);
-  --sweepOffset: 0s;
-  --pulseOffset: 0s;
-  --sweepDir: 1;
-  --sweepDist: 70%;
-  --pulseScale: 1.02;
-  --pulseCurve: ease-in-out;
+  --pulseDelay: 0s;
 
   position:relative;
   display:flex;
@@ -149,17 +141,23 @@ a.deck{
   cursor:pointer;
   border:9px solid var(--tileBorder);
 
+  /* Base glow */
   box-shadow:
     0 0 10px rgba(255,255,255,.10),
-    0 0 26px color-mix(in srgb, var(--glow) 35%, transparent),
-    0 0 54px color-mix(in srgb, var(--glow) 22%, transparent);
+    0 0 22px color-mix(in srgb, var(--glow) 30%, transparent),
+    0 0 46px color-mix(in srgb, var(--glow) 18%, transparent);
 
   transition:transform .22s ease, box-shadow .26s ease, filter .26s ease;
   -webkit-tap-highlight-color: transparent;
   will-change:transform;
   text-align:center;
+
+  /* ✅ Only pulsating glow */
+  animation: tileGlowPulse var(--pulseDurLocal) ease-in-out infinite;
+  animation-delay: var(--pulseDelay);
 }
 
+/* ✅ Titles always centered, never moving */
 a.deck b{
   position:relative;
   z-index:3;
@@ -208,163 +206,88 @@ a.deck span.sub{
   white-space:nowrap;
 }
 
-/* Sweep */
-a.deck::before{
-  content:"";
-  position:absolute;
-  inset:-55%;
-  background:linear-gradient(120deg,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,.92) 44%,
-    rgba(255,255,255,.92) 52%,
-    rgba(255,255,255,0) 64%
-  );
-  transform:translateX(calc(-1 * var(--sweepDir) * var(--sweepDist))) rotate(12deg);
-  opacity:.52;
-  mix-blend-mode:soft-light;
-  animation:sweep2 var(--sweepDurLocal) ease-in-out infinite;
-  animation-delay: var(--sweepOffset);
-  pointer-events:none;
-  z-index:1;
-  filter: blur(.2px) drop-shadow(0 0 10px color-mix(in srgb, var(--glow) 40%, transparent));
-}
-
-/* Pulse */
+/* ✅ Soft aura layer (pulses gently, no sweeps) */
 a.deck::after{
   content:"";
   position:absolute;
   inset:-10%;
   background:
-    radial-gradient(circle at 20% 24%, rgba(255,255,255,.36), rgba(255,255,255,0) 55%),
-    radial-gradient(circle at 76% 66%, rgba(255,255,255,.24), rgba(255,255,255,0) 58%),
-    radial-gradient(circle at 46% 52%, rgba(255,255,255,.18), rgba(255,255,255,0) 62%);
-  opacity:.45;
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.22), rgba(255,255,255,0) 60%),
+    radial-gradient(circle at 70% 70%, rgba(255,255,255,.18), rgba(255,255,255,0) 62%);
+  opacity:.40;
   mix-blend-mode:soft-light;
-  animation:pulse2 var(--pulseDurLocal) var(--pulseCurve) infinite;
-  animation-delay: var(--pulseOffset);
   pointer-events:none;
   z-index:1;
-  filter: contrast(1.12);
+  filter: blur(0.2px);
+  animation: auraPulse var(--pulseDurLocal) ease-in-out infinite;
+  animation-delay: var(--pulseDelay);
 }
 
-/* Neon ring */
+/* ✅ Static neon rim (NO SPIN) */
 a.deck .neon{
   position:absolute;
   inset:-3px;
   border-radius:24px;
   pointer-events:none;
   z-index:2;
-  background:
-    conic-gradient(from 0deg,
-      rgba(255,255,255,0) 0%,
-      color-mix(in srgb, var(--glow) 92%, white) 12%,
-      rgba(255,255,255,0) 24%,
-      color-mix(in srgb, var(--glow) 92%, white) 38%,
-      rgba(255,255,255,0) 52%,
-      color-mix(in srgb, var(--glow) 92%, white) 68%,
-      rgba(255,255,255,0) 82%,
-      color-mix(in srgb, var(--glow) 92%, white) 94%,
-      rgba(255,255,255,0) 100%
-    );
-  opacity:.60;
-  animation:ring 3.0s linear infinite;
-  filter: blur(.55px) drop-shadow(0 0 16px color-mix(in srgb, var(--glow) 38%, transparent));
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  padding:7px;
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,.10) inset,
+    0 0 18px color-mix(in srgb, var(--glow) 38%, transparent),
+    0 0 36px color-mix(in srgb, var(--glow) 22%, transparent);
+  opacity:.85;
 }
 
 a.deck:hover{
   transform: scale(1.04);
-  filter: brightness(1.12) saturate(1.08);
+  filter: brightness(1.10) saturate(1.06);
 }
 
 a.deck.active{
   box-shadow:
     0 0 14px rgba(255,255,255,.18),
-    0 0 32px color-mix(in srgb, var(--glow) 40%, transparent),
-    0 0 90px color-mix(in srgb, var(--glow) 30%, transparent);
-  filter: brightness(1.18) saturate(1.12);
+    0 0 34px color-mix(in srgb, var(--glow) 40%, transparent),
+    0 0 92px color-mix(in srgb, var(--glow) 32%, transparent);
+  filter: brightness(1.16) saturate(1.10);
 }
 
 a.deck.is-hidden{ visibility:hidden; }
 
-/* Tile colors + unique animation personality */
+/* Tile colors + OUT-OF-SEQUENCE pulse rhythms */
 a.deck:nth-child(1){
   background: linear-gradient(145deg, #ffcf4a, #b88912);
   --glow: rgba(255,209,102,.95);
-  --sweepDurLocal: 2.55s;
-  --pulseDurLocal: 1.85s;
-  --sweepOffset: -0.20s;
-  --pulseOffset: -0.65s;
-  --sweepDir: 1;
-  --sweepDist: 76%;
-  --pulseScale: 1.030;
-  --pulseCurve: ease-in-out;
+  --pulseDurLocal: 1.73s;
+  --pulseDelay: -0.41s;
 }
 a.deck:nth-child(2){
   background: linear-gradient(145deg, #45dfff, #0b4b5f);
   --glow: rgba(110,231,255,.95);
-  --sweepDurLocal: 1.88s;
-  --pulseDurLocal: 1.42s;
-  --sweepOffset: -1.10s;
-  --pulseOffset: -0.25s;
-  --sweepDir: -1;         /* reverse direction */
-  --sweepDist: 64%;
-  --pulseScale: 1.018;
-  --pulseCurve: cubic-bezier(.40,0,.30,1);
+  --pulseDurLocal: 3.11s;
+  --pulseDelay: -1.27s;
 }
 a.deck:nth-child(3){
   background: linear-gradient(145deg, #73f29a, #0c4b2a);
   --glow: rgba(166,247,178,.95);
-  --sweepDurLocal: 2.92s;
-  --pulseDurLocal: 1.62s;
-  --sweepOffset: -2.05s;
-  --pulseOffset: -1.05s;
-  --sweepDir: 1;
-  --sweepDist: 82%;
-  --pulseScale: 1.040;
-  --pulseCurve: cubic-bezier(.25,.60,.20,1);
+  --pulseDurLocal: 2.47s;
+  --pulseDelay: -2.03s;
 }
 a.deck:nth-child(4){
   background: linear-gradient(145deg, #b46bff, #2a0f5a);
   --glow: rgba(199,125,255,.95);
-  --sweepDurLocal: 2.15s;
-  --pulseDurLocal: 2.05s;
-  --sweepOffset: -0.55s;
-  --pulseOffset: -1.75s;
-  --sweepDir: -1;
-  --sweepDist: 70%;
-  --pulseScale: 1.028;
-  --pulseCurve: ease-out;
+  --pulseDurLocal: 4.29s;
+  --pulseDelay: -0.88s;
 }
 a.deck:nth-child(5){
   background: linear-gradient(145deg, #ff5fa9, #5a0f2b);
   --glow: rgba(255,126,185,.95);
-  --sweepDurLocal: 3.15s;
-  --pulseDurLocal: 1.52s;
-  --sweepOffset: -1.60s;
-  --pulseOffset: -0.85s;
-  --sweepDir: 1;
-  --sweepDist: 60%;
-  --pulseScale: 1.055;    /* bigger pulse */
-  --pulseCurve: cubic-bezier(.15,.80,.25,1);
+  --pulseDurLocal: 2.91s;
+  --pulseDelay: -1.94s;
 }
 a.deck:nth-child(6){
   background: linear-gradient(145deg, #ff9b3d, #5a2608);
   --glow: rgba(255,179,102,.95);
-  --sweepDurLocal: 2.05s;
-  --pulseDurLocal: 1.72s;
-  --sweepOffset: -2.40s;
-  --pulseOffset: -0.10s;
-  --sweepDir: -1;
-  --sweepDist: 88%;
-  --pulseScale: 1.020;
-  --pulseCurve: ease-in;
+  --pulseDurLocal: 5.37s;
+  --pulseDelay: -3.42s;
 }
 
 /* Sparkles */
@@ -388,7 +311,6 @@ a.deck:nth-child(6){
 }
 #fadeScreen.show{ transform:translateY(0%); }
 
-/* Footer */
 footer{
   position:absolute;
   left:50%;
@@ -412,27 +334,34 @@ footer{
   50%{ opacity:.42; }
 }
 
-/* NEW: sweep uses per-tile distance + direction */
-@keyframes sweep2{
-  0%   { transform: translateX(calc(-1 * var(--sweepDir) * var(--sweepDist))) rotate(12deg); opacity:.18; }
-  45%  { opacity:.72; }
-  100% { transform: translateX(calc( 1 * var(--sweepDir) * var(--sweepDist))) rotate(12deg); opacity:.18; }
-}
-
-/* NEW: pulse uses per-tile scale amplitude */
-@keyframes pulse2{
-  0%,100%{ opacity:.22; transform:scale(1); }
-  50%    { opacity:.60; transform:scale(var(--pulseScale)); }
-}
-
-@keyframes ring{
-  0%{transform:rotate(0deg)}
-  100%{transform:rotate(360deg)}
-}
 @keyframes fadeIn{
   from{opacity:0; transform:translateY(6px);}
   to{opacity:1; transform:translateY(0);}
 }
+
+/* ✅ Glow pulse = only box-shadow intensity changes */
+@keyframes tileGlowPulse{
+  0%,100%{
+    box-shadow:
+      0 0 10px rgba(255,255,255,.10),
+      0 0 22px color-mix(in srgb, var(--glow) 28%, transparent),
+      0 0 46px color-mix(in srgb, var(--glow) 16%, transparent);
+    filter: brightness(1.00) saturate(1.00);
+  }
+  50%{
+    box-shadow:
+      0 0 14px rgba(255,255,255,.16),
+      0 0 30px color-mix(in srgb, var(--glow) 40%, transparent),
+      0 0 74px color-mix(in srgb, var(--glow) 28%, transparent);
+    filter: brightness(1.10) saturate(1.06);
+  }
+}
+
+@keyframes auraPulse{
+  0%,100%{ opacity:.32; transform:scale(1.00); }
+  50%{ opacity:.55; transform:scale(1.02); }
+}
+
 @keyframes sparkleFly{
   0%{ transform:translate(0,0) scale(1); opacity:1; }
   100%{ transform:translate(var(--dx),var(--dy)) scale(0.35); opacity:0; }
@@ -486,7 +415,7 @@ footer{
     <a class="deck" href="g5-sentence-order.html">
       <div class="neon"></div>
       <b><span class="en long">Sentence Order</span></b>
-      <span class="jp">文の並べ替え</span>
+      <span class="jp">文の並べ替え</span></b>
       <span class="sub">文の順番</span>
     </a>
 
