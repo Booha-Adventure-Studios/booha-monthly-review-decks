@@ -37,14 +37,14 @@ body{
   font-family:'Cinzel',serif;
   overflow:hidden;
 
-  background-image:
-    radial-gradient(circle at 18% 18%, rgba(255,126,185,.12), transparent 60%),
-    radial-gradient(circle at 82% 22%, rgba(110,231,255,.10), transparent 60%),
-    radial-gradient(circle at 72% 82%, rgba(199,125,255,.12), transparent 65%),
-    radial-gradient(circle at 24% 78%, rgba(166,247,178,.08), transparent 65%),
-    radial-gradient(circle at 50% 50%, rgba(255,209,102,.06), transparent 70%),
-    linear-gradient(180deg, #070513 0%, #02010a 100%);
-}
+background-image:
+  radial-gradient(circle at 16% 18%, rgba(120, 80, 200, .12), transparent 60%),
+  radial-gradient(circle at 82% 20%, rgba(70, 40, 140, .14), transparent 62%),
+  radial-gradient(circle at 74% 84%, rgba(95, 60, 180, .10), transparent 68%),
+  radial-gradient(circle at 22% 78%, rgba(45, 25, 90, .12), transparent 66%),
+  radial-gradient(circle at 50% 50%, rgba(30, 15, 60, .10), transparent 72%),
+  linear-gradient(180deg, #05030b 0%, #020008 100%);
+
 
 
 /* animated aurora layer */
@@ -223,8 +223,9 @@ a.deck::before{
     rgba(255,255,255,0) 64%
   );
   transform:translateX(-70%) rotate(12deg);
-  opacity:.78;
-  mix-blend-mode:overlay;
+  opacity: .55;
+mix-blend-mode: soft-light;
+
   animation:sweep var(--sweepDur) ease-in-out infinite;
   pointer-events:none;
   z-index:1;
@@ -241,7 +242,7 @@ a.deck::after{
     radial-gradient(circle at 76% 66%, rgba(255,255,255,.28), rgba(255,255,255,0) 58%),
     radial-gradient(circle at 46% 52%, rgba(255,255,255,.22), rgba(255,255,255,0) 62%),
     radial-gradient(circle at 60% 18%, rgba(255,209,102,.18), rgba(255,209,102,0) 52%);
-  opacity:.62;
+  opacity:.45;
   mix-blend-mode:soft-light;
   animation:pulse var(--pulseDur) ease-in-out infinite;
   pointer-events:none;
@@ -296,12 +297,42 @@ a.deck.is-hidden{
 }
 
 /* Tile colors */
-a.deck:nth-child(1){background:linear-gradient(145deg, var(--c1), #fff2b8);}
-a.deck:nth-child(2){background:linear-gradient(145deg, var(--c2), #e8fbff);}
-a.deck:nth-child(3){background:linear-gradient(145deg, var(--c3), #eaffef);}
-a.deck:nth-child(4){background:linear-gradient(145deg, var(--c4), #efe0ff);}
-a.deck:nth-child(5){background:linear-gradient(145deg, var(--c5), #ffe0f0);}
-a.deck:nth-child(6){background:linear-gradient(145deg, var(--c6), #ffe7d4);}
+a.deck:nth-child(1){ background: linear-gradient(145deg, #ffcf4a, #b88912); } /* gold */
+a.deck:nth-child(2){ background: linear-gradient(145deg, #45dfff, #0b4b5f); } /* ice */
+a.deck:nth-child(3){ background: linear-gradient(145deg, #73f29a, #0c4b2a); } /* mint */
+a.deck:nth-child(4){ background: linear-gradient(145deg, #b46bff, #2a0f5a); } /* purple */
+a.deck:nth-child(5){ background: linear-gradient(145deg, #ff5fa9, #5a0f2b); } /* pink */
+a.deck:nth-child(6){ background: linear-gradient(145deg, #ff9b3d, #5a2608); } /* orange */
+
+
+a.deck:nth-child(1) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(255,209,102,.22)); }
+a.deck:nth-child(2) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(110,231,255,.22)); }
+a.deck:nth-child(3) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(166,247,178,.20)); }
+a.deck:nth-child(4) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(199,125,255,.22)); }
+a.deck:nth-child(5) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(255,126,185,.22)); }
+a.deck:nth-child(6) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(255,179,102,.20)); }
+
+a.deck:nth-child(1) .neon{ opacity:.62; filter: blur(.6px) drop-shadow(0 0 16px rgba(255,209,102,.28)); }
+a.deck:nth-child(2) .neon{ opacity:.62; filter: blur(.6px) drop-shadow(0 0 16px rgba(110,231,255,.24)); }
+a.deck:nth-child(3) .neon{ opacity:.62; filter: blur(.6px) drop-shadow(0 0 16px rgba(166,247,178,.22)); }
+a.deck:nth-child(4) .neon{ opacity:.62; filter: blur(.6px) drop-shadow(0 0 16px rgba(199,125,255,.26)); }
+a.deck:nth-child(5) .neon{ opacity:.62; filter: blur(.6px) drop-shadow(0 0 16px rgba(255,126,185,.24)); }
+a.deck:nth-child(6) .neon{ opacity:.62; filter: blur(.6px) drop-shadow(0 0 16px rgba(255,179,102,.22)); }
+
+/* desync sweep + pulse per tile */
+a.deck:nth-child(1)::before{ animation-delay: -0.15s; }
+a.deck:nth-child(2)::before{ animation-delay: -0.85s; }
+a.deck:nth-child(3)::before{ animation-delay: -1.55s; }
+a.deck:nth-child(4)::before{ animation-delay: -0.45s; }
+a.deck:nth-child(5)::before{ animation-delay: -1.15s; }
+a.deck:nth-child(6)::before{ animation-delay: -1.85s; }
+
+a.deck:nth-child(1)::after{ animation-delay: -0.25s; }
+a.deck:nth-child(2)::after{ animation-delay: -1.05s; }
+a.deck:nth-child(3)::after{ animation-delay: -1.65s; }
+a.deck:nth-child(4)::after{ animation-delay: -0.55s; }
+a.deck:nth-child(5)::after{ animation-delay: -1.25s; }
+a.deck:nth-child(6)::after{ animation-delay: -1.95s; }
 
 /* Sparkles */
 .sparkle{
