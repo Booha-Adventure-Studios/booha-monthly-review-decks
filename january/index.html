@@ -514,8 +514,13 @@ if (deckContainer) {
     deck.classList.add('active');
 
     const r = deck.getBoundingClientRect();
-    const clone = deck.cloneNode(true);
-    clone.classList.add('active');
+   const clone = deck.cloneNode(true);
+   clone.classList.add('active');
+
+   /* ✅ LOCK the glow color onto the clone */
+   const glow = getComputedStyle(deck).getPropertyValue('--glow');
+   clone.style.setProperty('--glow', glow);
+
 
     clone.style.position = 'fixed';
     clone.style.left = r.left + 'px';
