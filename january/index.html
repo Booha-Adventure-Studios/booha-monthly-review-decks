@@ -223,15 +223,14 @@ a.deck::before{
     rgba(255,255,255,0) 64%
   );
   transform:translateX(-70%) rotate(12deg);
-  opacity: .55;
-mix-blend-mode: soft-light;
-
+  opacity:.55;
+  mix-blend-mode:soft-light;
   animation:sweep var(--sweepDur) ease-in-out infinite;
+  animation-play-state: running;
   pointer-events:none;
   z-index:1;
   filter: blur(.2px) drop-shadow(0 0 10px rgba(255,209,102,.22));
 }
-
 
 a.deck::after{
   content:"";
@@ -245,6 +244,7 @@ a.deck::after{
   opacity:.45;
   mix-blend-mode:soft-light;
   animation:pulse var(--pulseDur) ease-in-out infinite;
+  animation-play-state: running;
   pointer-events:none;
   z-index:1;
   filter: contrast(1.15);
@@ -270,7 +270,7 @@ a.deck .neon{
     );
   opacity:.62;
   animation:ring 3.0s linear infinite;
-  filter: blur(0.6px) drop-shadow(0 0 16px rgba(255,255,255,.12));
+  animation-play-state: running;
   mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
@@ -280,6 +280,7 @@ a.deck .neon{
   padding:7px;
 }
 
+/* Hover / active */
 a.deck:hover{
   transform: scale(1.04);
   filter: brightness(1.12) saturate(1.05);
@@ -292,11 +293,9 @@ a.deck.active{
   filter: brightness(1.16) saturate(1.08);
 }
 
-a.deck.is-hidden{
-  visibility: hidden;
-}
+a.deck.is-hidden{ visibility:hidden; }
 
-/* Tile colors */
+/* Tile colors (richer, darker second stops) */
 a.deck:nth-child(1){ background: linear-gradient(145deg, #ffcf4a, #b88912); } /* gold */
 a.deck:nth-child(2){ background: linear-gradient(145deg, #45dfff, #0b4b5f); } /* ice */
 a.deck:nth-child(3){ background: linear-gradient(145deg, #73f29a, #0c4b2a); } /* mint */
@@ -304,20 +303,13 @@ a.deck:nth-child(4){ background: linear-gradient(145deg, #b46bff, #2a0f5a); } /*
 a.deck:nth-child(5){ background: linear-gradient(145deg, #ff5fa9, #5a0f2b); } /* pink */
 a.deck:nth-child(6){ background: linear-gradient(145deg, #ff9b3d, #5a2608); } /* orange */
 
-
-a.deck:nth-child(1) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(255,209,102,.22)); }
-a.deck:nth-child(2) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(110,231,255,.22)); }
-a.deck:nth-child(3) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(166,247,178,.20)); }
-a.deck:nth-child(4) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(199,125,255,.22)); }
-a.deck:nth-child(5) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(255,126,185,.22)); }
-a.deck:nth-child(6) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(255,179,102,.20)); }
-
-a.deck:nth-child(1) .neon{ opacity:.62; filter: blur(.6px) drop-shadow(0 0 16px rgba(255,209,102,.28)); }
-a.deck:nth-child(2) .neon{ opacity:.62; filter: blur(.6px) drop-shadow(0 0 16px rgba(110,231,255,.24)); }
-a.deck:nth-child(3) .neon{ opacity:.62; filter: blur(.6px) drop-shadow(0 0 16px rgba(166,247,178,.22)); }
-a.deck:nth-child(4) .neon{ opacity:.62; filter: blur(.6px) drop-shadow(0 0 16px rgba(199,125,255,.26)); }
-a.deck:nth-child(5) .neon{ opacity:.62; filter: blur(.6px) drop-shadow(0 0 16px rgba(255,126,185,.24)); }
-a.deck:nth-child(6) .neon{ opacity:.62; filter: blur(.6px) drop-shadow(0 0 16px rgba(255,179,102,.22)); }
+/* Per-tile neon glow tint (ONE set only — no duplicates) */
+a.deck:nth-child(1) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(255,209,102,.28)); }
+a.deck:nth-child(2) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(110,231,255,.24)); }
+a.deck:nth-child(3) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(166,247,178,.22)); }
+a.deck:nth-child(4) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(199,125,255,.26)); }
+a.deck:nth-child(5) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(255,126,185,.24)); }
+a.deck:nth-child(6) .neon{ filter: blur(.6px) drop-shadow(0 0 16px rgba(255,179,102,.22)); }
 
 /* desync sweep + pulse per tile */
 a.deck:nth-child(1)::before{ animation-delay: -0.15s; }
@@ -334,7 +326,7 @@ a.deck:nth-child(4)::after{ animation-delay: -0.55s; }
 a.deck:nth-child(5)::after{ animation-delay: -1.25s; }
 a.deck:nth-child(6)::after{ animation-delay: -1.95s; }
 
-/* Sparkles */
+/* Sparkles (FIX: visible above clone + fade) */
 .sparkle{
   position:fixed;
   width:8px;height:8px;border-radius:50%;
@@ -343,6 +335,8 @@ a.deck:nth-child(6)::after{ animation-delay: -1.95s; }
   pointer-events:none;
   opacity:0;
   animation:sparkleFly 2.4s ease-out forwards;
+  z-index: 10050; /* <-- THIS is what brings them back */
+  mix-blend-mode: screen;
 }
 
 #fadeScreen{
@@ -355,39 +349,22 @@ a.deck:nth-child(6)::after{ animation-delay: -1.95s; }
 }
 #fadeScreen.show{ transform:translateY(0%); }
 
-footer{
-  position:absolute;
-  bottom:18px;
-  width:100%;
-  text-align:center;
-  font-size:clamp(13px,2vw,18px);
-  color:#9a9a9a;
-  letter-spacing:.04em;
-}
-
-@keyframes bgDrift{
-  0%   { transform: translate3d(-2%, -1%, 0) rotate(0deg) scale(1.05); }
-  50%  { transform: translate3d( 2%,  1%, 0) rotate(18deg) scale(1.12); }
-  100% { transform: translate3d(-2%, -1%, 0) rotate(0deg) scale(1.05); }
-}
-
-@keyframes bgTwinkle{
-  0%,100%{ opacity:.45; }
-  50%{ opacity:.65; }
-}
-  
+/* Keyframes */
 @keyframes sweep{
-  0%{ transform:translateX(-65%) rotate(10deg); opacity:.28; }
-  45%{ opacity:.78; }
-  100%{ transform:translateX(65%) rotate(10deg); opacity:.28; }
+  0%{ transform:translateX(-65%) rotate(12deg); opacity:.22; }
+  45%{ opacity:.70; }
+  100%{ transform:translateX(65%) rotate(12deg); opacity:.22; }
 }
 @keyframes pulse{
-  0%,100%{ opacity:.28; transform:scale(1); }
-  50%{ opacity:.54; transform:scale(1.02); }
+  0%,100%{ opacity:.26; transform:scale(1); }
+  50%{ opacity:.56; transform:scale(1.02); }
 }
 @keyframes ring{ 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
-@keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
-@keyframes sparkleFly{ 0%{transform:translate(0,0) scale(1);opacity:1;} 100%{transform:translate(var(--dx),var(--dy)) scale(0.35);opacity:0;} }
+@keyframes sparkleFly{
+  0%{transform:translate(0,0) scale(1);opacity:1;}
+  100%{transform:translate(var(--dx),var(--dy)) scale(0.35);opacity:0;}
+}
+
 
 @media (max-width: 768px){
   #welcome{ justify-content:flex-start; padding-top:1.35rem; }
@@ -531,23 +508,28 @@ if (deckContainer) {
 
     deck.classList.add('active');
 
-    const r = deck.getBoundingClientRect();
-    const clone = deck.cloneNode(true);
-    clone.classList.add('active');
+  const r = deck.getBoundingClientRect();
+const clone = deck.cloneNode(true);
+clone.classList.add('active');
 
-    clone.style.position = 'fixed';
-    clone.style.left = r.left + 'px';
-    clone.style.top = r.top + 'px';
-    clone.style.width = r.width + 'px';
-    clone.style.height = r.height + 'px';
-    clone.style.margin = '0';
-    clone.style.transform = 'translate(0px,0px) scale(1)';
-    clone.style.zIndex = '9999';
-    clone.style.pointerEvents = 'none';
-    clone.style.willChange = 'transform';
+clone.style.position = 'fixed';
+clone.style.left = r.left + 'px';
+clone.style.top = r.top + 'px';
+clone.style.width = r.width + 'px';
+clone.style.height = r.height + 'px';
+clone.style.margin = '0';
+clone.style.transform = 'translate(0px,0px) scale(1)';
+clone.style.zIndex = '9999';
+clone.style.pointerEvents = 'none';
+clone.style.willChange = 'transform';
 
-    document.body.appendChild(clone);
-    deck.classList.add('is-hidden');
+document.body.appendChild(clone);
+deck.classList.add('is-hidden');
+
+/* ✅ sparkle from the clone (the thing actually visible) */
+const r2 = clone.getBoundingClientRect();
+sparkleBurst(r2, 38);
+
 
     const cx = window.innerWidth / 2 - (r.left + r.width / 2);
     const cy = window.innerHeight / 2 - (r.top + r.height / 2);
