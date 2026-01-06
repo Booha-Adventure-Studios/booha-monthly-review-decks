@@ -231,13 +231,13 @@ a.deck::before{
     rgba(255,255,255,.92) 52%,
     rgba(255,255,255,0) 64%
   );
-  transform:translateX(-70%) rotate(12deg);
-  opacity:.52;
-  mix-blend-mode:soft-light;
-  animation:sweep var(--sweepDurLocal) ease-in-out infinite;
+  transform: translateX(-70%) rotate(var(--sweepAng, 12deg));
+  opacity: var(--sweepOp, .52);
+  mix-blend-mode: soft-light;
+  animation: sweep var(--sweepDurLocal, 2.2s) ease-in-out infinite;
   pointer-events:none;
   z-index:1;
-  filter: blur(.2px) drop-shadow(0 0 10px color-mix(in srgb, var(--glow) 40%, transparent));
+  filter: blur(.2px) drop-shadow(0 0 10px color-mix(in srgb, var(--glow, rgba(255,255,255,.2)) 40%, transparent));
 }
 
 a.deck::after{
@@ -248,13 +248,14 @@ a.deck::after{
     radial-gradient(circle at 20% 24%, rgba(255,255,255,.36), rgba(255,255,255,0) 55%),
     radial-gradient(circle at 76% 66%, rgba(255,255,255,.24), rgba(255,255,255,0) 58%),
     radial-gradient(circle at 46% 52%, rgba(255,255,255,.18), rgba(255,255,255,0) 62%);
-  opacity:.45;
-  mix-blend-mode:soft-light;
-  animation:pulse var(--pulseDurLocal) ease-in-out infinite;
+  opacity: var(--pulseOp, .45);
+  mix-blend-mode: soft-light;
+  animation: pulse var(--pulseDurLocal, 1.6s) ease-in-out infinite;
   pointer-events:none;
   z-index:1;
   filter: contrast(1.12);
 }
+
 
 /* Neon ring */
 a.deck .neon{
@@ -356,16 +357,37 @@ a.deck:nth-child(4)::after{ animation-delay:-0.55s; }
 a.deck:nth-child(5)::after{ animation-delay:-1.25s; }
 a.deck:nth-child(6)::after{ animation-delay:-1.95s; }
 
+a.deck:nth-child(1){ --sweepAng: 9deg;  --sweepOp:.50; --pulseScale:1.018; --pulseOp:.40; --sweepDurLocal:2.55s; --pulseDurLocal:1.85s; }
+a.deck:nth-child(2){ --sweepAng: 14deg; --sweepOp:.56; --pulseScale:1.030; --pulseOp:.46; --sweepDurLocal:1.95s; --pulseDurLocal:1.45s; }
+a.deck:nth-child(3){ --sweepAng: 7deg;  --sweepOp:.48; --pulseScale:1.022; --pulseOp:.42; --sweepDurLocal:2.80s; --pulseDurLocal:1.62s; }
+a.deck:nth-child(4){ --sweepAng: 16deg; --sweepOp:.54; --pulseScale:1.035; --pulseOp:.48; --sweepDurLocal:2.10s; --pulseDurLocal:1.95s; }
+a.deck:nth-child(5){ --sweepAng: 11deg; --sweepOp:.52; --pulseScale:1.025; --pulseOp:.45; --sweepDurLocal:2.35s; --pulseDurLocal:1.55s; }
+a.deck:nth-child(6){ --sweepAng: 5deg;  --sweepOp:.49; --pulseScale:1.020; --pulseOp:.41; --sweepDurLocal:2.20s; --pulseDurLocal:1.72s; }
+
+a.deck.moving::before,
+a.deck.moving::after,
+a.deck.moving .neon{
+  animation: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  opacity: .0 !important;
+}
+  
+
 /* Sparkles (cool colors, visible above clone + fade) */
 .sparkle{
   position:fixed;
-  width:9px;height:9px;border-radius:50%;
+  width: var(--sz, 18px);
+  height: var(--sz, 18px);
+  border-radius: 50%;
   pointer-events:none;
   opacity:0;
   animation:sparkleFly 1.9s ease-out forwards;
   z-index:10050;
   mix-blend-mode:screen;
+  filter: drop-shadow(0 0 14px rgba(255,255,255,.15));
 }
+
 
 #fadeScreen{
   position:fixed; inset:0;
@@ -401,14 +423,16 @@ footer{
   50%{ opacity:.42; }
 }
 @keyframes sweep{
-  0%{ transform:translateX(-65%) rotate(12deg); opacity:.20; }
-  45%{ opacity:.70; }
-  100%{ transform:translateX(65%) rotate(12deg); opacity:.20; }
+  0%   { transform: translateX(-68%) rotate(var(--sweepAng, 12deg)); opacity: .18; }
+  45%  { opacity: .78; }
+  100% { transform: translateX(68%)  rotate(var(--sweepAng, 12deg)); opacity: .18; }
 }
+
 @keyframes pulse{
-  0%,100%{ opacity:.24; transform:scale(1); }
-  50%{ opacity:.58; transform:scale(1.02); }
+  0%,100%{ opacity: .22; transform: scale(1); }
+  50%    { opacity: .62; transform: scale(var(--pulseScale, 1.02)); }
 }
+
 @keyframes ring{
   0%{transform:rotate(0deg)}
   100%{transform:rotate(360deg)}
@@ -502,37 +526,44 @@ const COOL = [
   { a: "rgba(255,126,185,.92)", b: "rgba(255,126,185,.52)" }  // pink (still cool-ish)
 ];
 
-function sparkleBurst(rect, count = 46){
+function sparkleBurst(rect, count = 42){
   const cx = rect.left + rect.width / 2;
   const cy = rect.top + rect.height / 2;
 
-  for(let i = 0; i < count; i++){
-    const a = Math.random() * Math.PI * 2;
-    const radius = (Math.min(rect.width, rect.height) * (0.25 + Math.random()*0.25));
-    const x = cx + Math.cos(a) * radius;
-    const y = cy + Math.sin(a) * radius;
+  const COOL = [
+    ["rgba(110,231,255,.98)","rgba(110,231,255,.55)"], // ice
+    ["rgba(166,247,178,.98)","rgba(166,247,178,.55)"], // mint
+    ["rgba(199,125,255,.98)","rgba(199,125,255,.55)"], // purple
+    ["rgba(255,126,185,.95)","rgba(255,126,185,.50)"]  // pink
+  ];
 
-    const speed = 86 + Math.random() * 70;
-    const dx = (Math.cos(a) * speed).toFixed(2);
-    const dy = (Math.sin(a) * speed).toFixed(2);
+  for(let i=0;i<count;i++){
+    const a = Math.random()*Math.PI*2;
+    const speed = 110 + Math.random()*120; // faster/farther
+    const dx = (Math.cos(a)*speed).toFixed(2);
+    const dy = (Math.sin(a)*speed).toFixed(2);
 
-    const c = COOL[(Math.random() * COOL.length) | 0];
+    const [c1,c2] = COOL[(Math.random()*COOL.length)|0];
 
     const s = document.createElement('div');
     s.className = 'sparkle';
-    s.style.left = (x - 4.5) + 'px';
-    s.style.top  = (y - 4.5) + 'px';
-    s.style.setProperty('--dx', dx + 'px');
-    s.style.setProperty('--dy', dy + 'px');
 
-    // cool colored sparkle
-    s.style.background = `radial-gradient(circle at 35% 35%, #fff, ${c.a} 58%, rgba(0,0,0,0) 72%)`;
-    s.style.boxShadow  = `0 0 12px ${c.a}, 0 0 32px ${c.b}`;
+    const sz = 14 + Math.random()*20; // BIGGER
+    s.style.setProperty('--sz', sz+'px');
+
+    s.style.left = (cx - sz/2) + 'px';
+    s.style.top  = (cy - sz/2) + 'px';
+    s.style.setProperty('--dx', dx+'px');
+    s.style.setProperty('--dy', dy+'px');
+
+    s.style.background = `radial-gradient(circle at 35% 35%, #fff, ${c1} 55%, rgba(0,0,0,0) 72%)`;
+    s.style.boxShadow  = `0 0 18px ${c1}, 0 0 46px ${c2}`;
 
     document.body.appendChild(s);
-    setTimeout(() => s.remove(), 2000);
+    setTimeout(()=>s.remove(), 2100);
   }
 }
+
 
 function safePlay(aud, vol = 1){
   if(!aud) return;
@@ -569,27 +600,50 @@ if (deckContainer) {
 
     deck.classList.add('active');
 
-    const r = deck.getBoundingClientRect();
-    const clone = deck.cloneNode(true);
-    clone.classList.add('active');
+  const r = deck.getBoundingClientRect();
+const clone = deck.cloneNode(true);
+clone.classList.add('active');
 
-    clone.style.position = 'fixed';
-    clone.style.left = r.left + 'px';
-    clone.style.top  = r.top  + 'px';
-    clone.style.width  = r.width  + 'px';
-    clone.style.height = r.height + 'px';
-    clone.style.margin = '0';
-    clone.style.transform = 'translate(0px,0px) scale(1)';
-    clone.style.zIndex = '9999';
-    clone.style.pointerEvents = 'none';
-    clone.style.willChange = 'transform';
+// ✅ Lock the clone to the tile's *computed* look (prevents color shift)
+const cs = getComputedStyle(deck);
+clone.style.background = cs.background;
+clone.style.boxShadow  = cs.boxShadow;
+clone.style.border     = cs.border;
 
-    document.body.appendChild(clone);
-    deck.classList.add('is-hidden');
+// ✅ Copy your per-tile vars too (so glow stays unique)
+clone.style.setProperty('--glow', cs.getPropertyValue('--glow'));
+clone.style.setProperty('--sweepAng', cs.getPropertyValue('--sweepAng'));
+clone.style.setProperty('--sweepOp', cs.getPropertyValue('--sweepOp'));
+clone.style.setProperty('--pulseScale', cs.getPropertyValue('--pulseScale'));
+clone.style.setProperty('--pulseOp', cs.getPropertyValue('--pulseOp'));
+clone.style.setProperty('--sweepDurLocal', cs.getPropertyValue('--sweepDurLocal'));
+clone.style.setProperty('--pulseDurLocal', cs.getPropertyValue('--pulseDurLocal'));
 
-    // sparkle from the clone (always visible + correct position)
-    const r2 = clone.getBoundingClientRect();
-    sparkleBurst(r2, 52);
+// ✅ Performance: turn off heavy overlay animations during the big move
+clone.classList.add('moving');
+
+clone.style.position = 'fixed';
+clone.style.left = r.left + 'px';
+clone.style.top  = r.top  + 'px';
+clone.style.width  = r.width  + 'px';
+clone.style.height = r.height + 'px';
+clone.style.margin = '0';
+
+// ✅ GPU-friendly transform (reduces lag)
+clone.style.transform = 'translate3d(0px,0px,0) scale(1)';
+clone.style.transformOrigin = 'center center';
+clone.style.backfaceVisibility = 'hidden';
+
+clone.style.zIndex = '9999';
+clone.style.pointerEvents = 'none';
+clone.style.willChange = 'transform';
+
+document.body.appendChild(clone);
+deck.classList.add('is-hidden');
+
+// ✅ sparkle from the clone (always visible + correct position)
+const r2 = clone.getBoundingClientRect();
+sparkleBurst(r2, 52);
 
     const cx = window.innerWidth  / 2 - (r.left + r.width  / 2);
     const cy = window.innerHeight / 2 - (r.top  + r.height / 2);
@@ -609,13 +663,14 @@ if (deckContainer) {
       }, 5200);
     }
 
-    clone.animate(
-      [
-        { transform: 'translate(0px,0px) scale(1)' },
-        { transform: `translate(${cx}px,${cy}px) scale(${safeScale})` }
-      ],
-      { duration: MOVE_MS, easing: 'ease-in-out', fill: 'forwards' }
-    );
+  clone.animate(
+  [
+    { transform: 'translate3d(0px,0px,0) scale(1)' },
+    { transform: `translate3d(${cx}px,${cy}px,0) scale(${safeScale})` }
+  ],
+  { duration: MOVE_MS, easing: 'cubic-bezier(.2,.85,.2,1)', fill: 'forwards' }
+);
+
 
     setTimeout(() => {
       window.location.href = target;
