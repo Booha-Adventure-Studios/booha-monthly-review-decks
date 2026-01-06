@@ -356,7 +356,7 @@ a.deck:nth-child(4)::after{ animation-delay:-0.55s; }
 a.deck:nth-child(5)::after{ animation-delay:-1.25s; }
 a.deck:nth-child(6)::after{ animation-delay:-1.95s; }
 
-/* Sparkles (cool colors, visible above clone + fade) */
+/* Sparkles */
 .sparkle{
   position:fixed;
   width:9px;height:9px;border-radius:50%;
@@ -495,14 +495,18 @@ const intro = document.getElementById('reviewIntro');
 const deckContainer = document.querySelector('.deck-links');
 let isTransitioning = false;
 
-const COOL = [
-  { a: "rgba(110,231,255,.95)", b: "rgba(110,231,255,.55)" }, // ice
-  { a: "rgba(166,247,178,.95)", b: "rgba(166,247,178,.55)" }, // mint
-  { a: "rgba(199,125,255,.95)", b: "rgba(199,125,255,.55)" }, // purple
-  { a: "rgba(255,126,185,.92)", b: "rgba(255,126,185,.52)" }  // pink (still cool-ish)
-];
+/* =========================
+   Sparkles color change:
+   Sparkles now inherit the clicked tile’s --glow color.
+   (Behavior stays 100% identical.)
+========================= */
 
-function sparkleBurst(rect, count = 46){
+function getTileGlowColor(el){
+  const g = getComputedStyle(el).getPropertyValue('--glow').trim();
+  return g || 'rgba(255,209,102,.95)'; // fallback gold
+}
+
+function sparkleBurst(rect, count = 46, glow = 'rgba(255,209,102,.95)'){
   const cx = rect.left + rect.width / 2;
   const cy = rect.top + rect.height / 2;
 
@@ -516,8 +520,6 @@ function sparkleBurst(rect, count = 46){
     const dx = (Math.cos(a) * speed).toFixed(2);
     const dy = (Math.sin(a) * speed).toFixed(2);
 
-    const c = COOL[(Math.random() * COOL.length) | 0];
-
     const s = document.createElement('div');
     s.className = 'sparkle';
     s.style.left = (x - 4.5) + 'px';
@@ -525,9 +527,15 @@ function sparkleBurst(rect, count = 46){
     s.style.setProperty('--dx', dx + 'px');
     s.style.setProperty('--dy', dy + 'px');
 
-    // cool colored sparkle
-    s.style.background = `radial-gradient(circle at 35% 35%, #fff, ${c.a} 58%, rgba(0,0,0,0) 72%)`;
-    s.style.boxShadow  = `0 0 12px ${c.a}, 0 0 32px ${c.b}`;
+    // sparkle color = clicked tile glow
+    s.style.background =
+      `radial-gradient(circle at 35% 35%,
+        #fff,
+        ${glow} 58%,
+        rgba(0,0,0,0) 72%
+      )`;
+
+    s.style.boxShadow = `0 0 12px ${glow}, 0 0 34px ${glow}`;
 
     document.body.appendChild(s);
     setTimeout(() => s.remove(), 2000);
@@ -589,7 +597,8 @@ if (deckContainer) {
 
     // sparkle from the clone (always visible + correct position)
     const r2 = clone.getBoundingClientRect();
-    sparkleBurst(r2, 52);
+    const glow = getTileGlowColor(deck);      // ✅ NEW: inherit tile glow color
+    sparkleBurst(r2, 52, glow);               // ✅ NEW: pass glow
 
     const cx = window.innerWidth  / 2 - (r.left + r.width  / 2);
     const cy = window.innerHeight / 2 - (r.top  + r.height / 2);
