@@ -347,17 +347,23 @@ a.deck.moving .neon{
 /* WAAPI sparkles (no CSS animation dependency) */
 .sparkle{
   position:fixed;
-  left:0; top:0;
-  width: var(--sz, 14px);
-  height: var(--sz, 14px);
-  border-radius: 999px;
+  width: var(--sz, 16px);
+  height: var(--sz, 16px);
+  border-radius: 50%;
   pointer-events:none;
   z-index:10050;
-  mix-blend-mode:screen;
   opacity:0;
-  transform: translate3d(-9999px,-9999px,0);
-  will-change: transform, opacity;
-  filter: drop-shadow(0 0 18px rgba(255,255,255,.18));
+  mix-blend-mode:screen;
+  background: radial-gradient(circle at 35% 35%, #fff, rgba(255,255,255,.55) 55%, rgba(0,0,0,0) 75%);
+  filter: drop-shadow(0 0 18px rgba(255,255,255,.22));
+  animation: sparkleLinger 1.8s cubic-bezier(.16,.92,.2,1) forwards;
+}
+
+@keyframes sparkleLinger{
+  0%   { transform:translate3d(0,0,0) scale(.7); opacity:0; }
+  18%  { opacity:1; }
+  70%  { opacity:.95; }
+  100% { transform:translate3d(var(--dx), var(--dy), 0) scale(.2); opacity:0; }
 }
 
 #fadeScreen{
@@ -484,74 +490,10 @@ footer{
 <audio id="reviewIntro" src="reviewdeck.mp3" preload="auto" playsinline></audio>
 
 <script>
-const intro = document.getElementById('reviewIntro');
+const intro = document.getElementById('introSound');
+const openSound = document.getElementById('openSound');
 const deckContainer = document.querySelector('.deck-links');
-const decks = Array.from(document.querySelectorAll('a.deck'));
 let isTransitioning = false;
-
-/* Make each tile feel alive (never sync) */
-(function randomizeTiles(){
-  decks.forEach((d) => {
-    const r1 = Math.random(), r2 = Math.random(), r3 = Math.random();
-    d.style.setProperty('--phase1', `${-(0.2 + r1 * 3.0)}s`);
-    d.style.setProperty('--phase2', `${-(0.2 + r2 * 3.3)}s`);
-    d.style.setProperty('--auraDur', (2.9 + r1 * 2.6).toFixed(2) + 's');
-    d.style.setProperty('--auraDelay', (-(r2 * 3.0)).toFixed(2) + 's');
-    d.style.setProperty('--auraRot', (4 + r3 * 14).toFixed(2) + 'deg');
-    d.style.setProperty('--sweepDurLocal', (1.85 + Math.random() * 1.25).toFixed(2) + 's');
-    d.style.setProperty('--pulseDurLocal', (1.25 + Math.random() * 1.10).toFixed(2) + 's');
-  });
-})();
-
-function safeResetAudio(aud){
-  if(!aud) return;
-  try{
-    aud.pause();
-    if (aud.readyState >= 1) aud.currentTime = 0;
-  }catch(e){}
-}
-
-async function playIntroAndWaitForStart(aud, vol=1){
-  if(!aud) return false;
-
-  safeResetAudio(aud);
-  try{ aud.volume = vol; }catch(e){}
-
-  let started = false;
-  const waitStart = new Promise((resolve) => {
-    const t = setTimeout(() => resolve(false), 900);
-    const onPlaying = () => {
-      started = true;
-      clearTimeout(t);
-      resolve(true);
-    };
-    aud.addEventListener('playing', onPlaying, { once:true });
-    aud.addEventListener('play', () => {
-      if (started) return;
-      setTimeout(() => { if (!started) resolve(true); }, 120);
-    }, { once:true });
-  });
-
-  try{
-    const p = aud.play();
-    if (p && typeof p.then === "function") await p.catch(()=>{});
-  }catch(e){}
-
-  return await waitStart;
-}
-
-function waitForAudioEndOrTimeout(aud, maxMs){
-  return new Promise((resolve) => {
-    if(!aud) return resolve("no-audio");
-    const onEnd = () => resolve("ended");
-    aud.addEventListener('ended', onEnd, { once:true });
-    setTimeout(() => resolve("timeout"), maxMs);
-  });
-}
-
-/* ===========================
-   Sparkles: WAAPI (guaranteed)
-   =========================== */
 
 const COOL = [
   ["rgba(110,231,255,.98)","rgba(110,231,255,.45)"],
@@ -561,137 +503,90 @@ const COOL = [
   ["rgba(255,209,102,.96)","rgba(255,209,102,.40)"]
 ];
 
-function makeSparkle(x, y, sz, c1, c2, kind="dot"){
-  const el = document.createElement('div');
-  el.className = 'sparkle';
-  el.style.width = sz + 'px';
-  el.style.height = sz + 'px';
-  el.style.left = '0px';
-  el.style.top = '0px';
-  el.style.opacity = '0';
+function sparkleLingerBurst(rect, count = 26){
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top  + rect.height / 2;
 
-  if(kind === "glint"){
-    el.style.borderRadius = '999px';
-    el.style.width = (sz*1.45) + 'px';
-    el.style.height = (sz*0.72) + 'px';
-  }else{
-    el.style.borderRadius = '999px';
-  }
+  for(let i=0;i<count;i++){
+    const ang = Math.random()*Math.PI*2;
 
-  el.style.background = `radial-gradient(circle at 35% 35%, #fff, ${c1} 56%, rgba(0,0,0,0) 76%)`;
-  el.style.boxShadow  = `0 0 18px ${c1}, 0 0 56px ${c2}`;
+    // spawn around edges (activation feel)
+    const edge = 0.52 + Math.random()*0.58;
+    const x = cx + Math.cos(ang) * (rect.width  * 0.30) * edge;
+    const y = cy + Math.sin(ang) * (rect.height * 0.30) * edge;
 
-  document.body.appendChild(el);
-  return el;
-}
-
-function activateSparkles(rect, glowCss){
-  const cx = rect.left + rect.width/2;
-  const cy = rect.top + rect.height/2;
-
-  // Soft halo ring
-  const halo = makeSparkle(cx-20, cy-20, 40, "rgba(255,255,255,.90)", glowCss, "dot");
-  halo.style.mixBlendMode = "screen";
-  halo.animate(
-    [
-      { transform:`translate3d(${cx-20}px,${cy-20}px,0) scale(.55)`, opacity:0 },
-      { opacity:.95, offset:0.35 },
-      { transform:`translate3d(${cx-20}px,${cy-20}px,0) scale(2.0)`, opacity:0 }
-    ],
-    { duration:720, easing:'cubic-bezier(.18,.95,.25,1)', fill:'forwards' }
-  );
-  setTimeout(()=>halo.remove(), 820);
-
-  // Dust around edges (linger)
-  const dustCount = 18;
-  for(let i=0;i<dustCount;i++){
-    const side = (Math.random()*4)|0;
-    const pad = 10;
-    let x,y;
-    if(side===0){ x = rect.left+pad+Math.random()*(rect.width-pad*2); y = rect.top - 6 + Math.random()*14; }
-    else if(side===1){ x = rect.right - 6 + Math.random()*14; y = rect.top+pad+Math.random()*(rect.height-pad*2); }
-    else if(side===2){ x = rect.left+pad+Math.random()*(rect.width-pad*2); y = rect.bottom - 6 + Math.random()*14; }
-    else { x = rect.left - 6 + Math.random()*14; y = rect.top+pad+Math.random()*(rect.height-pad*2); }
-
-    const sz = 10 + Math.random()*18;
-    const dur = 1250 + Math.random()*950;
-    const drift = 18 + Math.random()*48;
-    const a = Math.random()*Math.PI*2;
-    const dx = Math.cos(a)*drift;
-    const dy = Math.sin(a)*drift;
+    // gentle drift, not fireworks
+    const drift = 24 + Math.random()*62;
+    const dx = Math.cos(ang) * drift;
+    const dy = Math.sin(ang) * drift;
 
     const [c1,c2] = COOL[(Math.random()*COOL.length)|0];
-    const s = makeSparkle(x, y, sz, c1, c2, "dot");
 
-    s.animate(
-      [
-        { transform:`translate3d(${x - sz/2}px,${y - sz/2}px,0) scale(.65)`, opacity:0 },
-        { opacity:1, offset:0.18 },
-        { opacity:.95, offset:0.65 },
-        { transform:`translate3d(${x - sz/2 + dx}px,${y - sz/2 + dy}px,0) scale(.20)`, opacity:0 }
-      ],
-      { duration:dur, easing:'cubic-bezier(.16,.9,.2,1)', fill:'forwards' }
-    );
-    setTimeout(()=>s.remove(), dur+80);
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+
+    const sz = 14 + Math.random()*18;
+    s.style.setProperty('--sz', sz+'px');
+    s.style.left = (x - sz/2) + 'px';
+    s.style.top  = (y - sz/2) + 'px';
+    s.style.setProperty('--dx', dx.toFixed(2)+'px');
+    s.style.setProperty('--dy', dy.toFixed(2)+'px');
+    s.style.background = `radial-gradient(circle at 35% 35%, #fff, ${c1} 56%, rgba(0,0,0,0) 78%)`;
+    s.style.boxShadow  = `0 0 18px ${c1}, 0 0 56px ${c2}`;
+
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(), 2000);
   }
 
-  // A few glints (twinkles)
-  const glints = 7;
-  for(let i=0;i<glints;i++){
-    const t = Math.random()*Math.PI*2;
-    const rad = Math.min(rect.width, rect.height) * (0.34 + Math.random()*0.28);
-    const x = cx + Math.cos(t)*rad;
-    const y = cy + Math.sin(t)*rad;
+  // tiny second wave (linger)
+  setTimeout(()=>{
+    for(let i=0;i<10;i++){
+      const ang = Math.random()*Math.PI*2;
+      const x = cx + (Math.random()*rect.width  - rect.width/2)  * 0.45;
+      const y = cy + (Math.random()*rect.height - rect.height/2) * 0.45;
+      const drift = 18 + Math.random()*40;
+      const dx = Math.cos(ang) * drift;
+      const dy = Math.sin(ang) * drift;
 
-    const sz = 10 + Math.random()*16;
-    const dur = 1100 + Math.random()*750;
-    const dx = (Math.cos(t)*(-16 - Math.random()*34));
-    const dy = (Math.sin(t)*(-12 - Math.random()*26));
-    const rot = (Math.random()*140 - 70);
-
-    const [c1,c2] = COOL[(Math.random()*COOL.length)|0];
-    const g = makeSparkle(x, y, sz, c1, c2, "glint");
-
-    g.animate(
-      [
-        { transform:`translate3d(${x - sz/2}px,${y - sz/2}px,0) rotate(${rot}deg) scale(.72)`, opacity:0 },
-        { opacity:1, offset:0.16 },
-        { opacity:.95, offset:0.70 },
-        { transform:`translate3d(${x - sz/2 + dx}px,${y - sz/2 + dy}px,0) rotate(${rot+25}deg) scale(.15)`, opacity:0 }
-      ],
-      { duration:dur, easing:'cubic-bezier(.16,.92,.2,1)', fill:'forwards' }
-    );
-    setTimeout(()=>g.remove(), dur+90);
-  }
-
-  // A second gentle wave (more “activation”)
-  setTimeout(()=> {
-    const r2 = rect;
-    const [c1] = COOL[(Math.random()*COOL.length)|0];
-    for(let i=0;i<6;i++){
-      const x = r2.left + Math.random()*r2.width;
-      const y = r2.top + Math.random()*r2.height;
-      const sz = 10 + Math.random()*16;
-      const dur = 900 + Math.random()*600;
-      const dx = (Math.random()*50 - 25);
-      const dy = (Math.random()*50 - 25);
-      const p = makeSparkle(x, y, sz, "rgba(255,255,255,.92)", c1, "dot");
-      p.animate(
-        [
-          { transform:`translate3d(${x - sz/2}px,${y - sz/2}px,0) scale(.7)`, opacity:0 },
-          { opacity:1, offset:0.20 },
-          { transform:`translate3d(${x - sz/2 + dx}px,${y - sz/2 + dy}px,0) scale(.2)`, opacity:0 }
-        ],
-        { duration:dur, easing:'cubic-bezier(.18,.95,.25,1)', fill:'forwards' }
-      );
-      setTimeout(()=>p.remove(), dur+80);
+      const [c1,c2] = COOL[(Math.random()*COOL.length)|0];
+      const s = document.createElement('div');
+      s.className = 'sparkle';
+      const sz = 12 + Math.random()*16;
+      s.style.setProperty('--sz', sz+'px');
+      s.style.left = (x - sz/2) + 'px';
+      s.style.top  = (y - sz/2) + 'px';
+      s.style.setProperty('--dx', dx.toFixed(2)+'px');
+      s.style.setProperty('--dy', dy.toFixed(2)+'px');
+      s.style.background = `radial-gradient(circle at 35% 35%, #fff, ${c1} 56%, rgba(0,0,0,0) 78%)`;
+      s.style.boxShadow  = `0 0 18px ${c1}, 0 0 56px ${c2}`;
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(), 1900);
     }
   }, 180);
 }
 
-/* ===========================
-   Click handler (NO lurch + wait for audio)
-   =========================== */
+function safePlay(aud, vol = 1){
+  if(!aud) return false;
+  try{
+    aud.pause();
+    if(aud.readyState >= 1) aud.currentTime = 0;
+    aud.volume = vol;
+    const p = aud.play();
+    if (p && p.catch) p.catch(()=>{});
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+function waitAudioEndOrTimeout(aud, maxMs){
+  return new Promise((resolve)=>{
+    if(!aud) return resolve("no-audio");
+    const done = (why)=> resolve(why);
+    aud.addEventListener('ended', ()=>done("ended"), { once:true });
+    setTimeout(()=>done("timeout"), maxMs);
+  });
+}
 
 if (deckContainer) {
   deckContainer.addEventListener('click', async (e) => {
@@ -699,100 +594,89 @@ if (deckContainer) {
     if (!deck) return;
 
     e.preventDefault();
-    e.stopPropagation();
     if (isTransitioning) return;
     isTransitioning = true;
 
     const target = deck.getAttribute('href');
     const fadeScreen = document.getElementById('fadeScreen');
 
-    // Start audio, wait until it actually begins (or short timeout)
-    await playIntroAndWaitForStart(intro, 1);
+    // stop intro (optional)
+    if (intro) { try { intro.pause(); } catch(_){} }
+
+    // play opening sound immediately
+    safePlay(openSound, 1);
 
     deck.classList.add('active');
 
-    // IMPORTANT: round the rect to avoid subpixel “first frame” wobble
+    // ---- CLONE ANIMATION ----
     const r0 = deck.getBoundingClientRect();
     const r = {
       left: Math.round(r0.left),
       top: Math.round(r0.top),
       width: Math.round(r0.width),
-      height: Math.round(r0.height),
-      right: Math.round(r0.right),
-      bottom: Math.round(r0.bottom)
+      height: Math.round(r0.height)
     };
 
     const clone = deck.cloneNode(true);
-    clone.classList.add('active');
 
+    // Preserve computed look (nth-child styles don't apply in body)
     const cs = getComputedStyle(deck);
-
-    // Lock visual style (prevents color shift)
     clone.style.background = cs.background;
     clone.style.boxShadow  = cs.boxShadow;
     clone.style.border     = cs.border;
 
-    // Copy vars so glow stays unique
-    const glowVar = (cs.getPropertyValue('--glow') || 'rgba(255,255,255,.35)').trim();
-    clone.style.setProperty('--glow', glowVar);
-    clone.style.setProperty('--sweepAng', cs.getPropertyValue('--sweepAng'));
-    clone.style.setProperty('--sweepOp', cs.getPropertyValue('--sweepOp'));
-    clone.style.setProperty('--pulseScale', cs.getPropertyValue('--pulseScale'));
-    clone.style.setProperty('--pulseOp', cs.getPropertyValue('--pulseOp'));
-    clone.style.setProperty('--sweepDurLocal', cs.getPropertyValue('--sweepDurLocal'));
-    clone.style.setProperty('--pulseDurLocal', cs.getPropertyValue('--pulseDurLocal'));
+    // Also preserve your glow var
+    clone.style.setProperty('--glow', cs.getPropertyValue('--glow'));
 
-    // Turn off overlays during move
-    clone.classList.add('moving');
+    clone.classList.add('active');
 
-    // Hard-disable transitions on clone (stops “jump forward”)
+    // HARD stop transitions/animations causing lurch
     clone.style.transition = 'none';
-    clone.style.animation = 'none';
+    clone.style.animation  = 'none';
 
     clone.style.position = 'fixed';
     clone.style.left = r.left + 'px';
     clone.style.top  = r.top  + 'px';
-    clone.style.width  = r.width  + 'px';
+    clone.style.width = r.width + 'px';
     clone.style.height = r.height + 'px';
     clone.style.margin = '0';
     clone.style.zIndex = '9999';
     clone.style.pointerEvents = 'none';
-
-    // Containment reduces paint jitter
-    clone.style.contain = 'layout paint size style';
-    clone.style.backfaceVisibility = 'hidden';
-    clone.style.transformOrigin = 'center center';
     clone.style.willChange = 'transform';
+    clone.style.transformOrigin = 'center center';
+    clone.style.backfaceVisibility = 'hidden';
     clone.style.transform = 'translate3d(0,0,0) scale(1)';
 
     document.body.appendChild(clone);
     deck.classList.add('is-hidden');
 
-    // FORCE COMMIT: layout flush
+    // FLUSH layout (critical)
     clone.getBoundingClientRect();
 
-    // Sparkles (guaranteed)
+    // sparkles from clone (always visible)
     const r2 = clone.getBoundingClientRect();
-    activateSparkles(r2, glowVar);
+    sparkleLingerBurst(r2, 26);
 
-    const cx = window.innerWidth  / 2 - (r.left + r.width  / 2);
+    const cx = window.innerWidth / 2 - (r.left + r.width / 2);
     const cy = window.innerHeight / 2 - (r.top  + r.height / 2);
 
-    const maxWidthScale  = (window.innerWidth  * 0.90) / r.width;
-    const maxHeightScale = (window.innerHeight * 0.90) / r.height;
+    const maxWidthScale  = (window.innerWidth  * 0.9) / r.width;
+    const maxHeightScale = (window.innerHeight * 0.9) / r.height;
     const safeScale = Math.min(3, maxWidthScale, maxHeightScale);
 
-    const MOVE_MS = 950;
+    // timing
+    const MOVE_MS = 900;
 
+    // fade near end of move
     if (fadeScreen) {
       setTimeout(() => {
         fadeScreen.classList.remove('show');
         requestAnimationFrame(() => fadeScreen.classList.add('show'));
-      }, 650);
+      }, 620);
     }
 
-    // DOUBLE RAF: eliminates first-frame lurch on Safari/Chrome
-    await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
+    // DOUBLE rAF (kills first-frame pop)
+    await new Promise(res => requestAnimationFrame(()=>requestAnimationFrame(res)));
 
     clone.animate(
       [
@@ -802,14 +686,15 @@ if (deckContainer) {
       { duration: MOVE_MS, easing: 'cubic-bezier(.18,.95,.25,1)', fill: 'forwards' }
     );
 
-    // Navigate AFTER: move completes AND audio ends (or timeout)
-    const moveDone = new Promise(res => setTimeout(res, MOVE_MS + 80));
-    const audioDone = waitForAudioEndOrTimeout(intro, 6500);
+    // ✅ Navigate when sound ends (or timeout), AND after move finishes
+    const moveDone  = new Promise(res => setTimeout(res, MOVE_MS + 80));
+    const audioDone = waitAudioEndOrTimeout(openSound, 7000);
     await Promise.all([moveDone, audioDone]);
 
     window.location.href = target;
   });
 }
 </script>
+
 </body>
 </html>
