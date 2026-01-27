@@ -121,10 +121,22 @@ h3{
   width:100%;
 }
 
+a.deck:link,
+a.deck:visited,
+a.deck:active{
+  color:#111;
+}
+a.deck:focus,
+a.deck:focus-visible{
+  outline:none;
+}
+  
 a.deck{
-  --glow: rgba(255,255,255,.18); /* overridden per-tile */
+  --glow: rgba(255,255,255,.18);
   --pulseDurLocal: var(--pulseDur);
   --pulseDelay: 0s;
+}
+
 
   position:relative;
   display:flex;
@@ -517,6 +529,15 @@ if (deckContainer) {
     const glow = getComputedStyle(deck).getPropertyValue('--glow').trim();
     if (glow) clone.style.setProperty('--glow', glow);
 
+// ✅ LOCK the tile's background so nth-child loss doesn't turn it red
+const bg = getComputedStyle(deck).background;
+if (bg) clone.style.background = bg;
+
+// optional but recommended
+clone.style.borderColor = getComputedStyle(deck).borderColor;
+clone.style.color = getComputedStyle(deck).color;
+
+    
     clone.style.position = 'fixed';
     clone.style.left = r.left + 'px';
     clone.style.top  = r.top  + 'px';
