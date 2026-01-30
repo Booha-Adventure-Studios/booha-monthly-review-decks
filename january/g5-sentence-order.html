@@ -1511,9 +1511,13 @@ function drawTokens(){
 function onCorrect(){
   SFX.play("ding", 1);
 
+ if(attemptsThisQ === 1){
   score += 1;
   streak += 1;
-  if(attemptsThisQ === 1) firstTryHits += 1;
+  firstTryHits += 1;
+}else{
+  streak = 0;
+}
 
   updateHud();
   applyBodyFireFromStreak();
@@ -1597,15 +1601,13 @@ function finish(){
 
   const maxScore = DATA.length; // 1 point per sentence
 
-  const firstTryPct = Math.round((firstTryHits / DATA.length) * 100);
-  const scorePct = Math.round((score / maxScore) * 100);
+  const scorePct = Math.round((score / DATA.length) * 100);
 
   const s = $('#resultScore');
-  s.textContent = `First-Try: ${firstTryPct}%`;
-  s.className = 'resultScore ' + (firstTryPct>=80?'good':firstTryPct>=50?'mid':'bad');
+  s.textContent = `Score: ${score} / ${DATA.length}  （${scorePct}%）`;
+  s.className = 'resultScore ' + (scorePct>=80?'good':scorePct>=50?'mid':'bad');
 
-  const detail = $('#resultDetail');
-  detail.textContent = `Score: ${score} / ${maxScore}  （${scorePct}%）`;
+  $('#resultDetail').textContent = "";
 
   const retry = $('#retryLink');
   if(retry) retry.href = window.location.pathname.split('/').pop() || '';
