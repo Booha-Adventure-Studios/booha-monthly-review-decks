@@ -1155,15 +1155,14 @@ let streak = 0;
 let locked = false;
 let lastFireLevel = 0;
 let anyWrongEver = false;
-let gameStarted = false;
-let firstTryOnly = true; // ✅ true until you miss on this question
-  
+
+let gameStarted = false;          // ✅ keep only ONE declaration
+let firstTryOnly = true;          // ✅ true until you miss on this question
 
 let heatRAF = 0;
 let heatStart = 0;
 let heatDur = 0;
 
-let gameStarted = false;
 
 /* ---------- Fire level thresholds (same as g2) ---------- */
 function getFireLevelFromStreak(n){
@@ -1313,12 +1312,12 @@ function resetGame(){
   locked = false;
   lastFireLevel = 0;
   anyWrongEver = false;
+  firstTryOnly = true;            // ✅ reset
 
   document.body.classList.remove("fire1","fire2","fire3","fire4");
   hideFireBanner();
 
   qTotal.textContent = String(DATA.length);
-  
 
   scoreEl.textContent = "0";
   streakEl.textContent = "0";
@@ -1332,6 +1331,7 @@ function resetGame(){
   hiText.textContent = "—";
   qNum.textContent = "0";
 }
+
 
 function render(isNew=true){
 
@@ -1370,12 +1370,10 @@ function advance(){
     stopHeat();
     results.classList.add("show");
 
-   const total = DATA.length;
-   const pct = Math.round((score / total) * 100);
-   finalScore.textContent = `${score}/${total}  ${pct}%`;
+    const total = DATA.length;
+    const pct = total ? Math.round((score / total) * 100) : 0;
+    finalScore.textContent = `${score}/${total}  ${pct}%`;
 
-   
-    
     grid.innerHTML = "";
     jpText.textContent = "—";
     hiText.textContent = "—";
@@ -1384,6 +1382,7 @@ function advance(){
   }
   render(true);
 }
+
 
 function lockChoices(){
   const tiles = [...document.querySelectorAll(".choice")];
@@ -1394,18 +1393,15 @@ function onCorrect(tile){
   locked = true;
   stopHeat();
 
- tile.classList.add("correct");
+  tile.classList.add("correct");
 
-if(firstTryOnly){
-  score++;
-  streak++;
-}else{
-  // ✅ correct after a miss = no score, no streak
-  streak = 0;
-}
+  if(firstTryOnly){
+    score++;
+    streak++;
+  }else{
+    streak = 0;
+  }
 
-
-  
   popHeart();
   SFX.play("ding", 1);
 
@@ -1433,12 +1429,12 @@ function onWrong(tile){
   applyBodyFireFromStreak();
   maybeTriggerFire();
 
- firstTryOnly = false; // ✅ you missed this question
-  setTimeout(()=>{
-  locked = false;
-  render(false); // stay on same word, NOT first try anymore
-}, 520);
+  firstTryOnly = false;
 
+  setTimeout(()=>{
+    locked = false;
+    render(false);
+  }, 520);
 }
 
 function onTimeout(){
@@ -1455,13 +1451,14 @@ function onTimeout(){
   applyBodyFireFromStreak();
   maybeTriggerFire();
 
-  firstTryOnly = false; // ✅ timeout counts as a miss
-  setTimeout(()=>{
-  locked = false;
-  render(false); // stay on same word, NOT first try anymore
-}, 520);
+  firstTryOnly = false;
 
+  setTimeout(()=>{
+    locked = false;
+    render(false);
+  }, 520);
 }
+
 
 function pick(tile, word){
   if(locked) return;
