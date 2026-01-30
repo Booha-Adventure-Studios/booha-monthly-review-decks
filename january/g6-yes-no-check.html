@@ -979,7 +979,7 @@ body.fire4 .fireBanner{opacity:1}
       <div class="results" id="results">
         <h2>Finished!</h2>
         <div class="sub">おつかれさま！</div>
-        <div class="score"><span id="finalScore">0</span>/<span id="finalTotal">0</span></div>
+        <div class="score"><span id="finalScore">0</span></div>
         <div class="btnRow">
           <button class="bigBtn" id="playAgain">PLAY AGAIN <span>もういちど</span></button>
           <button class="bigBtn" id="back2">BACK TO MENU <span>メニュー</span></button>
@@ -1514,7 +1514,9 @@ function advance(){
   idx++;
   if(idx >= order.length){
     results.classList.add("show");
-    finalScore.textContent = String(score);
+    const pct = Math.round((score / DATA.length) * 100);
+    finalScore.textContent = `${score}/${DATA.length}  ${pct}%`;
+
     finalTotal.textContent = String(DATA.length);
 
     grid.innerHTML = "";
@@ -1538,7 +1540,7 @@ function pick(tile, picked){
   const tiles = [...document.querySelectorAll(".choice")];
   tiles.forEach(t=>t.classList.add("locked"));
 
-  const isCorrect = (picked === item.answer);
+  const isCorrect = (picked.toUpperCase() === String(item.answer).toUpperCase());
 
   if(isCorrect) SFX.play("ding", 1);
   else SFX.play("fart", 1);
