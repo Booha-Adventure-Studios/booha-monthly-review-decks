@@ -1,23 +1,3 @@
-<!-- =========================
-REMINDERS (READ ME)
-✅ Put these files in the SAME folder as this HTML:
-   - ding.mp3
-   - fart.mp3
-   - fire.mp3
-   - level4.mp3  (required for Fire Level 4)
-✅ Keep @keyframes wildSpin defined ONCE (used by banner FX)
-✅ Fire levels must exist in BOTH CSS + JS:
-   - CSS: body.fire1..body.fire4
-   - JS: getFireLevelFromStreak() thresholds 3/6/10/15
-✅ g4 rule:
-   - ONLY misspelled word OR extra word that does NOT belong
-   - ❌ NO duplicated words
-   - ❌ NO missing words
-✅ Gameplay:
-   - Tap the misspelled word OR the extra word that does not belong
-   - Correct answer stays; student taps NEXT to continue
-   - Multi-attempt allowed; scoring rewards first-try
-========================= -->
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -1148,6 +1128,9 @@ let locked = false;
 let lastTapAt = 0;
 let lastFireLevel = 0;
 
+let firstTryOnly = true; // ✅ per-question: stays true until first miss on that question
+
+
 /* hooks */
 const sentenceEl = $('#sentence');
 const fbEl = $('#feedback');
@@ -1261,6 +1244,7 @@ function resetGame(){
   attemptsThisQ = 0;
   anyWrongEver = false;
   locked = false;
+  firstTryOnly = true; // ✅ reset
 
   lastFireLevel = 0;
   document.body.classList.remove("fire1","fire2","fire3","fire4");
@@ -1276,11 +1260,13 @@ function resetGame(){
   maybeTriggerFire();
 }
 
+
 function clearFeedback(){ fbEl.textContent = ""; }
 
 function renderSentence(){
   clearFeedback();
   attemptsThisQ = 0;
+  firstTryOnly = true;   // ✅ reset ONLY when new question renders
   locked = false;
 
   if(nextBtn){
@@ -1322,10 +1308,10 @@ function renderSentence(){
   maybeTriggerFire();
 }
 
+
 function tapWord(span){
   if(locked) return;
 
-  // anti-mash
   const now = performance.now();
   if(now - lastTapAt < 220) return;
   lastTapAt = now;
@@ -1341,15 +1327,12 @@ function tapWord(span){
     span.classList.add('good');
     fbEl.innerHTML = '<div class="heart">❤</div>';
 
-    // scoring: 1st = +2, 2nd = +1, 3rd+ = +0
-    if(attemptsThisQ === 1){
+    if(firstTryOnly){
       score += 2;
       streak++;
       firstTryHits++;
-    }else if(attemptsThisQ === 2){
-      score += 1;
-      streak = 0;
     }else{
+      // ✅ correct after any miss = no score, no streak
       streak = 0;
     }
 
@@ -1370,6 +1353,7 @@ function tapWord(span){
 
   // wrong
   anyWrongEver = true;
+  firstTryOnly = false;  // ✅ first miss locks out scoring for this question
   streak = 0;
 
   span.classList.add('bad');
@@ -1382,6 +1366,7 @@ function tapWord(span){
 
   setTimeout(()=>{ span.classList.remove('bad'); }, 320);
 }
+
 
 function next(){
   idx++;
@@ -1398,16 +1383,15 @@ function finish(){
   hudScoreEl.textContent = String(score);
   hudStreakEl.textContent = String(streak);
 
-  const maxScore = DATA.length * 2;
-  const firstTryPct = Math.round((firstTryHits / DATA.length) * 100);
-  const scorePct = Math.round((score / maxScore) * 100);
+  const total = DATA.length;
+  const firstTryPct = total ? Math.round((firstTryHits / total) * 100) : 0;
 
   const s = $('#resultScore');
-  s.textContent = `First-Try: ${firstTryPct}%`;
+  s.textContent = `${firstTryHits}/${total}  ${firstTryPct}%`;
   s.className = 'resultScore ' + (firstTryPct>=80?'good':firstTryPct>=50?'mid':'bad');
 
   const detail = $('#resultDetail');
-  detail.textContent = `Score: ${score} / ${maxScore}  （${scorePct}%）`;
+  detail.textContent = "";
 
   const retry = $('#retryLink');
   if(retry) retry.href = window.location.pathname.split('/').pop() || '';
@@ -1417,6 +1401,7 @@ function finish(){
     $('#perfectTag').style.display='block';
   }
 }
+
 
 function goMenu(e){
   e.preventDefault();
