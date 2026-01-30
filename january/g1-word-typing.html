@@ -1,15 +1,3 @@
-<!-- =========================
-REMINDERS (READ ME)
-✅ Put these files in the SAME folder as this HTML:
-   - ding.mp3
-   - fart.mp3
-   - fire.mp3
-   - level4.mp3  (NEW: required for Fire Level 4)
-✅ Keep @keyframes wildSpin defined ONCE (used by card + banner)
-✅ Fire levels must exist in BOTH CSS + JS:
-   - CSS: body.fire1..body.fire4
-   - JS: getFireLevelFromStreak() thresholds 3/6/10/15
-========================= -->
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -986,7 +974,8 @@ let order = [];
 let idx = 0;
 let score = 0;
 let streak = 0;
-
+let firstTryCorrect = 0;
+   
 let hintLevel = 0;
 let wrongCountForWord = 0;
 let anyWrongEver = false;
@@ -1016,7 +1005,7 @@ function norm(s){
 function updateHud(){
   qNumEl.textContent = String(Math.min(idx+1, DATA.length));
   qTotalEl.textContent = String(DATA.length);
-  hudScoreEl.textContent = String(score);
+  hudScoreEl.textContent = String(firstTryCorrect);
   hudStreakEl.textContent = String(streak);
 }
 
@@ -1125,6 +1114,7 @@ function resetGame(){
   order = shuffle([...Array(DATA.length)].map((_,i)=>i));
   idx = 0;
   score = 0;
+  firstTryCorrect = 0; 
   streak = 0;
   anyWrongEver = false;
 
@@ -1172,7 +1162,7 @@ function load(){
 
 /* correct path */
 function onCorrect(){
-  score++;
+  if(wrongCountForWord === 0) firstTryCorrect++;
   streak++;
 
   fbEl.innerHTML = '<div class="heart">❤</div>';
@@ -1350,18 +1340,20 @@ function finish(){
   hudScoreEl.textContent = String(score);
   hudStreakEl.textContent = String(streak);
 
-  const pct = Math.round((score / DATA.length) * 100);
+  const total = DATA.length;
+  const pct = Math.round((firstTryCorrect / total) * 100);
   const s = $('#resultScore');
-  s.textContent = pct + '%';
+  s.textContent = `${firstTryCorrect}/${total}  ${pct}%`;
+   
   s.className = 'resultScore ' + (pct>=80?'good':pct>=50?'mid':'bad');
 
   const retry = $('#retryLink');
   if(retry) retry.href = window.location.pathname.split('/').pop() || '';
 
-  if(!anyWrongEver){
-    cardEl.classList.add('perfect');
-    $('#perfectTag').style.display='block';
-  }
+  if(firstTryCorrect === DATA.length){
+  cardEl.classList.add('perfect');
+  $('#perfectTag').style.display='block';
+ }
 }
 
 function goMenu(e){
