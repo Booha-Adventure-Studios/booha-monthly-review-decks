@@ -926,7 +926,7 @@ body.fire4 .fireBanner{opacity:1}
     <div class="results" id="results">
       <h2>Finished!</h2>
       <div class="sub">おつかれさま！</div>
-      <div class="score"><span id="finalScore">0</span>/<span id="finalTotal">0</span></div>
+      <div class="score"><span id="finalScore">0</span></div>
       <div class="btnRow">
         <button class="bigBtn" id="playAgain">PLAY AGAIN <span>もういちど</span></button>
         <button class="bigBtn" id="back2">BACK TO MENU <span>メニュー</span></button>
@@ -1052,7 +1052,7 @@ const scoreEl    = document.querySelector("#score");
 const streakEl   = document.querySelector("#streak");
 const results    = document.querySelector("#results");
 const finalScore = document.querySelector("#finalScore");
-const finalTotal = document.querySelector("#finalTotal");
+
 
 const fireBanner = document.querySelector("#fireBanner");
 const fireEn     = document.querySelector("#fireEn");
@@ -1247,11 +1247,11 @@ function popFart(){
    ========================= */
 function getHeatDurationMs(){
   const lv = getFireLevelFromStreak(streak);
-  if(lv === 4) return 1400;
-  if(lv === 3) return 2000;
-  if(lv === 2) return 2800;
-  if(lv === 1) return 3500;
-  return 4500;
+  if(lv === 4) return 1800;
+  if(lv === 3) return 2600;
+  if(lv === 2) return 3400;
+  if(lv === 1) return 4200;
+  return 5200;
 }
 
 function stopHeat(){
@@ -1315,7 +1315,7 @@ function resetGame(){
   hideFireBanner();
 
   qTotal.textContent = String(DATA.length);
-  finalTotal.textContent = String(DATA.length);
+  
 
   scoreEl.textContent = "0";
   streakEl.textContent = "0";
@@ -1363,7 +1363,13 @@ function advance(){
   if(idx >= order.length){
     stopHeat();
     results.classList.add("show");
-    finalScore.textContent = String(score);
+
+   const total = DATA.length;
+   const pct = Math.round((score / total) * 100);
+   finalScore.textContent = `${score}/${total}  ${pct}%`;
+
+   
+    
     grid.innerHTML = "";
     jpText.textContent = "—";
     hiText.textContent = "—";
@@ -1561,7 +1567,7 @@ window.addEventListener("DOMContentLoaded", ()=>{
 
   // make sure UI shows totals even before start
   qTotal.textContent = String(DATA.length);
-  finalTotal.textContent = String(DATA.length);
+  
 
   startBtn && startBtn.addEventListener("click", beginFromOverlay);
   startBtn && startBtn.addEventListener("keydown", (e)=>{
