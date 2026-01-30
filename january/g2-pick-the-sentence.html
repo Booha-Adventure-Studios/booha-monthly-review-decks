@@ -1340,6 +1340,9 @@ let streak = 0;
 let locked = false;
 let pendingAdvance = false;
 let lastFireLevel = 0;   // prevents banner/sound spam
+let firstTryCorrect = 0;
+let firstClickThisQ = true;
+  
 
 /* ---------- Shuffle ---------- */
 function shuffle(arr){
@@ -1452,6 +1455,9 @@ function resetGame(){
   locked = false;
   pendingAdvance = false;
   lastFireLevel = 0;
+  firstTryCorrect = 0;
+  firstClickThisQ = true;
+
 
   document.body.classList.remove("fire1","fire2","fire3","fire4");
   hideFireBanner();
@@ -1470,6 +1476,8 @@ function render(){
   locked = false;
   pendingAdvance = false;
   nextWrap.classList.remove("show");
+  firstClickThisQ = true;
+
 
   grid.innerHTML = "";
   results.classList.remove("show");
@@ -1489,7 +1497,7 @@ function render(){
     grid.appendChild(btn);
   });
 
-  scoreEl.textContent = String(score);
+  scoreEl.textContent = String(firstTryCorrect);
   streakEl.textContent = String(streak);
 
   applyBodyFireFromStreak();
@@ -1500,7 +1508,12 @@ function advance(){
   idx++;
   if(idx >= order.length){
     results.classList.add("show");
-    finalScore.textContent = String(score);
+    const total = DATA.length;
+    const pct = Math.round((firstTryCorrect / total) * 100);
+    finalScore.textContent = `${firstTryCorrect}/${total}  ${pct}%`;
+
+
+    
     grid.innerHTML = "";
     jpText.textContent = "—";
     hiText.textContent = "—";
@@ -1525,13 +1538,17 @@ function pick(tile, originalIndex){
   else SFX.play("fart", 1);
 
   if(isCorrect){
-    tile.classList.add("correct");
-    score++;
-    streak++;
-    popHeart();
+   tile.classList.add("correct");
 
-    scoreEl.textContent = String(score);
-    streakEl.textContent = String(streak);
+  if(firstClickThisQ) firstTryCorrect++;
+  firstClickThisQ = false;
+
+  streak++;
+  popHeart();
+
+  scoreEl.textContent = String(firstTryCorrect);
+  streakEl.textContent = String(streak);
+
 
     applyBodyFireFromStreak();
     maybeTriggerFire();
@@ -1543,6 +1560,8 @@ function pick(tile, originalIndex){
   // WRONG
   tile.classList.add("wrong");
   popFart();
+  firstClickThisQ = false;
+
 
   streak = 0;
   streakEl.textContent = "0";
