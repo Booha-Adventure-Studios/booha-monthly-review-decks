@@ -1259,7 +1259,7 @@ const scoreEl    = document.querySelector("#score");
 const streakEl   = document.querySelector("#streak");
 const results    = document.querySelector("#results");
 const finalScore = document.querySelector("#finalScore");
-const finalTotal = document.querySelector("#finalTotal");
+
 
 const fireBanner = document.querySelector("#fireBanner");
 const fireEn     = document.querySelector("#fireEn");
@@ -1407,9 +1407,9 @@ function resetGame(){
   hideFireBanner();
 
   qTotal.textContent = String(DATA.length);
-  finalTotal.textContent = String(DATA.length);
 
-  scoreEl.textContent = "0";
+
+  scoreEl.textContent = `${score}/${DATA.length}`;
   streakEl.textContent = "0";
   nextWrap.classList.remove("show");
   results.classList.remove("show");
@@ -1472,6 +1472,7 @@ function hideCorrectPopup(){
 
 /* ---------- Game ---------- */
 function render(){
+  attemptsThisQ = 0;
   locked = false;
   pendingAdvance = false;
   nextWrap.classList.remove("show");
@@ -1503,7 +1504,7 @@ no.addEventListener("click", ()=>pick(no, "NO"));
 grid.appendChild(yes);
 grid.appendChild(no);
 
-  scoreEl.textContent = String(score);
+  scoreEl.textContent = `${score}/${DATA.length}`;
   streakEl.textContent = String(streak);
 
   applyBodyFireFromStreak();
@@ -1517,7 +1518,7 @@ function advance(){
     const pct = Math.round((score / DATA.length) * 100);
     finalScore.textContent = `${score}/${DATA.length}  ${pct}%`;
 
-    finalTotal.textContent = String(DATA.length);
+   
 
     grid.innerHTML = "";
     jpText.textContent = "—";
@@ -1531,9 +1532,8 @@ function advance(){
 }
 
 function pick(tile, picked){
-  attemptsThisQ++;
-
   if(locked || pendingAdvance) return;
+  attemptsThisQ++;
   locked = true;
 
   const item = DATA[order[idx]];
@@ -1552,7 +1552,7 @@ function pick(tile, picked){
     streak++;
     popHeart();
 
-    scoreEl.textContent = String(score);
+    scoreEl.textContent = `${score}/${DATA.length}`;
     streakEl.textContent = String(streak);
 
     applyBodyFireFromStreak();
