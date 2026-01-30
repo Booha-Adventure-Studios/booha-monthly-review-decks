@@ -1155,6 +1155,9 @@ let streak = 0;
 let locked = false;
 let lastFireLevel = 0;
 let anyWrongEver = false;
+let gameStarted = false;
+let firstTryOnly = true; // ✅ true until you miss on this question
+  
 
 let heatRAF = 0;
 let heatStart = 0;
@@ -1330,10 +1333,13 @@ function resetGame(){
   qNum.textContent = "0";
 }
 
-function render(){
+function render(isNew=true){
+
   locked = false;
   results.classList.remove("show");
   grid.innerHTML = "";
+  if(isNew) firstTryOnly = true; // ✅ only reset on a brand-new question
+
 
   const item = DATA[order[idx]];
   qNum.textContent = String(idx+1);
@@ -1376,7 +1382,7 @@ function advance(){
     locked = true;
     return;
   }
-  render();
+  render(true);
 }
 
 function lockChoices(){
@@ -1388,9 +1394,18 @@ function onCorrect(tile){
   locked = true;
   stopHeat();
 
-  tile.classList.add("correct");
+ tile.classList.add("correct");
+
+if(firstTryOnly){
   score++;
   streak++;
+}else{
+  // ✅ correct after a miss = no score, no streak
+  streak = 0;
+}
+
+
+  
   popHeart();
   SFX.play("ding", 1);
 
@@ -1418,10 +1433,12 @@ function onWrong(tile){
   applyBodyFireFromStreak();
   maybeTriggerFire();
 
+ firstTryOnly = false; // ✅ you missed this question
   setTimeout(()=>{
-    locked = false;
-    render(); // stay on same word
-  }, 520);
+  locked = false;
+  render(false); // stay on same word, NOT first try anymore
+}, 520);
+
 }
 
 function onTimeout(){
@@ -1438,10 +1455,12 @@ function onTimeout(){
   applyBodyFireFromStreak();
   maybeTriggerFire();
 
+  firstTryOnly = false; // ✅ timeout counts as a miss
   setTimeout(()=>{
-    locked = false;
-    render(); // stay on same word
-  }, 520);
+  locked = false;
+  render(false); // stay on same word, NOT first try anymore
+}, 520);
+
 }
 
 function pick(tile, word){
