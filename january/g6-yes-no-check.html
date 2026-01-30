@@ -1286,6 +1286,8 @@ let streak = 0;
 let locked = false;
 let pendingAdvance = false;
 let lastFireLevel = 0;   // prevents banner/sound spam
+let attemptsThisQ = 0;
+  
 
 /* ---------- Shuffle ---------- */
 function shuffle(arr){
@@ -1397,6 +1399,8 @@ function resetGame(){
   streak = 0;
   locked = false;
   pendingAdvance = false;
+  attemptsThisQ = 0;
+
   lastFireLevel = 0;
 
   document.body.classList.remove("fire1","fire2","fire3","fire4");
@@ -1511,6 +1515,8 @@ function advance(){
   if(idx >= order.length){
     results.classList.add("show");
     finalScore.textContent = String(score);
+    finalTotal.textContent = String(DATA.length);
+
     grid.innerHTML = "";
     jpText.textContent = "—";
     hiText.textContent = "—";
@@ -1523,6 +1529,8 @@ function advance(){
 }
 
 function pick(tile, picked){
+  attemptsThisQ++;
+
   if(locked || pendingAdvance) return;
   locked = true;
 
@@ -1537,7 +1545,8 @@ function pick(tile, picked){
 
   if(isCorrect){
     tile.classList.add("correct");
-    score++;
+    if(attemptsThisQ === 1) score++;
+
     streak++;
     popHeart();
 
