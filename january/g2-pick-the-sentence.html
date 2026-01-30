@@ -1313,7 +1313,7 @@ const scoreEl    = document.querySelector("#score");
 const streakEl   = document.querySelector("#streak");
 const results    = document.querySelector("#results");
 const finalScore = document.querySelector("#finalScore");
-const finalTotal = document.querySelector("#finalTotal");
+
 
 const fireBanner = document.querySelector("#fireBanner");
 const fireEn     = document.querySelector("#fireEn");
@@ -1463,8 +1463,7 @@ function resetGame(){
   hideFireBanner();
 
   qTotal.textContent = String(DATA.length);
-  finalTotal.textContent = String(DATA.length);
-
+  
   scoreEl.textContent = "0";
   streakEl.textContent = "0";
   nextWrap.classList.remove("show");
