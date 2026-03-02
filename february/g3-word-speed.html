@@ -1,0 +1,1623 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Booha Review Decks – Word Speed</title>
+<meta name="theme-color" content="#0b1020" />
+<link rel="icon" type="image/png" href="BoohaYellow.png">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet" />
+
+<style>
+:root{
+  --bg:#0b1020;
+  --panel:#0f172a;
+  --panel2:#0b1327;
+  --ink:#ffffff;
+  --muted:#cbd5e1;
+  --outline:rgba(255,255,255,.18);
+  --good:#22c55e;
+  --bad:#e53935;
+  --gold:#ffd17a;
+  --shadow: 0 18px 45px rgba(0,0,0,.45);
+  --radius:28px;
+  --btnR:22px;
+
+  --jpSize: clamp(26px, 3.3vw, 44px);
+  --hiSize: clamp(18px, 2.4vw, 30px);
+  --enSize: clamp(20px, 2.6vw, 34px);
+  --hudSize: 14px;
+
+  /* default calm */
+  --fireA: rgba(255,209,122,.12);
+  --fireB: rgba(255,120,70,.08);
+  --ringA: rgba(255,209,122,.22);
+  --ringB: rgba(255,120,70,.14);
+  --pulse1: rgba(255,209,122,.22);
+  --pulse2: rgba(255,120,70,.22);
+
+  --unlockGlow: rgba(255,209,122,.00);
+  --unlockScale: 1;
+  --unlockWobble: 0deg;
+
+  --bgP: rgba(124,58,237,.46);
+  --bgB: rgba(94,230,255,.30);
+  --bgG: rgba(255,209,122,.26);
+
+  --stormA: rgba(255,126,185,.00);
+  --stormB: rgba(94,230,255,.00);
+  --stormC: rgba(255,209,122,.00);
+  --fireSpark: 0;
+
+  /* Heat bar */
+  --heat1: rgba(255,209,122,.95);
+  --heat2: rgba(255,120,70,.85);
+  --heatPulse: 0;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 760px at 28% 18%, var(--bgP), transparent 58%),
+    radial-gradient(980px 720px  at 76% 26%, var(--bgB), transparent 60%),
+    radial-gradient(980px 760px  at 52% 92%, var(--bgG), transparent 62%),
+    var(--bg);
+  color:var(--ink);
+  font-family:'Cinzel', serif;
+  overflow:hidden;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:-12%;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(900px 650px at 20% 20%, rgba(255,126,185,.24), transparent 60%),
+    radial-gradient(900px 650px at 82% 30%, rgba(94,230,255,.20), transparent 62%),
+    radial-gradient(900px 650px at 55% 85%, rgba(255,209,122,.20), transparent 62%),
+    radial-gradient(900px 650px at 35% 65%, rgba(124,58,237,.22), transparent 62%);
+  filter: blur(10px) saturate(1.35);
+  opacity:.95;
+  mix-blend-mode: screen;
+  transform: translate3d(0,0,0);
+  animation: auroraDrift 8.5s ease-in-out infinite;
+}
+@keyframes auroraDrift{
+  0%   {transform: translate(-2%, -1%) scale(1.02)}
+  50%  {transform: translate( 2%,  1%) scale(1.06)}
+  100% {transform: translate(-2%, -1%) scale(1.02)}
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:-10%;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(900px 700px at 30% 18%, var(--stormA), transparent 62%),
+    radial-gradient(1000px 760px at 70% 28%, var(--stormB), transparent 62%),
+    radial-gradient(980px 760px at 50% 86%, var(--stormC), transparent 62%),
+    conic-gradient(from 210deg at 50% 45%,
+      rgba(255,209,122, calc(.03 + var(--fireSpark)*.06)),
+      rgba(255,120,70,  calc(.02 + var(--fireSpark)*.06)),
+      rgba(94,230,255,  calc(.02 + var(--fireSpark)*.06)),
+      rgba(124,58,237,  calc(.02 + var(--fireSpark)*.06)),
+      rgba(255,126,185, calc(.02 + var(--fireSpark)*.06)),
+      rgba(255,209,122, calc(.03 + var(--fireSpark)*.06))
+    );
+  filter: blur(14px) saturate(1.55) contrast(1.05);
+  opacity: .85;
+  mix-blend-mode: screen;
+  animation: fireStorm 3.2s ease-in-out infinite;
+}
+@keyframes fireStorm{
+  0%   {transform: translate(-1.5%, -1%) rotate(-2deg) scale(1.02)}
+  50%  {transform: translate( 1.5%,  1%) rotate( 2deg) scale(1.06)}
+  100% {transform: translate(-1.5%, -1%) rotate(-2deg) scale(1.02)}
+}
+
+@keyframes wildSpin{to{transform: rotate(360deg);}}
+
+/* ===========================
+   FIRE LEVELS
+   =========================== */
+body.fire1{
+  --fireA: rgba(255,209,122,.48);
+  --fireB: rgba(255,120,70,.32);
+  --ringA: rgba(255,209,122,.72);
+  --ringB: rgba(255,120,70,.54);
+  --pulse1: rgba(255,209,122,.82);
+  --pulse2: rgba(255,120,70,.70);
+
+  --bgP: rgba(124,58,237,.78);
+  --bgB: rgba(94,230,255,.56);
+  --bgG: rgba(255,209,122,.60);
+
+  --stormA: rgba(255,126,185,.36);
+  --stormB: rgba(94,230,255,.32);
+  --stormC: rgba(255,209,122,.32);
+  --fireSpark: .75;
+
+  --heat1: rgba(255,214,102,.98);
+  --heat2: rgba(255,120,90,.90);
+  --heatPulse: .6;
+}
+
+body.fire2{
+  --fireA: rgba(255,209,122,.82);
+  --fireB: rgba(255,120,70,.62);
+  --ringA: rgba(255,209,122,.98);
+  --ringB: rgba(255,120,70,.92);
+  --pulse1: rgba(255,209,122,1.00);
+  --pulse2: rgba(255,120,70,1.00);
+
+  --bgP: rgba(124,58,237,1.00);
+  --bgB: rgba(94,230,255,.78);
+  --bgG: rgba(255,209,122,.82);
+
+  --stormA: rgba(255,126,185,.58);
+  --stormB: rgba(94,230,255,.50);
+  --stormC: rgba(255,209,122,.50);
+  --fireSpark: 1.10;
+
+  --heat1: rgba(255,90,160,.98);
+  --heat2: rgba(255,214,102,.94);
+  --heatPulse: .85;
+}
+
+body.fire3{
+  --fireA: rgba(255,255,255,.18);
+  --fireB: rgba(255,209,122,1.00);
+  --ringA: rgba(255,255,255,.40);
+  --ringB: rgba(255,120,70,1.00);
+  --pulse1: rgba(255,255,255,.42);
+  --pulse2: rgba(94,230,255,.70);
+
+  --bgP: rgba(255,126,185,.44);
+  --bgB: rgba(94,230,255,.62);
+  --bgG: rgba(255,209,122,.94);
+
+  --stormA: rgba(255,126,185,.78);
+  --stormB: rgba(94,230,255,.68);
+  --stormC: rgba(255,209,122,.68);
+  --fireSpark: 1.35;
+
+  --heat1: rgba(90,255,214,.98);
+  --heat2: rgba(120,130,255,.92);
+  --heatPulse: 1.0;
+}
+
+body.fire4{
+  --fireA: rgba(255,255,255,.28);
+  --fireB: rgba(255,214,102,1.00);
+  --ringA: rgba(255,255,255,.75);
+  --ringB: rgba(255,90,160,1.00);
+  --pulse1: rgba(255,255,255,.85);
+  --pulse2: rgba(90,255,214,.92);
+
+  --bgP: rgba(255,90,160,.72);
+  --bgB: rgba(90,255,214,.62);
+  --bgG: rgba(255,214,102,.72);
+
+  --stormA: rgba(255,90,160,.78);
+  --stormB: rgba(90,255,214,.70);
+  --stormC: rgba(255,214,102,.70);
+  --fireSpark: 1.75;
+
+  --heat1: rgba(255,255,255,.98);
+  --heat2: rgba(255,214,102,.92);
+  --heatPulse: 1.2;
+}
+
+body.fire1, body.fire2, body.fire3, body.fire4{
+  background:
+    radial-gradient(1100px 760px at 50% 16%, var(--fireA), transparent 60%),
+    radial-gradient(980px 720px  at 50% 46%, var(--fireB), transparent 62%),
+    radial-gradient(980px 760px  at 50% 92%, rgba(255,209,122,.24), transparent 62%),
+    radial-gradient(1200px 760px at 28% 18%, var(--bgP), transparent 58%),
+    radial-gradient(980px 720px  at 76% 26%, var(--bgB), transparent 60%),
+    radial-gradient(980px 760px  at 52% 92%, var(--bgG), transparent 62%),
+    var(--bg);
+}
+
+body.fire4::after{
+  animation-duration: 1.75s;
+  filter: blur(14px) saturate(1.95) contrast(1.12);
+  opacity: .98;
+}
+
+body.fire4::before{
+  content:"";
+  position:fixed;
+  inset:-20%;
+  pointer-events:none;
+  z-index:0;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,.10), transparent 35%),
+    linear-gradient(245deg, rgba(90,255,214,.12), transparent 40%),
+    linear-gradient(300deg, rgba(255,90,160,.12), transparent 42%),
+    radial-gradient(900px 700px at 50% 50%, rgba(255,214,102,.10), transparent 60%);
+  mix-blend-mode: screen;
+  filter: blur(1px) saturate(1.2);
+  opacity:.95;
+  transform: translate3d(0,0,0);
+  animation: concertBeams 2.2s ease-in-out infinite;
+}
+@keyframes concertBeams{
+  0%   {transform: translate(-1%, -1%) rotate(-1.5deg) scale(1.02)}
+  50%  {transform: translate( 1%,  1%) rotate( 1.5deg) scale(1.06)}
+  100% {transform: translate(-1%, -1%) rotate(-1.5deg) scale(1.02)}
+}
+
+/* ========================= */
+
+.wrap{
+  position:relative;
+  z-index:1;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
+  gap:10px;
+}
+
+/* ===== Start Overlay ===== */
+.startOverlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:rgba(0,0,0,.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.startCard{
+  width:min(560px, 92vw);
+  background:rgba(15, 23, 42, .78);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:18px;
+  box-shadow:0 24px 70px rgba(0,0,0,.55);
+  padding:22px 20px 18px;
+  text-align:center;
+}
+.startTitle{
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.8px;
+  font-size:22px;
+  color:#fff;
+}
+.startSub{
+  margin-top:6px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:900;
+  font-size:13px;
+  opacity:.95;
+}
+.startMsg{
+  margin:14px auto 16px;
+  max-width:44ch;
+  line-height:1.35;
+}
+.startMsg .en{
+  font-family:'Cinzel',serif;
+  font-weight:800;
+  font-size:15px;
+}
+.startMsg .jp{
+  margin-top:8px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:900;
+  font-size:13px;
+  opacity:.95;
+}
+.startBtn{
+  appearance:none;
+  border:0;
+  width:min(360px, 100%);
+  padding:12px 14px;
+  border-radius:14px;
+  cursor:pointer;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.5px;
+  background:linear-gradient(180deg, rgba(255,209,122,.98), rgba(255,187,92,.94));
+  color:#141414;
+  box-shadow:0 14px 30px rgba(0,0,0,.35);
+}
+.startBtn .jp{
+  margin-left:8px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:900;
+  font-size:12px;
+}
+.startOverlay.hide{
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s ease;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.back{
+  appearance:none;
+  border:0;
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  padding:7px 10px;
+  font-size:14px;
+  gap:8px;
+  border-radius:999px;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.4px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.18);
+  cursor:pointer;
+  display:flex;
+  align-items:baseline;
+  -webkit-tap-highlight-color: transparent;
+}
+.back span.jp{
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:900;
+  font-size:10px;
+  opacity:.95;
+}
+.back span[aria-hidden="true"]{font-size:14px;}
+
+.hud{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:var(--hudSize);
+  color:var(--muted);
+  user-select:none;
+}
+.hud .pill{
+  padding:8px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+}
+.hud b{color:#fff}
+
+/* ===== Heat bar ===== */
+.heatWrap{
+  width:min(980px, 100%);
+  align-self:center;
+  padding: 0 2px;
+}
+.heatTrack{
+  height:12px;
+  border-radius:999px;
+  background: rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.14);
+  overflow:hidden;
+  box-shadow: 0 10px 26px rgba(0,0,0,.28);
+  position:relative;
+}
+.heatFill{
+  height:100%;
+  width:100%;
+  border-radius:999px;
+  background: linear-gradient(90deg, var(--heat1), var(--heat2));
+  box-shadow: 0 0 40px rgba(255,120,70,.20);
+  transform-origin: left center;
+  transform: scaleX(1);
+}
+.heatTrack::after{
+  content:"";
+  position:absolute;
+  inset:-40% -20%;
+  pointer-events:none;
+  opacity: calc(.10 + var(--heatPulse)*.20);
+  background:
+    radial-gradient(55% 45% at 20% 35%, rgba(255,255,255,.30), transparent 62%),
+    radial-gradient(55% 45% at 70% 55%, rgba(255,255,255,.18), transparent 62%);
+  filter: blur(10px);
+  mix-blend-mode: screen;
+  animation: heatDrift 1.8s ease-in-out infinite;
+}
+@keyframes heatDrift{
+  0%{transform: translate(-2%, -1%)}
+  50%{transform: translate( 2%,  1%)}
+  100%{transform: translate(-2%, -1%)}
+}
+
+.stage{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  min-height:0;
+}
+
+.card{
+  width:min(980px, 100%);
+  border-radius:var(--radius);
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow: var(--shadow);
+  padding:18px 18px 16px;
+  position:relative;
+  overflow:hidden;
+  transform: scale(var(--unlockScale)) rotate(var(--unlockWobble));
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+body.fire2 .card,
+body.fire3 .card,
+body.fire4 .card{
+  box-shadow:
+    var(--shadow),
+    0 0 60px var(--unlockGlow),
+    0 0 140px rgba(255,209,122, calc(.08 + var(--fireSpark)*.10));
+}
+body.fire3 .card{ animation: cardThrill 0.85s ease-in-out infinite; }
+body.fire4 .card{ animation: cardThrillWild 0.70s ease-in-out infinite; }
+@keyframes cardThrill{
+  0%,100%{ transform: scale(var(--unlockScale)) rotate(calc(var(--unlockWobble) * -1)); }
+  50%{ transform: scale(calc(var(--unlockScale) + .015)) rotate(var(--unlockWobble)); }
+}
+@keyframes cardThrillWild{
+  0%,100%{ transform: scale(var(--unlockScale)) rotate(calc(var(--unlockWobble) * -1)); }
+  50%{ transform: scale(calc(var(--unlockScale) + .02)) rotate(var(--unlockWobble)); }
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius:var(--radius);
+  background:
+    radial-gradient(520px 220px at 30% 0%, rgba(255,255,255,.12), transparent 60%),
+    radial-gradient(560px 260px at 80% 0%, rgba(255,209,122,.18), transparent 62%),
+    radial-gradient(900px 380px at 50% 120%, rgba(255,120,70, calc(.06 + var(--fireSpark)*.10)), transparent 62%);
+  pointer-events:none;
+}
+
+body.fire4 .card::after{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background: conic-gradient(from 0deg at 50% 50%,
+    rgba(255,214,102,0),
+    rgba(255,214,102,.22),
+    rgba(255,90,160,.18),
+    rgba(90,255,214,.18),
+    rgba(120,130,255,.16),
+    rgba(255,214,102,.22),
+    rgba(255,214,102,0)
+  );
+  filter: blur(12px);
+  opacity:.55;
+  mix-blend-mode: screen;
+  animation: wildSpin 1.8s linear infinite;
+  pointer-events:none;
+}
+
+/* FIRE RING */
+.fireRing{
+  position:absolute;
+  inset:10px;
+  border-radius: calc(var(--radius) - 10px);
+  pointer-events:none;
+  opacity:0;
+  transition: opacity .25s ease;
+  background:
+    radial-gradient(600px 220px at 30% 0%, var(--ringA), transparent 62%),
+    radial-gradient(600px 240px at 70% 0%, var(--ringB), transparent 62%),
+    radial-gradient(700px 260px at 50% 110%, rgba(255,209,122,.14), transparent 62%);
+  filter: drop-shadow(0 0 18px rgba(255,209,122,.38));
+}
+body.fire1 .fireRing,
+body.fire2 .fireRing,
+body.fire3 .fireRing,
+body.fire4 .fireRing{
+  opacity:1;
+  animation: firePulse 0.85s ease-in-out infinite;
+}
+body.fire3 .fireRing{animation-duration:.65s;}
+body.fire4 .fireRing{animation-duration:.55s;}
+@keyframes firePulse{
+  0%,100%{filter: drop-shadow(0 0 28px var(--pulse1));}
+  50%{filter: drop-shadow(0 0 58px var(--pulse2));}
+}
+
+.prompt{
+  position:relative;
+  z-index:1;
+  text-align:center;
+  padding:14px 8px 8px;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.jp{
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:900;
+  font-size:var(--jpSize);
+  line-height:1.12;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.90),
+    0 0 10px rgba(0,0,0,.80),
+    0 0 18px rgba(0,0,0,.60),
+    0 10px 26px rgba(0,0,0,.45);
+}
+.hira{
+  margin-top:10px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:800;
+  font-size:var(--hiSize);
+  line-height:1.12;
+  color: rgba(255,255,255,.92);
+  opacity:.95;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.85),
+    0 0 10px rgba(0,0,0,.70),
+    0 0 18px rgba(0,0,0,.50);
+}
+
+.grid{
+  width:min(980px, 100%);
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:12px;
+}
+@media (min-width: 820px){
+  .grid{grid-template-columns: 1fr 1fr;}
+}
+
+.choice{
+  position:relative;
+  border-radius:var(--btnR);
+  padding:16px 16px 18px;
+  background:#ffffff;
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
+  cursor:pointer;
+  user-select:none;
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+  overflow:hidden;
+}
+.choice:hover{transform: translateY(-1px)}
+.choice:active{transform: translateY(0px) scale(.995)}
+.choice .en{
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 900;
+  font-size: var(--enSize);
+  line-height: 1.15;
+  color: #0b1020;
+}
+.choice.locked{pointer-events:none; opacity:.92}
+
+.choice.correct{
+  border-color: #22c55e;
+  box-shadow:
+    0 0 0 6px rgba(34,197,94,.35),
+    0 0 40px rgba(34,197,94,.90),
+    0 0 90px rgba(34,197,94,.45),
+    0 12px 28px rgba(0,0,0,.35);
+  animation: correctFlash .22s ease-out;
+}
+@keyframes correctFlash{ from{transform: scale(.96);} to{transform: scale(1);} }
+
+.choice.wrong{
+  border-color: #ff3b3b;
+  box-shadow:
+    0 0 0 6px rgba(255,59,59,.35),
+    0 0 45px rgba(255,59,59,.85),
+    0 0 95px rgba(255,59,59,.45),
+    0 12px 28px rgba(0,0,0,.35);
+  animation: shake .45s ease;
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-10px)}
+  40%{transform:translateX(10px)}
+  60%{transform:translateX(-7px)}
+  80%{transform:translateX(7px)}
+}
+
+/* ===========================
+   FIRE BANNER
+   =========================== */
+.fireBanner{
+  position: fixed;
+  left: 50%;
+  top: calc(max(12px, env(safe-area-inset-top)) + 6px);
+  transform: translateX(-50%);
+  z-index: 70;
+
+  display:grid;
+  grid-template-columns:16px 1fr;
+  grid-template-rows:auto auto;
+  column-gap:10px;
+  row-gap:2px;
+
+  padding:12px 14px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(15,23,42,.58);
+  box-shadow: 0 16px 50px rgba(0,0,0,.55);
+
+  overflow:hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  pointer-events:none;
+  opacity:0;
+  transition: opacity .18s ease;
+}
+.fireBanner.show{opacity:1}
+body.fire1 .fireBanner,
+body.fire2 .fireBanner,
+body.fire3 .fireBanner,
+body.fire4 .fireBanner{opacity:1}
+
+.fireBanner .bannerFX{
+  position:absolute;
+  inset:-40%;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(55% 45% at 20% 20%, rgba(255,214,102,.18), transparent 60%),
+    radial-gradient(55% 45% at 80% 20%, rgba(255,90,160,.16), transparent 60%),
+    radial-gradient(70% 60% at 50% 90%, rgba(90,255,214,.14), transparent 62%);
+  filter: blur(10px) saturate(1.4);
+  opacity:.85;
+  mix-blend-mode: screen;
+  animation: bannerDrift 2.8s ease-in-out infinite;
+}
+@keyframes bannerDrift{
+  0%{transform: translate(-1%, -1%) rotate(-1deg) scale(1.02)}
+  50%{transform: translate( 1%,  1%) rotate( 1deg) scale(1.06)}
+  100%{transform: translate(-1%, -1%) rotate(-1deg) scale(1.02)}
+}
+
+.fireDot{
+  width:14px;height:14px;border-radius:999px;
+  background: radial-gradient(circle at 30% 30%, #fff6d8, #ffd17a 45%, #ff6b3d 100%);
+  box-shadow: 0 0 26px rgba(255,209,122,.80);
+  grid-column:1;
+  grid-row:1 / span 2;
+  align-self:center;
+  position:relative;
+  z-index:2;
+}
+
+.fireBanner .en{
+  grid-column:2; grid-row:1;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.4px;
+  font-size: clamp(18px, 3.1vw, 28px);
+  line-height:1.05;
+  position:relative;
+  z-index:2;
+  text-shadow: 0 2px 0 rgba(0,0,0,.25);
+}
+.fireBanner .jp{
+  grid-column:2; grid-row:2;
+  margin-top:6px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-weight:900;
+  font-size: clamp(14px, 2.7vw, 20px);
+  line-height:1.05;
+  opacity:.98;
+  position:relative;
+  z-index:2;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.90),
+    0 0 10px rgba(0,0,0,.75),
+    0 0 18px rgba(0,0,0,.55);
+}
+
+.fireBanner.fire1{ background: radial-gradient(120% 140% at 20% 20%, rgba(255,214,102,.92), rgba(255,120,90,.45) 55%, rgba(20,30,60,.12) 100%); border-color: rgba(255,214,102,.58); }
+.fireBanner.fire2{ background: radial-gradient(120% 140% at 20% 20%, rgba(255,90,160,.92), rgba(255,214,102,.50) 55%, rgba(20,30,60,.12) 100%); border-color: rgba(255,90,160,.58); }
+.fireBanner.fire3{ background: radial-gradient(120% 140% at 20% 20%, rgba(90,255,214,.92), rgba(120,130,255,.52) 55%, rgba(20,30,60,.12) 100%); border-color: rgba(90,255,214,.58); }
+.fireBanner.fire4{
+  border-color: rgba(255,255,255,.38);
+  background: radial-gradient(120% 160% at 15% 20%,
+    rgba(255,255,255,.92),
+    rgba(255,214,102,.62) 22%,
+    rgba(255,90,160,.58) 48%,
+    rgba(90,255,214,.58) 70%,
+    rgba(120,130,255,.48) 100%
+  );
+}
+.fireBanner.fire4 .bannerFX{
+  background:
+    conic-gradient(from 0deg,
+      rgba(255,214,102,0),
+      rgba(255,214,102,.30),
+      rgba(255,90,160,.26),
+      rgba(90,255,214,.26),
+      rgba(120,130,255,.22),
+      rgba(255,214,102,.30),
+      rgba(255,214,102,0)
+    );
+  filter: blur(12px) saturate(1.8);
+  opacity:.95;
+  animation: wildSpin 1.2s linear infinite;
+}
+
+/* FX */
+.fx{position:fixed; inset:0; pointer-events:none; z-index:60;}
+.heartSvg{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:160px;
+  height:160px;
+  transform: translate(-50%,-50%) scale(.75);
+  opacity:0;
+  filter: drop-shadow(0 0 18px rgba(255,209,122,.35));
+}
+.heartSvg.show{opacity:1; animation: popHeart .65s ease-out forwards;}
+@keyframes popHeart{
+  0%{transform: translate(-50%,-50%) scale(.55); opacity:0}
+  35%{transform: translate(-50%,-55%) scale(1.08); opacity:1}
+  70%{transform: translate(-50%,-62%) scale(.98); opacity:.95}
+  100%{transform: translate(-50%,-72%) scale(.92); opacity:0}
+}
+
+.fart{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%) scale(.9);
+  width:220px;
+  height:160px;
+  opacity:0;
+}
+.fart .blob{
+  position:absolute;
+  inset:0;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.92), rgba(203,213,225,.92) 38%, rgba(148,163,184,.95) 100%);
+  filter: drop-shadow(0 0 18px rgba(0,0,0,.35));
+}
+.fart .puff{
+  position:absolute;
+  width:84px;height:84px;border-radius:999px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.92), rgba(203,213,225,.92) 44%, rgba(148,163,184,.95) 100%);
+  filter: drop-shadow(0 0 18px rgba(0,0,0,.35));
+}
+.fart .p1{left:-18px; top:54px}
+.fart .p2{right:-22px; top:62px}
+.fart .p3{left:48px; top:-18px; width:92px;height:92px}
+.fart .txt{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%);
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.6px;
+  font-size:18px;
+  color: rgba(11,16,32,.75);
+}
+.fart.show{opacity:1; animation: popFart .75s ease-out forwards;}
+@keyframes popFart{
+  0%{transform: translate(-50%,-50%) scale(.7); opacity:0}
+  25%{transform: translate(-50%,-52%) scale(1.03); opacity:1}
+  65%{transform: translate(-50%,-58%) scale(.98); opacity:.95}
+  100%{transform: translate(-50%,-68%) scale(.92); opacity:0}
+}
+
+/* results */
+.results{
+  display:none;
+  width:min(980px, 100%);
+  border-radius:var(--radius);
+  background: rgba(15,23,42,.78);
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow: var(--shadow);
+  padding:22px 18px;
+  text-align:center;
+}
+.results.show{display:block}
+.results h2{margin:0 0 10px; font-size: clamp(22px, 3vw, 34px)}
+.results .sub{font-family:'Noto Sans JP',sans-serif; color:var(--muted); font-weight:800; margin-bottom:14px}
+.results .score{font-size: clamp(32px, 4.2vw, 56px); font-weight:900; letter-spacing:.3px}
+
+.btnRow{display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap}
+.bigBtn{
+  appearance:none;
+  border:0;
+  border-radius:999px;
+  padding:12px 18px;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.4px;
+  cursor:pointer;
+  background: rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
+}
+.bigBtn span{font-family:'Noto Sans JP',sans-serif; font-weight:900; font-size:12px; margin-left:10px; opacity:.95}
+
+.footer{
+  text-align:center;
+  font-family:'Cinzel',serif;
+  font-weight:900;
+  letter-spacing:.5px;
+  color: rgba(255,255,255,.85);
+  font-size: 14px;
+  padding: 4px 0 0;
+}
+
+/* reduce motion */
+@media (prefers-reduced-motion: reduce){
+  body::before, body::after{animation:none !important}
+  .choice,.heartSvg,.fart,.fireRing,.card{animation:none !important; transition:none !important}
+  .choice:hover{transform:none}
+  .heatTrack::after{animation:none !important}
+}
+</style>
+</head>
+
+<body>
+
+<!-- START OVERLAY -->
+<div class="startOverlay" id="startOverlay" role="dialog" aria-modal="true">
+  <div class="startCard">
+    <div class="startTitle">WORD SPEED</div>
+    <div class="startSub">ワードスピード</div>
+
+    <div class="startMsg">
+      <div class="en">Once you press <b>START</b>, the meter starts. Get ready!</div>
+      <div class="jp">「スタート」を押すと、メーターが動きます。準備してね！</div>
+    </div>
+
+    <button class="startBtn" id="startBtn">
+      START <span class="jp">スタート</span>
+    </button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="topbar">
+    <button class="back" id="backBtn" aria-label="Back to menu">
+      <span aria-hidden="true">←</span> MENU <span class="jp">メニュー</span>
+    </button>
+    <div class="hud">
+      <div class="pill">Q <b id="qNum">1</b>/<span id="qTotal">15</span></div>
+      <div class="pill">Score <b id="score">0</b></div>
+      <div class="pill">Streak <b id="streak">0</b></div>
+    </div>
+  </div>
+
+  <!-- HEAT BAR -->
+  <div class="heatWrap" aria-label="Timer">
+    <div class="heatTrack"><div class="heatFill" id="heatFill"></div></div>
+  </div>
+
+  <div class="stage">
+    <div class="card" id="card">
+      <div class="fireRing" aria-hidden="true"></div>
+      <div class="prompt" id="prompt">
+        <div class="jp" id="jpText">—</div>
+        <div class="hira" id="hiText">—</div>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="results" id="results">
+      <h2>Finished!</h2>
+      <div class="sub">おつかれさま！</div>
+      <div class="score"><span id="finalScore">0</span></div>
+      <div class="btnRow">
+        <button class="bigBtn" id="playAgain">PLAY AGAIN <span>もういちど</span></button>
+        <button class="bigBtn" id="back2">BACK TO MENU <span>メニュー</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Bryan’s English School</div>
+</div>
+
+<div class="fireBanner" id="fireBanner" role="status" aria-live="polite">
+  <div class="bannerFX" aria-hidden="true"></div>
+  <span class="fireDot" aria-hidden="true"></span>
+  <div class="en" id="fireEn">You’re on fire!</div>
+  <div class="jp" id="fireJp">ノってきた！</div>
+</div>
+
+<div class="fx" id="fx">
+  <svg class="heartSvg" id="heart" viewBox="0 0 64 64" aria-hidden="true">
+    <defs>
+      <radialGradient id="hg" cx="30%" cy="25%" r="80%">
+        <stop offset="0%" stop-color="rgba(255,255,255,.98)"/>
+        <stop offset="45%" stop-color="rgba(255,209,122,.98)"/>
+        <stop offset="100%" stop-color="rgba(255,126,185,.98)"/>
+      </radialGradient>
+    </defs>
+    <path fill="url(#hg)" d="M32 56s-20-12.6-26.8-25C-.3 18.6 8 8.6 19.5 12.2c5 1.6 8.2 6.2 12.5 11 4.3-4.8 7.5-9.4 12.5-11C56 8.6 64.3 18.6 58.8 31 52 43.4 32 56 32 56z"/>
+  </svg>
+
+  <div class="fart" id="fart">
+    <div class="blob"></div>
+    <div class="puff p1"></div>
+    <div class="puff p2"></div>
+    <div class="puff p3"></div>
+    <div class="txt">NO!</div>
+  </div>
+</div>
+
+<script>
+/* =========================
+   Booha Review – Word Speed (g3)
+   FIXED: start menu
+   - Removed duplicate `let gameStarted` (this was breaking the whole script)
+   - Removed duplicate beginFromOverlay + duplicate event wiring
+   - Single, clean start gate: click START → hide overlay → reset → start after 0.5s
+   ========================= */
+
+/* =========================
+   DATA (your exact list)
+   ========================= */
+const DATA = [
+  // Feelings
+  { en:'happy',     jp:'うれしい',         hi:'うれしい' },
+  { en:'sad',       jp:'かなしい',         hi:'かなしい' },
+  { en:'angry',     jp:'おこっている',     hi:'おこって いる' },
+  { en:'tired',     jp:'つかれた',         hi:'つかれた' },
+  { en:'nervous',   jp:'きんちょうして',   hi:'きんちょう して' },
+  { en:'excited',   jp:'わくわくして',     hi:'わくわく して' },
+  { en:'bored',     jp:'退屈',             hi:'たいくつ' },
+  { en:'surprised', jp:'おどろいた',       hi:'おどろいた' },
+
+  { en:'scared',    jp:'こわい',           hi:'こわい' },
+  { en:'calm',      jp:'おちついた',       hi:'おちついた' },
+  { en:'proud',     jp:'ほこらしい',       hi:'ほこらしい' },
+  { en:'worried',   jp:'心配',             hi:'しんぱい' },
+  { en:'shy',       jp:'はずかしがり',     hi:'はずかしがり' },
+  { en:'sick',      jp:'具合が悪い',       hi:'ぐあい が わるい' },
+  { en:'hungry',    jp:'おなかがすいた',   hi:'おなか が すいた' },
+
+  // Friends / Character
+  { en:'friend',    jp:'友達',             hi:'ともだち' },
+  { en:'kind',      jp:'やさしい',         hi:'やさしい' },
+  { en:'polite',    jp:'丁寧',             hi:'ていねい' },
+  { en:'honest',    jp:'正直',             hi:'しょうじき' },
+  { en:'friendly',  jp:'親しみやすい',     hi:'したしみやすい' },
+  { en:'patient',   jp:'我慢強い',         hi:'がまんづよい' },
+  { en:'brave',     jp:'勇気のある',       hi:'ゆうき の ある' },
+  { en:'team',      jp:'チーム',           hi:'ちーむ' },
+
+  // Social actions
+  { en:'share',     jp:'分け合う',         hi:'わけあう' },
+  { en:'help',      jp:'助ける',           hi:'たすける' },
+  { en:'listen',    jp:'聞く',             hi:'きく' },
+  { en:'invite',    jp:'招待する',         hi:'しょうたい する' },
+  { en:'include',   jp:'入れる／含める',   hi:'いれる／ふくめる' },
+  { en:'trust',     jp:'信頼する',         hi:'しんらい する' },
+  { en:'respect',   jp:'尊敬する',         hi:'そんけい する' },
+
+  // Family
+  { en:'mother',      jp:'母',             hi:'はは' },
+  { en:'father',      jp:'父',             hi:'ちち' },
+  { en:'sister',      jp:'姉／妹',         hi:'あね／いもうと' },
+  { en:'brother',     jp:'兄／弟',         hi:'あに／おとうと' },
+  { en:'grandmother', jp:'祖母',           hi:'そぼ' },
+  { en:'grandfather', jp:'祖父',           hi:'そふ' },
+  { en:'cousin',      jp:'いとこ',         hi:'いとこ' },
+  { en:'family',      jp:'家族',           hi:'かぞく' },
+
+  // Events / Gifts
+  { en:'celebrate', jp:'祝う',             hi:'いわう' },
+  { en:'gift',      jp:'プレゼント',       hi:'ぷれぜんと' },
+  { en:'letter',    jp:'手紙',             hi:'てがみ' },          // fixed
+  { en:'chocolate', jp:'チョコレート',     hi:'ちょこれーと' },
+  { en:'heart',     jp:'ハート／心',       hi:'はーと／こころ' },
+  { en:'bouquet',   jp:'花束',             hi:'はなたば' },
+  { en:'relative',  jp:'親せき',           hi:'しんせき' },
+
+  // Help / Safety
+  { en:'carry',     jp:'はこぶ',           hi:'はこぶ' },
+  { en:'open',      jp:'あける',           hi:'あける' },
+  { en:'close',     jp:'しめる',           hi:'しめる' },
+  { en:'lend',      jp:'かす',             hi:'かす' },
+  { en:'borrow',    jp:'かりる',           hi:'かりる' },
+  { en:'heavy',     jp:'おもい',           hi:'おもい' },
+  { en:'light',     jp:'かるい',           hi:'かるい' },
+
+  { en:'directions',jp:'道案内',           hi:'みちあんない' },
+  { en:'broken',    jp:'こわれた',         hi:'こわれた' },
+  { en:'fix',       jp:'なおす',           hi:'なおす' },
+  { en:'hurry',     jp:'いそぐ',           hi:'いそぐ' },
+  { en:'accident',  jp:'事故',             hi:'じこ' },
+  { en:'safe',      jp:'安全',             hi:'あんぜん' },
+  { en:'emergency', jp:'緊急',             hi:'きんきゅう' }
+];
+
+  
+/* ---------- Helpers ---------- */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* ---------- Hooks ---------- */
+const grid       = document.querySelector("#grid");
+const jpText     = document.querySelector("#jpText");
+const hiText     = document.querySelector("#hiText");
+const qNum       = document.querySelector("#qNum");
+const qTotal     = document.querySelector("#qTotal");
+const scoreEl    = document.querySelector("#score");
+const streakEl   = document.querySelector("#streak");
+const results    = document.querySelector("#results");
+const finalScore = document.querySelector("#finalScore");
+
+
+const fireBanner = document.querySelector("#fireBanner");
+const fireEn     = document.querySelector("#fireEn");
+const fireJp     = document.querySelector("#fireJp");
+
+const heart      = document.querySelector("#heart");
+const fart       = document.querySelector("#fart");
+
+const backBtn    = document.querySelector("#backBtn");
+const back2      = document.querySelector("#back2");
+const playAgain  = document.querySelector("#playAgain");
+
+const heatFill   = document.querySelector("#heatFill");
+
+const card       = document.querySelector("#card");
+const prompt     = document.querySelector("#prompt");
+
+const startOverlay = document.querySelector("#startOverlay");
+const startBtn     = document.querySelector("#startBtn");
+
+/* ---------- WebAudio SFX (same-folder) ---------- */
+const SFX = (() => {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let ctx = null;
+  let master = null;
+  const buf = new Map();
+  let unlocked = false;
+
+  function ensure(){
+    if (!ctx) {
+      ctx = new AudioCtx();
+      master = ctx.createGain();
+      master.gain.value = 1;
+      master.connect(ctx.destination);
+    }
+  }
+
+  async function loadOne(name, url){
+    ensure();
+    const res = await fetch(url, { cache: "force-cache" });
+    const arr = await res.arrayBuffer();
+    const b = await ctx.decodeAudioData(arr);
+    buf.set(name, b);
+  }
+
+  async function preload(){
+    ensure();
+    const jobs = [
+      ["ding","ding.mp3"],
+      ["fart","fart.mp3"],
+      ["fire","fire.mp3"],
+      ["level4","level4.mp3"],
+    ].map(([name,url]) => loadOne(name,url).catch(()=>null));
+    await Promise.all(jobs);
+  }
+
+  function unlock(){
+    ensure();
+    if (unlocked) return;
+    unlocked = true;
+
+    if (ctx.state === "suspended") ctx.resume().catch(()=>{});
+    const b = ctx.createBuffer(1, 1, 22050);
+    const src = ctx.createBufferSource();
+    src.buffer = b;
+    src.connect(master);
+    try { src.start(0); } catch(e) {}
+  }
+
+  function play(name, volume=1){
+    if (!ctx) return;
+    let b = buf.get(name);
+
+    // fallback so level4 is never silent
+    if (!b && name === "level4") b = buf.get("fire");
+    if (!b) return;
+
+    if (ctx.state === "suspended") ctx.resume().catch(()=>{});
+
+    const src = ctx.createBufferSource();
+    src.buffer = b;
+
+    const g = ctx.createGain();
+    g.gain.value = Math.max(0, Math.min(1, volume));
+
+    src.connect(g);
+    g.connect(master);
+
+    try { src.start(0); } catch(e) {}
+  }
+
+  return { preload, unlock, play };
+})();
+
+/* ---------- State ---------- */
+let order = [];
+let idx = 0;
+let score = 0;
+let streak = 0;
+let locked = false;
+let lastFireLevel = 0;
+let anyWrongEver = false;
+
+let gameStarted = false;          // ✅ keep only ONE declaration
+let firstTryOnly = true;          // ✅ true until you miss on this question
+
+let heatRAF = 0;
+let heatStart = 0;
+let heatDur = 0;
+
+
+/* ---------- Fire level thresholds (same as g2) ---------- */
+function getFireLevelFromStreak(n){
+  if(n >= 15) return 4;
+  if(n >= 10) return 3;
+  if(n >= 6)  return 2;
+  if(n >= 3)  return 1;
+  return 0;
+}
+
+/* ---------- Fire level (BODY) ---------- */
+function applyBodyFireFromStreak(){
+  const lv = getFireLevelFromStreak(streak);
+  document.body.classList.remove("fire1","fire2","fire3","fire4");
+  if(lv) document.body.classList.add(`fire${lv}`);
+}
+
+/* ---------- Fire Banner (same messages as g2) ---------- */
+const FIRE_MSG = {
+  1: { en:"You are awesome!",                     jp:"すごい！" },
+  2: { en:"You are even more awesome!",           jp:"もっとすごい！" },
+  3: { en:"What? You are the most awesome!",      jp:"えっ！？一番すごい！" },
+  4: { en:"You are the smartest person alive!!!", jp:"あなたは世界一かしこい！！！" }
+};
+
+function playLevelSound(lv){
+  if(lv === 1 || lv === 2 || lv === 3){
+    SFX.play("fire", 1);
+    return;
+  }
+  if(lv === 4){
+    try{ SFX.play("level4", 1); }catch(e){ SFX.play("fire", 1); }
+  }
+}
+
+function hideFireBanner(){
+  if(!fireBanner) return;
+  fireBanner.classList.remove("show","fire1","fire2","fire3","fire4");
+}
+
+function showFireBanner(level){
+  const msg = FIRE_MSG[level];
+  if(!msg || !fireBanner) return;
+
+  if(fireEn) fireEn.textContent = msg.en;
+  if(fireJp) fireJp.textContent = msg.jp;
+
+  fireBanner.classList.remove("fire1","fire2","fire3","fire4");
+  fireBanner.classList.add(`fire${level}`);
+  fireBanner.classList.add("show");
+
+  playLevelSound(level);
+}
+
+function maybeTriggerFire(){
+  const lv = getFireLevelFromStreak(streak);
+  if(lv === 0){
+    lastFireLevel = 0;
+    hideFireBanner();
+    return;
+  }
+  if(lv > lastFireLevel){
+    showFireBanner(lv);
+    lastFireLevel = lv;
+  }
+}
+
+/* ---------- FX ---------- */
+function popHeart(){
+  if(!heart) return;
+  heart.classList.remove("show");
+  void heart.getBoundingClientRect();
+  heart.classList.add("show");
+}
+function popFart(){
+  if(!fart) return;
+  fart.classList.remove("show");
+  void fart.getBoundingClientRect();
+  fart.classList.add("show");
+}
+
+/* =========================
+   HEAT BAR TIMER
+   ========================= */
+function getHeatDurationMs(){
+  const lv = getFireLevelFromStreak(streak);
+  if(lv === 4) return 1800;
+  if(lv === 3) return 2600;
+  if(lv === 2) return 3400;
+  if(lv === 1) return 4200;
+  return 5200;
+}
+
+function stopHeat(){
+  cancelAnimationFrame(heatRAF);
+  heatRAF = 0;
+}
+
+function setHeatProgress01(p){
+  const clamped = Math.max(0, Math.min(1, p));
+  if(heatFill) heatFill.style.transform = `scaleX(${clamped})`;
+}
+
+function startHeat(){
+  stopHeat();
+  heatStart = performance.now();
+  heatDur = getHeatDurationMs();
+  setHeatProgress01(1);
+
+  const tick = (t)=>{
+    if(locked){
+      heatRAF = requestAnimationFrame(tick);
+      return;
+    }
+
+    const elapsed = t - heatStart;
+    const p = 1 - (elapsed / heatDur);
+    setHeatProgress01(p);
+
+    if(elapsed >= heatDur){
+      onTimeout();
+      return;
+    }
+
+    heatRAF = requestAnimationFrame(tick);
+  };
+
+  heatRAF = requestAnimationFrame(tick);
+}
+
+/* =========================
+   WORD SPEED CHOICE BUILD
+   ========================= */
+function buildChoices(correctEn){
+  const pool = DATA.map(d=>d.en).filter(x=>x !== correctEn);
+  const distractors = shuffle(pool).slice(0, 3);
+  const mixed = shuffle([correctEn, ...distractors]);
+  return mixed;
+}
+
+/* ---------- Game control ---------- */
+function resetGame(){
+  order = shuffle([...Array(DATA.length)].map((_,i)=>i));
+  idx = 0;
+  score = 0;
+  streak = 0;
+  locked = false;
+  lastFireLevel = 0;
+  anyWrongEver = false;
+  firstTryOnly = true;            // ✅ reset
+
+  document.body.classList.remove("fire1","fire2","fire3","fire4");
+  hideFireBanner();
+
+  qTotal.textContent = String(DATA.length);
+
+  scoreEl.textContent = "0";
+  streakEl.textContent = "0";
+  results.classList.remove("show");
+  grid.innerHTML = "";
+
+  stopHeat();
+  setHeatProgress01(1);
+
+  jpText.textContent = "—";
+  hiText.textContent = "—";
+  qNum.textContent = "0";
+}
+
+
+function render(isNew=true){
+
+  locked = false;
+  results.classList.remove("show");
+  grid.innerHTML = "";
+  if(isNew) firstTryOnly = true; // ✅ only reset on a brand-new question
+
+
+  const item = DATA[order[idx]];
+  qNum.textContent = String(idx+1);
+  jpText.textContent = item.jp;
+  hiText.textContent = item.hi;
+
+  const choices = buildChoices(item.en);
+  choices.forEach((word)=>{
+    const btn = document.createElement("div");
+    btn.className = "choice";
+    btn.innerHTML = `<div class="en">${word}</div>`;
+    btn.addEventListener("click", ()=>pick(btn, word));
+    grid.appendChild(btn);
+  });
+
+  scoreEl.textContent = String(score);
+  streakEl.textContent = String(streak);
+
+  applyBodyFireFromStreak();
+  maybeTriggerFire();
+
+  startHeat();
+}
+
+function advance(){
+  idx++;
+  if(idx >= order.length){
+    stopHeat();
+    results.classList.add("show");
+
+    const total = DATA.length;
+    const pct = total ? Math.round((score / total) * 100) : 0;
+    finalScore.textContent = `${score}/${total}  ${pct}%`;
+
+    grid.innerHTML = "";
+    jpText.textContent = "—";
+    hiText.textContent = "—";
+    locked = true;
+    return;
+  }
+  render(true);
+}
+
+
+function lockChoices(){
+  const tiles = [...document.querySelectorAll(".choice")];
+  tiles.forEach(t=>t.classList.add("locked"));
+}
+
+function onCorrect(tile){
+  locked = true;
+  stopHeat();
+
+  tile.classList.add("correct");
+
+  if(firstTryOnly){
+    score++;
+    streak++;
+  }else{
+    streak = 0;
+  }
+
+  popHeart();
+  SFX.play("ding", 1);
+
+  scoreEl.textContent = String(score);
+  streakEl.textContent = String(streak);
+
+  applyBodyFireFromStreak();
+  maybeTriggerFire();
+
+  setTimeout(advance, 520);
+}
+
+function onWrong(tile){
+  locked = true;
+  stopHeat();
+  anyWrongEver = true;
+
+  tile.classList.add("wrong");
+  popFart();
+  SFX.play("fart", 1);
+
+  streak = 0;
+  streakEl.textContent = "0";
+
+  applyBodyFireFromStreak();
+  maybeTriggerFire();
+
+  firstTryOnly = false;
+
+  setTimeout(()=>{
+    locked = false;
+    render(false);
+  }, 520);
+}
+
+function onTimeout(){
+  locked = true;
+  stopHeat();
+  anyWrongEver = true;
+
+  popFart();
+  SFX.play("fart", 1);
+
+  streak = 0;
+  streakEl.textContent = "0";
+
+  applyBodyFireFromStreak();
+  maybeTriggerFire();
+
+  firstTryOnly = false;
+
+  setTimeout(()=>{
+    locked = false;
+    render(false);
+  }, 520);
+}
+
+
+function pick(tile, word){
+  if(locked) return;
+  lockChoices();
+
+  const item = DATA[order[idx]];
+  const isCorrect = (word === item.en);
+
+  if(isCorrect) onCorrect(tile);
+  else onWrong(tile);
+}
+
+/* ---------- Fire3/4: keep JP text from moving while card animates ---------- */
+const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function parseMatrix2D(t){
+  if(!t || t === "none") return null;
+  const m = t.match(/matrix\(([^)]+)\)/);
+  if(!m) return null;
+  const parts = m[1].split(",").map(s=>parseFloat(s.trim()));
+  if(parts.length !== 6 || parts.some(n=>Number.isNaN(n))) return null;
+  return parts;
+}
+
+function invertMatrix2D(m){
+  const [a,b,c,d,e,f] = m;
+  const det = a*d - b*c;
+  if(!det) return null;
+  const id = 1/det;
+  const na =  d*id;
+  const nb = -b*id;
+  const nc = -c*id;
+  const nd =  a*id;
+  const ne = -(na*e + nc*f);
+  const nf = -(nb*e + nd*f);
+  return [na,nb,nc,nd,ne,nf];
+}
+
+let stabilizeRAF = 0;
+function stabilizePromptLoop(){
+  cancelAnimationFrame(stabilizeRAF);
+  if(prefersReduced || !prompt || !card) { if(prompt) prompt.style.transform = "none"; return; }
+
+  const tick = ()=>{
+    const isFire = document.body.classList.contains("fire3") || document.body.classList.contains("fire4");
+    if(!isFire){
+      prompt.style.transform = "none";
+      stabilizeRAF = requestAnimationFrame(tick);
+      return;
+    }
+
+    const m = parseMatrix2D(getComputedStyle(card).transform);
+    if(!m){
+      prompt.style.transform = "none";
+      stabilizeRAF = requestAnimationFrame(tick);
+      return;
+    }
+
+    const inv = invertMatrix2D(m);
+    if(!inv){
+      prompt.style.transform = "none";
+      stabilizeRAF = requestAnimationFrame(tick);
+      return;
+    }
+
+    prompt.style.transform = `matrix(${inv[0]},${inv[1]},${inv[2]},${inv[3]},${inv[4]},${inv[5]})`;
+    stabilizeRAF = requestAnimationFrame(tick);
+  };
+
+  stabilizeRAF = requestAnimationFrame(tick);
+}
+
+/* ---------- Buttons ---------- */
+function goMenu(){ history.back(); }
+backBtn && backBtn.addEventListener("click", goMenu);
+back2 && back2.addEventListener("click", goMenu);
+
+playAgain && playAgain.addEventListener("click", ()=>{
+  // restart instantly (no overlay)
+  resetGame();
+  render();
+  stabilizePromptLoop();
+});
+
+/* =========================
+   START OVERLAY GATE (SINGLE SOURCE OF TRUTH)
+   ========================= */
+function beginFromOverlay(){
+  if(gameStarted) return;
+
+  if(!Array.isArray(DATA) || DATA.length === 0){
+    console.error("❌ DATA is missing or empty. Game cannot start.");
+    alert("Game data failed to load.");
+    return;
+  }
+
+  gameStarted = true;
+
+  // unlock audio on user gesture (Safari)
+  try { SFX.unlock(); } catch(e) {}
+
+  // hide overlay
+  if(startOverlay){
+    startOverlay.classList.add("hide");
+    setTimeout(()=>{ startOverlay.style.display = "none"; }, 180);
+  }
+
+  // prep state now
+  resetGame();
+
+  // start meter/game after 0.5s (your request)
+  setTimeout(()=>{
+    render();              // render() → startHeat()
+    stabilizePromptLoop();
+  }, 500);
+}
+
+/* Wire start once */
+window.addEventListener("DOMContentLoaded", ()=>{
+  // preload early (doesn't start game)
+  SFX.preload();
+
+  // make sure UI shows totals even before start
+  qTotal.textContent = String(DATA.length);
+  
+
+  startBtn && startBtn.addEventListener("click", beginFromOverlay);
+  startBtn && startBtn.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      beginFromOverlay();
+    }
+  });
+});
+  
+</script>
+
+<script src="./token.js"></script>
+</body>
+</html>
